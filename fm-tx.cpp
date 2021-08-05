@@ -380,7 +380,59 @@ int main(int argc, char *argv[])
     tx_stream.dataFmt = lms_stream_t::LMS_FMT_F32; //set dataformat for tx_stream to uint16 or floating point samples
     tx_stream.isTx = true;
 
+//modulator
+    float kf = 0.1f;                         // modulation factor
+    unsigned int num_samples = 1024;         // number of samples
+    freqmod mod = freqmod_create(modFactor); // modulator
 
+    //Initialize data buffers
+    const int buffer_size = 1024 * 8;
+    liquid_float_complex mod_buffer[buffer_size]; //TX buffer to hold complex values - liquid library)
+    float test_tone[buffer_size];
+
+    msg.str("");
+    msg << "Modulation Factor: " << modFactor << endl;
+    Logger(msg.str());
+
+    for (int i = 0; i < buffer_size; i++)
+    {
+        float w = 2 * M_PI * i * f_ratio;
+        test_tone[i] = 2*sin(w+0.2);
+    }
+    freqmod_modulate_block(mod, test_tone, buffer_size, mod_buffer);
+
+    const int send_cnt = int(buffer_size * f_ratio) / f_ratio;
+    msg.str("");
+    msg << "sample count per send call: " << send_cnt << std::endl;
+    Logger(msg.str());
+
+    //Streaming
+    auto t1 = chrono::high_resolution_clock::now();
+    auto t2 = t1;
+    LMS_SetupStream(device, &tx_stream);
+    LMS_StartStream(&tx_stream);                                                 //Start streaming
+    while (chrono::high_resolution_clock::now() - t1 < chrono::seconds(tx_time)) //run for 10 seconds
+    {
+        //Transmit samples
+        int ret = LMS_SendStream(&tx_stream, mod_buffer, send_cnt, nullptr, 1000);
+        if (ret != send_cnt)
+        {
+            msg.str("");
+            msg << "error: samples sent: " << ret << "/" << send_cnt << endl;
+            Logger(msg.str());
+        }
+
+        //Print data rate (once per second)
+        if (chrono::high_resolution_clock::now() - t2 > chrono::seconds(5))
+        {
+            t2 = chrono::high_resolution_clock::now();
+            lms_stream_status_t status;
+            LMS_GetStreamStatus(&tx_stream, &status); //Get stream status
+            msg.str("");
+            msg << "TX data rate: " << status.linkRate / 1e6 << " MB/s\n"; //link data rate
+            Logger(msg.str());
+        }
+    }
 
     sleep(1);
     //Stop streaming
