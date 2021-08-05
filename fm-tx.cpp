@@ -380,7 +380,8 @@ int main(int argc, char *argv[])
     tx_stream.dataFmt = lms_stream_t::LMS_FMT_F32; //set dataformat for tx_stream to uint16 or floating point samples
     tx_stream.isTx = true;
 
-    
+
+
     sleep(1);
     //Stop streaming
     LMS_StopStream(&tx_stream);
