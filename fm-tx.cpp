@@ -53,7 +53,7 @@ float modFactor = 0.2f;
 int modeSelector = 1;
 int duration = 10;
 float toneFrequency = 2e3;
-float sampleRate = toneFrequency*50;
+float sampleRate = 2e6;
 
 int error();
 void print_gpio(uint8_t gpio_val);
@@ -69,8 +69,7 @@ int main(int argc, char *argv[])
         cout << "Tone Frequency: " << toneFrequency << endl;
         cout << "Modulation Factor: " << modFactor << endl;
         cout << "Duration: " << duration << endl;
-        cout << endl;
-        cout << "Calcualted Sample Rate: \033[36m" << sampleRate << "\033[0m" << endl;
+        cout << "Sample Rate: " << sampleRate << endl;
         cout << endl;
         cout << "type \033[36m'fm-tx help'\033[0m to see all options !" << endl;
     }
@@ -114,7 +113,7 @@ int main(int argc, char *argv[])
                 }
                 else if (mode == "help")
                 {
-                    cout << "Options for starting RPX-100: fm-tx \033[36mMODE CENTER-FREQUENCY GAIN TONE-FREQUENCY MODULATION-FACTOR DURATION\033[0m" << endl;
+                    cout << "Options for starting RPX-100: fm-tx \033[36mMODE CENTER-FREQUENCY GAIN TONE-FREQUENCY MODULATION-FACTOR DURATION SAMPLE-RATE\033[0m" << endl;
                     cout << endl;
                     cout << "\033[36mMODE\033[0m:" << endl;
                     cout << "     \033[32mRX\033[0m for receive mode" << endl;
@@ -129,7 +128,7 @@ int main(int argc, char *argv[])
                     cout << "\033[36mGAIN\033[0m:" << endl;
                     cout << "     0 - 1.0, number of type float" << endl;
                     cout << endl;
-                    cout << "\033[36mTONE FREQUENCY\033[0m:" << endl;
+                    cout << "\033[36mTONE-FREQUENCY\033[0m:" << endl;
                     cout << "     in Hz, number of type float" << endl;
                     cout << endl;
                     cout << "\033[36mMODULATION FACTOR\033[0m:" << endl;
@@ -137,6 +136,9 @@ int main(int argc, char *argv[])
                     cout << endl;
                     cout << "\033[36mDURATION\033[0m:" << endl;
                     cout << "     in sec, number of type int" << endl;
+                    cout << endl;
+                    cout << "\033[36mSAMPLE-RATE\033[0m:" << endl;
+                    cout << "     in Hz, number of type int" << endl;
                     cout << endl;
                     return 0;
                 }
@@ -171,11 +173,13 @@ int main(int argc, char *argv[])
                 cout << "Duration: " << argv[c] << endl;
                 duration = stoi(argv[c]);
                 break;
+
+            case 7:
+                cout << "Sample Rate: " << argv[c] << endl;
+                sampleRate = stof(argv[c]);
+                break;
             }
         }
-        sampleRate = toneFrequency*50;
-        cout << "Calcualted Sample Rate: \033[36m" << sampleRate << "\033[0m" << endl;
-        cout << endl;
     }
 
     pid_t pid, sid;
@@ -380,24 +384,23 @@ int main(int argc, char *argv[])
     tx_stream.dataFmt = lms_stream_t::LMS_FMT_F32; //set dataformat for tx_stream to uint16 or floating point samples
     tx_stream.isTx = true;
 
-//modulator
-    float kf = 0.1f;                         // modulation factor
+    //modulator
     unsigned int num_samples = 1024;         // number of samples
     freqmod mod = freqmod_create(modFactor); // modulator
 
     //Initialize data buffers
     const int buffer_size = 1024 * 8;
     liquid_float_complex mod_buffer[buffer_size]; //TX buffer to hold complex values - liquid library)
-    float test_tone[buffer_size];
+    float test_tone[2*buffer_size];
 
     msg.str("");
     msg << "Modulation Factor: " << modFactor << endl;
     Logger(msg.str());
 
-    for (int i = 0; i < buffer_size; i++)
+    for (int t = 0; t < 2*buffer_size; t++)
     {
-        float w = 2 * M_PI * i * f_ratio;
-        test_tone[i] = 2*sin(w+0.2);
+        float w = 2 * M_PI * t * f_ratio;
+        test_tone[t] = 5*sin(w+0.2);
     }
     freqmod_modulate_block(mod, test_tone, buffer_size, mod_buffer);
 
