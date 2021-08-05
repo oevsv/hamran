@@ -5,7 +5,7 @@
  * Author: Bernhard Isemann
  *
  * Created on 30 May 2021, 11:35
- * Updated on 06 Jun 2021, 15:55
+ * Updated on 05 Aug 2021, 15:18
  * Version 1.00
  *****************************************************************************/
 
@@ -46,10 +46,10 @@ uint8_t setTXwoBP = 0x0B; //all other bit = 0 --> direct path without BP
 uint8_t setTX6m = 0x08;   //all other bit = 0 --> 6m with BP
 uint8_t setTX2m = 0x09;   //all other bit = 0 --> 2m with BP
 uint8_t setTX70cm = 0x0A; //all other bit = 0 --> 70cm with BP
-float centerFrequency = 52.8e6;
+float centerFrequency = 144.8e6;
 string mode = "TXwoBP";
 float normalizedGain = 1;
-float modFactor = 0.1f;
+float modFactor = 0.2f;
 int modeSelector = 1;
 int duration = 10;
 float toneFrequency = 2e3;
@@ -371,9 +371,6 @@ int main(int argc, char *argv[])
     //calibrate Tx, continue on failure
     LMS_Calibrate(device, LMS_CH_TX, 0, sampleRate, 0);
 
-    //Wait 12sec and send status LoRa message
-    sleep(2);
-
     //Streaming Setup
 
     lms_stream_t tx_stream;                        //stream structure
@@ -383,64 +380,7 @@ int main(int argc, char *argv[])
     tx_stream.dataFmt = lms_stream_t::LMS_FMT_F32; //set dataformat for tx_stream to uint16 or floating point samples
     tx_stream.isTx = true;
 
-    //lms_stream_meta_t meta_tx;
-    //meta_tx.waitForTimestamp = true;
-    //meta_tx.flushPartialPacket = true;
-    //meta_tx.timestamp = 0;
-
-    //modulator
-    float kf = 0.1f;                         // modulation factor
-    unsigned int num_samples = 1024;         // number of samples
-    freqmod mod = freqmod_create(modFactor); // modulator
-
-    //Initialize data buffers
-    const int buffer_size = 1024 * 8;
-    liquid_float_complex mod_buffer[buffer_size]; //TX buffer to hold complex values - liquid library)
-    float test_tone[buffer_size];
-
-    msg.str("");
-    msg << "Modulation Factor: " << modFactor << endl;
-    Logger(msg.str());
-
-    for (int i = 0; i < buffer_size; i++)
-    {
-        float w = 2 * M_PI * i * f_ratio;
-        test_tone[i] = 2*sin(w+0.2);
-    }
-    freqmod_modulate_block(mod, test_tone, buffer_size, mod_buffer);
-
-    const int send_cnt = int(buffer_size * f_ratio) / f_ratio;
-    msg.str("");
-    msg << "sample count per send call: " << send_cnt << std::endl;
-    Logger(msg.str());
-
-    //Streaming
-    auto t1 = chrono::high_resolution_clock::now();
-    auto t2 = t1;
-    LMS_SetupStream(device, &tx_stream);
-    LMS_StartStream(&tx_stream);                                                 //Start streaming
-    while (chrono::high_resolution_clock::now() - t1 < chrono::seconds(tx_time)) //run for 10 seconds
-    {
-        //Transmit samples
-        int ret = LMS_SendStream(&tx_stream, mod_buffer, send_cnt, nullptr, 1000);
-        if (ret != send_cnt)
-        {
-            msg.str("");
-            msg << "error: samples sent: " << ret << "/" << send_cnt << endl;
-            Logger(msg.str());
-        }
-
-        //Print data rate (once per second)
-        if (chrono::high_resolution_clock::now() - t2 > chrono::seconds(5))
-        {
-            t2 = chrono::high_resolution_clock::now();
-            lms_stream_status_t status;
-            LMS_GetStreamStatus(&tx_stream, &status); //Get stream status
-            msg.str("");
-            msg << "TX data rate: " << status.linkRate / 1e6 << " MB/s\n"; //link data rate
-            Logger(msg.str());
-        }
-    }
+    
     sleep(1);
     //Stop streaming
     LMS_StopStream(&tx_stream);
