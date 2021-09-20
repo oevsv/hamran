@@ -5,49 +5,18 @@
  * Author: Bernhard Isemann
  *
  * Created on 02 Aug 2021, 09:05
- * Updated on 03 Aug 2021, 14:00
+ * Updated on 19 Sep 2021, 14:00
  * Version 1.00
  *****************************************************************************/
 
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <unistd.h>
-#include <sstream>
-#include <syslog.h>
-#include <string.h>
-#include <iostream>
-#include <cstdio>
-#include <ctime>
-#include <math.h>
-#include <complex.h>
-#include <time.h>
-#include <chrono>
-#include <cstring>
-#include <bitset>
-#include "ini.h"
-#include "log.h"
-#include <wiringPi.h>
-#include <wiringSerial.h>
-#include "lime/LimeSuite.h"
-#include <chrono>
-#include <math.h>
-#include "liquid/liquid.h"
-#include "alsa/asoundlib.h"
+#include "RPX-100.h"
 
 using namespace std;
 lms_device_t *device = NULL;
 std::stringstream msg;
 std::stringstream HEXmsg;
-uint8_t setRX = 0x04;     //all other bit = 0 --> 6m
-uint8_t setTXwoBP = 0x0B; //all other bit = 0 --> direct path without BP
-uint8_t setTX6m = 0x08;   //all other bit = 0 --> 6m with BP
-uint8_t setTX2m = 0x09;   //all other bit = 0 --> 2m with BP
-uint8_t setTX70cm = 0x0A; //all other bit = 0 --> 70cm with BP
-float centerFrequency = 99.9e6;
+
+float centerFrequency = 144.8e6;
 string mode = "RX";
 float normalizedGain = 0;
 float modFactor = 0.8f;
@@ -314,16 +283,18 @@ int main(int argc, char *argv[])
     snd_pcm_t *handle;
     snd_pcm_sframes_t frames;
 
-    if (snd_pcm_open(&handle, audioDev, SND_PCM_STREAM_PLAYBACK, 0) != 0) {
+    if (snd_pcm_open(&handle, audioDev, SND_PCM_STREAM_PLAYBACK, 0) != 0)
+    {
         error();
     }
     if (snd_pcm_set_params(handle,
-                      SND_PCM_FORMAT_U8,
-                      SND_PCM_ACCESS_RW_INTERLEAVED,
-                      1,
-                      48000,
-                      1,
-                      500000) != 0) {   /* 0.5sec */
+                           SND_PCM_FORMAT_U8,
+                           SND_PCM_ACCESS_RW_INTERLEAVED,
+                           1,
+                           48000,
+                           1,
+                           500000) != 0)
+    { /* 0.5sec */
         error();
     }
 
@@ -344,18 +315,29 @@ int main(int argc, char *argv[])
     //Streaming Setup
 
     //Initialize stream
-    lms_stream_t streamId; //stream structure
-    streamId.channel = 0; //channel number
-    streamId.fifoSize = 1024 * 1024; //fifo size in samples
-    streamId.throughputVsLatency = 1.0; //optimize for max throughput
-    streamId.isTx = false; //RX channel
+    lms_stream_t streamId;                        //stream structure
+    streamId.channel = 0;                         //channel number
+    streamId.fifoSize = 1024 * 1024;              //fifo size in samples
+    streamId.throughputVsLatency = 1.0;           //optimize for max throughput
+    streamId.isTx = false;                        //RX channel
     streamId.dataFmt = lms_stream_t::LMS_FMT_I12; //12-bit integers
     if (LMS_SetupStream(device, &streamId) != 0)
         error();
 
     //Initialize data buffers
-    const int sampleCnt = 5000; //complex samples per buffer
-    int16_t buffer[sampleCnt * 2]; //buffer to hold complex values (2*samples))
+    const int sampleCnt = 5000;             //complex samples per sdrSample
+    liquid_float_complex sdrSample[sampleCnt]; //sdrSample to hold complex values (2*samples))
+    float fc = CUTOFF_HZ / sampleRate;      // cutoff frequency
+    unsigned int h_len = 64;                // filter length
+    float As = 70.0f;                       // stop-band attenuation
+
+    float kf = FSK_DEVIATION_HZ/sampleRate; // modulation factor
+    freqdem dem = freqdem_create(kf);
+    
+    float demodSignal[sampleCnt]; // filtered signal
+    liquid_float_complex filterSignal[sampleCnt]; // filtered signal
+    firfilt_crcf q = firfilt_crcf_create_kaiser(h_len, fc, As, 0.0f);
+    firfilt_crcf_set_scale(q, 2.0f * fc);
 
     //Start streaming
     LMS_StartStream(&streamId);
@@ -363,17 +345,24 @@ int main(int argc, char *argv[])
     //Streaming
     auto t1 = chrono::high_resolution_clock::now();
     auto t2 = t1;
-                                             //Start streaming
+    //Start streaming
     while (chrono::high_resolution_clock::now() - t1 < chrono::seconds(tx_time)) //run for 10 seconds
     {
-        //Receive samples
-        int samplesRead = LMS_RecvStream(&streamId, buffer, sampleCnt, NULL, 1000);
-	    //I and Q samples are interleaved in buffer: IQIQIQ...
-        frames = snd_pcm_writei(handle, buffer, sizeof(buffer));
+        //Receive samples - I and Q samples are interleaved in sdrSample: IQIQIQ...
+        int samplesRead = LMS_RecvStream(&streamId, sdrSample, sampleCnt, NULL, 1000);
 
-	    /*
-		    INSERT CODE FOR PROCESSING RECEIVED SAMPLES
-	    */
+        // FM Demodulation
+        freqdem_demodulate_block(dem, sdrSample, sampleCnt, demodSignal);
+
+        //Low Pass Filtering
+        for (int i = 0; i < sampleCnt; i++)
+        {
+            firfilt_crcf_push(q, demodSignal[i]);
+            firfilt_crcf_execute(q, &filterSignal[i]);
+        }
+
+        // send filtered signal to Audio Codec
+        frames = snd_pcm_writei(handle, filterSignal, sizeof(filterSignal));
 
         //Print data rate (once per second)
         if (chrono::high_resolution_clock::now() - t2 > chrono::seconds(5))
@@ -384,14 +373,14 @@ int main(int argc, char *argv[])
             Logger(msg.str());
         }
     }
-    if(snd_pcm_drain(handle) !=0 )
-        {
-            error();
-        }
+    if (snd_pcm_drain(handle) != 0)
+    {
+        error();
+    }
     sleep(1);
 
     //Stop streaming
-    LMS_StopStream(&streamId); //stream is stopped but can be started again with LMS_StartStream()
+    LMS_StopStream(&streamId);            //stream is stopped but can be started again with LMS_StartStream()
     LMS_DestroyStream(device, &streamId); //stream is deallocated and can no longer be used
 
     //Close device
