@@ -35,8 +35,14 @@
 #include "lime/LimeSuite.h"
 #include <chrono>
 #include <math.h>
-#include "liquid/liquid.h"
 #include "alsa/asoundlib.h"
+#include "liquid/liquid.h"
+
+// FM Demodulator
+#define FSK_DEVIATION_HZ 3500.0f
+
+// LP Filter Definition NBFM
+#define CUTOFF_HZ 10000.0f
 
 // Define GPIO settings for CM4 hat module
 uint8_t setRX = 0x04;     //all other bit = 0 --> 6m

@@ -16,7 +16,7 @@ lms_device_t *device = NULL;
 std::stringstream msg;
 std::stringstream HEXmsg;
 
-float centerFrequency = 144.8e6;
+float centerFrequency = 99.4e6;
 string mode = "RX";
 float normalizedGain = 0;
 float modFactor = 0.8f;
@@ -325,16 +325,16 @@ int main(int argc, char *argv[])
         error();
 
     //Initialize data buffers
-    const int sampleCnt = 5000;             //complex samples per sdrSample
-    liquid_float_complex sdrSample[sampleCnt]; //sdrSample to hold complex values (2*samples))
-    float fc = CUTOFF_HZ / sampleRate;      // cutoff frequency
-    unsigned int h_len = 64;                // filter length
-    float As = 70.0f;                       // stop-band attenuation
-
-    float kf = FSK_DEVIATION_HZ/sampleRate; // modulation factor
+    const int sampleCnt = 1024;        //complex samples per sdrSample
+    float_t sdrSample[sampleCnt * 2];  //sdrSample to hold complex values (2*samples))
+    float fc = CUTOFF_HZ / sampleRate; // cutoff frequency
+    unsigned int h_len = 64;           // filter length
+    float As = 70.0f;                  // stop-band attenuation
+    liquid_float_complex receivedSignal[sampleCnt];
+    float kf = 0.5f;// FSK_DEVIATION_HZ / sampleRate; // modulation factor
     freqdem dem = freqdem_create(kf);
-    
-    float demodSignal[sampleCnt]; // filtered signal
+
+    float demodSignal[sampleCnt];                 // filtered signal
     liquid_float_complex filterSignal[sampleCnt]; // filtered signal
     firfilt_crcf q = firfilt_crcf_create_kaiser(h_len, fc, As, 0.0f);
     firfilt_crcf_set_scale(q, 2.0f * fc);
@@ -349,20 +349,19 @@ int main(int argc, char *argv[])
     while (chrono::high_resolution_clock::now() - t1 < chrono::seconds(tx_time)) //run for 10 seconds
     {
         //Receive samples - I and Q samples are interleaved in sdrSample: IQIQIQ...
-        int samplesRead = LMS_RecvStream(&streamId, sdrSample, sampleCnt, NULL, 1000);
+        int samplesRead = LMS_RecvStream(&streamId, sdrSample, sampleCnt * 2, NULL, 1000);
 
-        // FM Demodulation
-        freqdem_demodulate_block(dem, sdrSample, sampleCnt, demodSignal);
-
-        //Low Pass Filtering
         for (int i = 0; i < sampleCnt; i++)
         {
-            firfilt_crcf_push(q, demodSignal[i]);
-            firfilt_crcf_execute(q, &filterSignal[i]);
+            receivedSignal[i] = (sdrSample[2 * i]) + _Complex_I * (sdrSample[(2 * i) + 1]);
         }
+        
+        // FM Demodulation
+        freqdem_demodulate_block(dem, receivedSignal, sampleCnt, demodSignal);
+        
 
         // send filtered signal to Audio Codec
-        frames = snd_pcm_writei(handle, filterSignal, sizeof(filterSignal));
+        frames = snd_pcm_writei(handle, demodSignal, sizeof(demodSignal));
 
         //Print data rate (once per second)
         if (chrono::high_resolution_clock::now() - t2 > chrono::seconds(5))
