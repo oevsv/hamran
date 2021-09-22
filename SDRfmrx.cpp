@@ -16,7 +16,7 @@ lms_device_t *device = NULL;
 std::stringstream msg;
 std::stringstream HEXmsg;
 
-float centerFrequency = 99.4e6;
+float centerFrequency = 144.8e6;
 string mode = "RX";
 float normalizedGain = 0;
 float modFactor = 0.8f;
