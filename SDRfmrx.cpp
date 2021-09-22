@@ -16,11 +16,11 @@ lms_device_t *device = NULL;
 std::stringstream msg;
 std::stringstream HEXmsg;
 
-float centerFrequency = 144.8e6;
+float centerFrequency = 99.9e6;
 string mode = "RX";
 float normalizedGain = 0;
 float modFactor = 0.8f;
-float deviation = 25e3;
+float deviation = 10e3;
 int modeSelector = 1;
 int duration = 10;
 float toneFrequency = 2e3;
@@ -331,7 +331,7 @@ int main(int argc, char *argv[])
     unsigned int h_len = 64;           // filter length
     float As = 70.0f;                  // stop-band attenuation
     liquid_float_complex receivedSignal[sampleCnt];
-    float kf = 0.5f;// FSK_DEVIATION_HZ / sampleRate; // modulation factor
+    float kf = deviation/sampleRate;// FSK_DEVIATION_HZ / sampleRate; // modulation factor
     freqdem dem = freqdem_create(kf);
 
     float demodSignal[sampleCnt];                 // filtered signal
