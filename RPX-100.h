@@ -38,13 +38,23 @@
 #include "alsa/asoundlib.h"
 #include "liquid/liquid.h"
 
+// LimeSDR
+#define INPUT_BUFFER_SIZE 8192
+#define NUM_SAMPLES INPUT_BUFFER_SIZE/4
+float sampleRate = 1e6f;
+float resampleRate = 48e3f;
+float bandwidth = 100e3f;
+int modulation = 0;
+float centerFrequency = 99.9e6;
+float normalizedGain = 0;
+
 // FM Demodulator
-#define FSK_DEVIATION_HZ 3500.0f
+float fmDeviation = 75e3f;
 
-// LP Filter Definition NBFM
-#define CUTOFF_HZ 10000.0f
+// LP Filter Definition
+#define CUTOFF_HZ 100000.0f
 
-// Define GPIO settings for CM4 hat module
+// Radio Frontend - Define GPIO settings for CM4 hat module
 uint8_t setRX = 0x04;     //all other bit = 0 --> 6m
 uint8_t setTXwoBP = 0x0B; //all other bit = 0 --> direct path without BP
 uint8_t setTX6m = 0x08;   //all other bit = 0 --> 6m with BP

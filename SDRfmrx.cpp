@@ -16,15 +16,7 @@ lms_device_t *device = NULL;
 std::stringstream msg;
 std::stringstream HEXmsg;
 
-float centerFrequency = 99.9e6;
-string mode = "RX";
-float normalizedGain = 0;
-float modFactor = 0.8f;
-float deviation = 10e3;
-int modeSelector = 1;
 int duration = 10;
-float toneFrequency = 2e3;
-float sampleRate = 2e6;
 
 static char audioDev[] = "default";
 
@@ -36,14 +28,12 @@ int main(int argc, char *argv[])
     if (argc == 1)
     {
         cout << "Starting RPX-100 with default settings:\n";
-        cout << "Mode: " << mode << endl;
         cout << "Frequency: " << centerFrequency << endl;
-        cout << "Deviation: " << deviation << endl;
-        cout << "Modulation Factor: " << modFactor << endl;
+        cout << "Deviation: " << fmDeviation << endl;
         cout << "Duration: " << duration << endl;
         cout << "Sample Rate: " << sampleRate << endl;
         cout << endl;
-        cout << "type \033[36m'fm-rx help'\033[0m to see all options !" << endl;
+        cout << "type \033[36m'SDRfmrx help'\033[0m to see all options !" << endl;
     }
     else if (argc >= 2)
     {
@@ -52,79 +42,21 @@ int main(int argc, char *argv[])
             switch (c)
             {
             case 1:
-                mode = (string)argv[c];
-                if (mode == "RX")
-                {
-                    cout << "Starting RPX-100 with following setting:\n";
-                    cout << "Mode: " << argv[c] << endl;
-                    modeSelector = 0;
-                }
-                else if (mode == "APRS")
-                {
-                    cout << "Starting RPX-100 with following setting:\n";
-                    cout << "Mode: " << argv[c] << endl;
-                    modeSelector = 1;
-                }
-                else if (mode == "OFDM")
-                {
-                    cout << "Starting RPX-100 with following setting:\n";
-                    cout << "Mode: " << argv[c] << endl;
-                    modeSelector = 2;
-                }
-                else if (mode == "help")
-                {
-                    cout << "Options for starting RPX-100: fm-rx \033[36mMODE CENTER-FREQUENCY DEVIATION MODULATION-FACTOR DURATION SAMPLE-RATE\033[0m" << endl;
-                    cout << endl;
-                    cout << "\033[36mMODE\033[0m:" << endl;
-                    cout << "     \033[32mRX\033[0m for receiving Analog FM" << endl;
-                    cout << "     \033[31mAPRS\033[0m for receiving APRS" << endl;
-                    cout << "     \033[31mOFDM\033[0m for receiving OFDM frames" << endl;
-                    cout << endl;
-                    cout << "\033[36mCENTER-FREQUENCY\033[0m:" << endl;
-                    cout << "     in Hz, number of type float" << endl;
-                    cout << endl;
-                    cout << "\033[36mDEVIATION\033[0m:" << endl;
-                    cout << "     in Hz, number of type float" << endl;
-                    cout << endl;
-                    cout << "\033[36mMODULATION-FACTOR\033[0m:" << endl;
-                    cout << "     in Hz, number of type float" << endl;
-                    cout << endl;
-                    cout << "\033[36mDURATION\033[0m:" << endl;
-                    cout << "     in sec, number of type int" << endl;
-                    cout << endl;
-                    cout << "\033[36mSAMPLE-RATE033[0m:" << endl;
-                    cout << "     in Hz, number of type float" << endl;
-                    cout << endl;
-                    return 0;
-                }
-                else
-                {
-                    cout << "Wrong settings, please type  \033[36m'fm-rx help'\033[0m to see all options !" << endl;
-                    return 0;
-                }
-                break;
-
-            case 2:
                 cout << "Center Frequency: " << argv[c] << endl;
                 centerFrequency = stof(argv[c]);
                 break;
 
-            case 3:
+            case 2:
                 cout << "Deviation: " << argv[c] << endl;
-                deviation = atof(argv[c]);
+                fmDeviation = atof(argv[c]);
                 break;
 
-            case 4:
-                cout << "Modulation Factor: " << argv[c] << endl;
-                modFactor = stof(argv[c]);
-                break;
-
-            case 5:
+            case 3:
                 cout << "Duration: " << argv[c] << endl;
                 duration = stoi(argv[c]);
                 break;
 
-            case 6:
+            case 4:
                 cout << "Sample Rate: " << argv[c] << endl;
                 sampleRate = stof(argv[c]);
                 break;
@@ -163,16 +95,10 @@ int main(int argc, char *argv[])
     LogInit();
     Logger("RPX-100 was started succesfully with following settings:");
     msg.str("");
-    msg << "Mode: " << mode;
-    Logger(msg.str());
-    msg.str("");
     msg << "Center Frequency: " << centerFrequency;
     Logger(msg.str());
     msg.str("");
-    msg << "Deviation: " << deviation;
-    Logger(msg.str());
-    msg.str("");
-    msg << "Modulation factor: " << modFactor;
+    msg << "Deviation: " << fmDeviation;
     Logger(msg.str());
     msg.str("");
     msg << "Duration: " << duration;
@@ -238,28 +164,9 @@ int main(int argc, char *argv[])
     msg << "Set GPIOs direction to output.\n";
     Logger(msg.str());
 
-    switch (modeSelector)
+    if (LMS_GPIOWrite(device, &setRX, 1) != 0)
     {
-    case 0:
-        if (LMS_GPIOWrite(device, &setRX, 1) != 0)
-        {
-            error();
-        }
-        break;
-
-    case 1:
-        if (LMS_GPIOWrite(device, &setRX, 1) != 0)
-        {
-            error();
-        }
-        break;
-
-    case 2:
-        if (LMS_GPIOWrite(device, &setRX, 1) != 0)
-        {
-            error();
-        }
-        break;
+        error();
     }
 
     if (LMS_GPIORead(device, &gpio_val, 1) != 0)
@@ -272,12 +179,8 @@ int main(int argc, char *argv[])
     Logger(msg.str());
 
     msg.str("");
-    msg << "LimeRFE set to " << mode << endl;
+    msg << "LimeRFE set to RX" << endl;
     Logger(msg.str());
-
-    // Send single tone
-    const int tx_time = (const int)duration;
-    float f_ratio = toneFrequency / sampleRate;
 
     // open Audio Device
     snd_pcm_t *handle;
@@ -313,31 +216,46 @@ int main(int argc, char *argv[])
         error();
 
     //Streaming Setup
-
-    //Initialize stream
     lms_stream_t streamId;                        //stream structure
     streamId.channel = 0;                         //channel number
     streamId.fifoSize = 1024 * 1024;              //fifo size in samples
     streamId.throughputVsLatency = 1.0;           //optimize for max throughput
     streamId.isTx = false;                        //RX channel
-    streamId.dataFmt = lms_stream_t::LMS_FMT_I12; //12-bit integers
+    streamId.dataFmt = lms_stream_t::LMS_FMT_I16; //12-bit integers
     if (LMS_SetupStream(device, &streamId) != 0)
         error();
 
-    //Initialize data buffers
-    const int sampleCnt = 1024;        //complex samples per sdrSample
-    float_t sdrSample[sampleCnt * 2];  //sdrSample to hold complex values (2*samples))
-    float fc = CUTOFF_HZ / sampleRate; // cutoff frequency
-    unsigned int h_len = 64;           // filter length
-    float As = 70.0f;                  // stop-band attenuation
-    liquid_float_complex receivedSignal[sampleCnt];
-    float kf = deviation/sampleRate;// FSK_DEVIATION_HZ / sampleRate; // modulation factor
-    freqdem dem = freqdem_create(kf);
+    unsigned int i;
+    unsigned int k;
+    uint16_t sdrSample[INPUT_BUFFER_SIZE];
 
-    float demodSignal[sampleCnt];                 // filtered signal
-    liquid_float_complex filterSignal[sampleCnt]; // filtered signal
-    firfilt_crcf q = firfilt_crcf_create_kaiser(h_len, fc, As, 0.0f);
-    firfilt_crcf_set_scale(q, 2.0f * fc);
+    // filter options
+    unsigned int filter_len = 64;
+    float filter_cutoff_freq = bandwidth / sampleRate;
+    float filter_attenuation = 70.0f; // stop-band attenuation
+
+    // design filter from prototype and scale to bandwidth
+    firfilt_crcf filter = firfilt_crcf_create_kaiser(filter_len, filter_cutoff_freq, filter_attenuation, 0.0f);
+    firfilt_crcf_set_scale(filter, 2.0f * filter_cutoff_freq);
+
+    // resampler options
+    float resampler_rate = resampleRate / sampleRate;
+    msresamp_crcf resampler = msresamp_crcf_create(resampler_rate, filter_attenuation);
+    float resampler_delay = msresamp_crcf_get_delay(resampler);
+
+    // number of input samples (zero-padded)
+    unsigned int resampler_input_len = NUM_SAMPLES + (int)ceilf(resampler_delay) + 10;
+    // output buffer with extra padding
+    unsigned int resampler_output_len = (unsigned int)(2 * (float)resampler_input_len * resampler_rate);
+
+    liquid_float_complex c_input[resampler_input_len];
+    liquid_float_complex c_output[resampler_output_len];
+    unsigned int resampler_output_count = 0;
+
+    // FM demodulator
+    float kf = fmDeviation / resampleRate; // modulation factor
+    freqdem fm_demodulator = freqdem_create(kf);
+    float dem_out[resampler_output_len];
 
     //Start streaming
     LMS_StartStream(&streamId);
@@ -346,22 +264,32 @@ int main(int argc, char *argv[])
     auto t1 = chrono::high_resolution_clock::now();
     auto t2 = t1;
     //Start streaming
-    while (chrono::high_resolution_clock::now() - t1 < chrono::seconds(tx_time)) //run for 10 seconds
+    while (chrono::high_resolution_clock::now() - t1 < chrono::seconds(duration)) //run for 10 seconds
     {
         //Receive samples - I and Q samples are interleaved in sdrSample: IQIQIQ...
-        int samplesRead = LMS_RecvStream(&streamId, sdrSample, sampleCnt * 2, NULL, 1000);
+        int samplesRead = LMS_RecvStream(&streamId, sdrSample, INPUT_BUFFER_SIZE, NULL, 1000);
 
-        for (int i = 0; i < sampleCnt; i++)
+        if (samplesRead)
         {
-            receivedSignal[i] = (sdrSample[2 * i]) + _Complex_I * (sdrSample[(2 * i) + 1]);
-        }
-        
-        // FM Demodulation
-        freqdem_demodulate_block(dem, receivedSignal, sampleCnt, demodSignal);
-        
+            // convert int16_t IQ to complex float
+            for (k = 0, i = 0; k < samplesRead / 2; k += 2, i++)
+            {
+                c_input[i] = sdrSample[k] / 32768.0 + sdrSample[k + 1] / 32768.0 * I;
 
-        // send filtered signal to Audio Codec
-        frames = snd_pcm_writei(handle, demodSignal, sizeof(demodSignal));
+                // run filter
+                firfilt_crcf_push(filter, c_input[i]);
+                firfilt_crcf_execute(filter, &c_input[i]);
+            }
+
+            // resample
+            msresamp_crcf_execute(resampler, c_input, NUM_SAMPLES, c_output, &resampler_output_count);
+
+            // demodulate
+            freqdem_demodulate_block(fm_demodulator, c_output, resampler_output_count, dem_out);
+
+            // send filtered signal to Audio Codec
+            frames = snd_pcm_writei(handle, dem_out, resampler_output_count);
+        }
 
         //Print data rate (once per second)
         if (chrono::high_resolution_clock::now() - t2 > chrono::seconds(5))
@@ -372,6 +300,15 @@ int main(int argc, char *argv[])
             Logger(msg.str());
         }
     }
+    // destroy filter object
+	firfilt_crcf_destroy(filter);
+
+	// destroy resampler object
+	msresamp_crcf_destroy(resampler);
+
+	// destroy fm demodulator object
+	freqdem_destroy(fm_demodulator);
+
     if (snd_pcm_drain(handle) != 0)
     {
         error();
