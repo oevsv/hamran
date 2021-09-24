@@ -39,20 +39,21 @@
 #include "liquid/liquid.h"
 
 // LimeSDR
-#define INPUT_BUFFER_SIZE 8192
-#define NUM_SAMPLES INPUT_BUFFER_SIZE/4
+const int INPUT_BUFFER_SIZE = 4000;
+const int NUM_SAMPLES = INPUT_BUFFER_SIZE/4;
 float sampleRate = 1e6f;
 float resampleRate = 48e3f;
 float bandwidth = 100e3f;
 int modulation = 0;
 float centerFrequency = 99.9e6;
 float normalizedGain = 0;
+int duration = 10;
 
 // FM Demodulator
 float fmDeviation = 75e3f;
 
 // LP Filter Definition
-#define CUTOFF_HZ 100000.0f
+float CUTOFF_HZ = 100000.0f;
 
 // Radio Frontend - Define GPIO settings for CM4 hat module
 uint8_t setRX = 0x04;     //all other bit = 0 --> 6m
