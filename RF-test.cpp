@@ -30,12 +30,12 @@
 #include <bitset>
 #include "ini.h"
 #include "log.h"
-#include <wiringPi.h>
-#include <wiringSerial.h>
+//#include <wiringPi.h>
+//#include <wiringSerial.h>
 #include "lime/LimeSuite.h"
 #include <chrono>
 #include <math.h>
-#include "liquid/liquid.h"
+//#include "liquid/liquid.h"
 
 using namespace std;
 lms_device_t *device = NULL;
@@ -160,12 +160,12 @@ int main(int argc, char *argv[])
     msg << "Mode: " << mode;
     Logger(msg.str());
 
-    if (wiringPiSetup() == -1) /* initializes wiringPi setup */
-    {
-        msg.str("");
-        msg << "Unable to start wiringPi: " << strerror(errno);
-        return 1;
-    }
+    // if (wiringPiSetup() == -1) /* initializes wiringPi setup */
+    // {
+    //     msg.str("");
+    //     msg << "Unable to start wiringPi: " << strerror(errno);
+    //     return 1;
+    // }
 
     //Find devices
     int n;
