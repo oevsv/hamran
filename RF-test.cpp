@@ -42,7 +42,7 @@ lms_device_t *device = NULL;
 std::stringstream msg;
 std::stringstream HEXmsg;
 
-uint8_t setRX = 0x06;       //all other bit = 0 --> 6m
+uint8_t setRX = 0x08;       //all other bit = 0 --> 6m
 uint8_t setTXDirect= 0x07;  //all other bit = 0 --> direct path without BP
 uint8_t setTX6m = 0x03;     //all other bit = 0 --> 6m with BP
 uint8_t setTX2m = 0x01;     //all other bit = 0 --> 2m with BP

@@ -11,7 +11,7 @@
 				"-o",
 				"${fileDirname}/${fileBasenameNoExtension}",
 				"-lLimeSuite",
-				"-L/opt/install/LimeSuite/lib",
+				"-L/usr/lib",
 				"-lpthread",
 				"-L/usr/lib",
 				"-lasound",
@@ -28,6 +28,6 @@
 				"isDefault": true
 			},
 			"detail": "compiler: /usr/bin/g++"
-		},
+		}
 	]
 }
