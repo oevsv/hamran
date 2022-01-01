@@ -1,11 +1,11 @@
 /******************************************************************************
  * C++ source of RPX-100
  *
- * File:   RF-test.cpp
+ * File:   RPX-100.cpp
  * Author: Bernhard Isemann
  *
- * Created on 24 Sep 2021, 11:35
- * Updated on 24 Sep 2021, 15:18
+ * Created on 01 Jan 2022, 10:35
+ * Updated on 01 Jan 2021, 18:20
  * Version 1.00
  *****************************************************************************/
 
