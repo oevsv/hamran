@@ -7,18 +7,20 @@
 			"command": "/usr/bin/g++",
 			"args": [
 				"-g",
-				"${file}",
+				"${workspaceFolder}/*.cpp",
 				"-o",
-				"${fileDirname}/${fileBasenameNoExtension}",
+				"${workspaceFolder}/${fileBasenameNoExtension}",
 				"-lLimeSuite",
 				"-L/usr/lib",
 				"-lpthread",
 				"-L/usr/lib",
 				"-lasound",
+				"-L/usr/lib",
+				"-lliquid",
 				"-L/usr/lib"
 			],
 			"options": {
-				"cwd": "${fileDirname}"
+				"cwd": "${workspaceFolder}"
 			},
 			"problemMatcher": [
 				"$gcc"

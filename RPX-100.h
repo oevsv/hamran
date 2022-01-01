@@ -30,34 +30,37 @@
 #include <bitset>
 #include "ini.h"
 #include "log.h"
-#include <wiringPi.h>
-#include <wiringSerial.h>
 #include "lime/LimeSuite.h"
 #include <chrono>
 #include <math.h>
 #include "alsa/asoundlib.h"
 #include "liquid/liquid.h"
+#pragma once
 
-// LimeSDR
-const int INPUT_BUFFER_SIZE = 4000;
-const int NUM_SAMPLES = INPUT_BUFFER_SIZE/4;
-float sampleRate = 1e6f;
-float resampleRate = 48e3f;
-float bandwidth = 100e3f;
-int modulation = 0;
-float centerFrequency = 99.9e6;
-float normalizedGain = 0;
-int duration = 10;
+class RPX_SDR
+{
+public:
+    int SDRinit(double frequency, double sampleRate, int modeSelector, double normalizedGain);
+    string modeName[9] = {"RX", "TXDirect", "TX6m", "TX2m", "TX70cm", "TXDirectPTT", "TX6mPTT", "TX2mPTT", "TX70cmPTT"};
 
-// FM Demodulator
-float fmDeviation = 75e3f;
+private:
+    int error();
+    void print_gpio(uint8_t gpio_val);
+    std::stringstream msg;
+    std::stringstream HEXmsg;
+    lms_device_t *device = NULL;
 
-// LP Filter Definition
-float CUTOFF_HZ = 100000.0f;
+    // Radio Frontend - Define GPIO settings for CM4 hat module
+    uint8_t setRX = 0x18;       // GPIO0=LOW - RX, GPIO3=HIGH - PTT off,
+    uint8_t setTXDirect = 0x0F; // GPIO0=HIGH - TX, GPIO3=HIGH - PTT off, GPIO1=HIGH, GPIO2=HIGH
+    uint8_t setTX6m = 0x0B;     // GPIO0=HIGH - TX, GPIO3=HIGH - PTT off, GPIO1=HIGH, GPIO2=LOW
+    uint8_t setTX2m = 0x09;     // GPIO0=HIGH - TX, GPIO3=HIGH - PTT off, GPIO1=LOW, GPIO2=HIGH
+    uint8_t setTX70cm = 0x0D;   // GPIO0=HIGH - TX, GPIO3=HIGH - PTT off, GPIO1=LOW, GPIO2=LOW
 
-// Radio Frontend - Define GPIO settings for CM4 hat module
-uint8_t setRX = 0x04;     //all other bit = 0 --> 6m
-uint8_t setTXwoBP = 0x0B; //all other bit = 0 --> direct path without BP
-uint8_t setTX6m = 0x08;   //all other bit = 0 --> 6m with BP
-uint8_t setTX2m = 0x09;   //all other bit = 0 --> 2m with BP
-uint8_t setTX70cm = 0x0A; //all other bit = 0 --> 70cm with BP
+    uint8_t setTXDirectPTT = 0x07; // GPIO0=HIGH - TX, GPIO3=LOW - PTT on, GPIO1=HIGH, GPIO2=HIGH
+    uint8_t setTX6mPTT = 0x03;     // GPIO0=HIGH - TX, GPIO3=LOW - PTT on, GPIO1=HIGH, GPIO2=LOW
+    uint8_t setTX2mPTT = 0x01;     // GPIO0=HIGH - TX, GPIO3=LOW - PTT on, GPIO1=LOW, GPIO2=HIGH
+    uint8_t setTX70cmPTT = 0x05;   // GPIO0=HIGH - TX, GPIO3=LOW - PTT on, GPIO1=LOW, GPIO2=LOW
+
+    uint8_t modeGPIO[9] = {setRX, setTXDirect, setTX6m, setTX2m, setTX70cm, setTXDirectPTT, setTX6mPTT, setTX2mPTT, setTX70cmPTT};
+};
