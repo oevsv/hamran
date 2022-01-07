@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="theme-color" content="white" />
+  <title>RPX-100</title>
+  <link rel="icon" href="images/oevsv.ico" />
+  <link rel="apple-touch-icon" href="images/logo152.png">
+  <meta name="theme-color" content="white" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Out of Band">
+  <meta name="msapplication-TileImage" content="images/logo144.png">
+  <meta name="msapplication-TileColor" content="#FFFFFF">
+  <meta name="description" content="Bernhard Isemann">
+  <meta name="author" content="Bernhard Isemann">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-9VCQW9GQJZ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-9VCQW9GQJZ');
+  </script>
+</head>
+
+<body class="fullscreen">
+  <nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-top">
+    <!-- Brand -->
+    <a class="navbar-brand" href="#"><img src="images/oevsv.png" height="42" style="padding-right: 20px;" />RPX-100</a>
+    <!-- Toggler/collapsibe Button -->
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <!-- Links -->
+    <div class="collapse navbar-collapse" id="collapsibleNavbar">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="#HAMNET">Access to HAMNET</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#WRAN">WRAN Project</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#RPX-100">RPX-100</a>
+        </li>
+
+        <!-- Dropdown -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+            Resources
+          </a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" style="color: red;" href="http://isemann.at:8080" target="_blank">RPX-100 WEB
+              API</a>
+            <a class="dropdown-item" style="color: orange" href="https://rpx-100.net/getstarted.html" target="_blank">RPX-100 getting started</a>  
+            <a class="dropdown-item" style="color: royalblue;"
+              href="https://docs.google.com/presentation/d/e/2PACX-1vQjh2NOZDqOUoY7hfxhkQ4hxQz-e9j1oipNl1l4RmKi2hVUVFf2zLA0vUI7aNBxssfW4vhr3iyscmBp/pub?start=true&loop=true&delayms=5000"
+              target="_blank">Status WRAN Project</a>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </nav>
+  <div class="container-fluid">
+    <div class="row menu" id="HAMNET">
+      <div class="col-sm-1"></div>
+      <div class="col-sm-5 text" style="margin-top: 30px;">
+        <p><a href="https://oevsv.at" target="_blank">The Austrian Amateur Radio Society (&Ouml;VSV)</a> establsihes a
+          new digital transmission procedure allowing high speed data communication in Sub-GHz Frequency bands.
+          Requirements are to use a wideband transmission mode to support state of the art bandwidth for each user, and
+          to enable multiple users at the same time to connect to a base station providing access to HAMNET.</br></br>
+          The implementation will be based on the concept of a software defined radio using commercial available
+          hardware and open source software. This will address and motivate a larger community of developers and radio
+          amateurs.
+          Hardware and software design of a base station and CPE-like user device, <a
+            href="https://rpx-100.net/#RPX-100">the RPX-100</a> shall allow a modular use with different radio
+          front-ends supporting all possible Sub-GHz frequency bands.
+          <a href="https://www.nt.tuwien.ac.at/" target="_blank">The Institute of Telecommunications of TU-Wien</a> has
+          successfully requested permit to test operation of such a new digital communication system at 52-54MHz in the
+          6m band.
+          Multi user access is achieved by using OFDMA as channel access methodology based on IEEE 802.22 (WRAN)
+          standard.
+        </p>
+      </div>
+      <div class="col-sm-5" style="margin-right: 20px; margin-left: 20px;">
+        </br>
+        <img src="images/WRAN-HAMNET.png" width="100%" frameborder="0">
+      </div>
+      <div class="col-sm-1"></div>
+    </div>
+    <div class="row menu" id="RPX-100">
+      <div class="col-sm-1"></div>
+      <div class="col-sm-5 text">
+        <p>
+          <b>RPX-100 Transceiver Kit for Radio Amateurs</b><br />
+          A modular kit for a software defined transceiver build with Raspberry <a
+            href="https://www.raspberrypi.com/products/compute-module-4/?variant=raspberry-pi-cm4001000"
+            target="_blank">Compute Module 4</a>, the <a href="https://limemicro.com/products/boards/limesdr-mini/"
+            target="_blank">LimeSDR mini</a> and a Radio Frontend with software
+          defined band pass filters and output power of 10W.<br /><br />The kit includes the Radio Frontend manufactured
+          with a form factor to fit as hat-board on the Compute Module 4.<br /><br />
+          <a href="https://rpx-100.net/images/RPX-100_foto.png" target="_blank"><img src="images/RPX-100_foto_small.png"
+              width="100%"></a><br />
+
+        </p>
+      </div>
+      <div class="col-sm-5 list">
+        <p>
+          <a href="http://isemann.at:8080" target="_blank"><img src="images/pcb_icon_red_32.png"></a><b>
+            Specifications V1.2:</b><br />
+        <ul>
+          <li>Supply Voltage 12V for mobile operation or 220V with internal PSU.</li>
+          <li>Software defined filters and amplifier for 6m, 2m and 70cm Radio Amateur bands</li>
+          <li>Premaplifier with 24dBm for 0-2.4GHz with external access</li>
+          <li>Radio Power amplifier for 3 Radio Amateur bands:</li>
+          <ul>
+            <li>Output Power at 54MHz: 0 - 15 Watt</li>
+            <li>Output Power at 144MHz: 0 - 10 Watt</li>
+            <li>Output Power at 430MHz: 0 - 10 Watt</li>
+          </ul>
+          <li>Bidirectional control interface for SDR </li>
+          <li>Raspian Operating System enabling devlopers to write new sourcecode</li>
+          <li>Optional extentions:</li>
+          <ul>
+            <li>4.3 inch touch screen</li>
+            <li>Internal speakers and microphone</li>
+            <li>External microphon with PTT</li>
+            <li>Fast Access Buttons</li>
+          </ul>
+        </ul>
+        </p>
+        <p>
+          <a href="https://rpx-100.net/files/RPX-100_Schematic_V1.2.png" target="_blank"><img
+              src="images/pcb_icon_blue_32.png"></a><b> Schematic of the Radio Frontend V1.2:</b><br />
+        <ul>
+          <li><a href="https://rpx-100.net/files/RPX-100_Schematic_V1.2.pdf" target="_blank">RPX-100 Schematic as PDF
+              file</a><br /><br /></li>
+        </ul>
+        <a><img src="images/pcb_icon_green_32.png"></a><b> Bill of Material V1.2:</b><br />
+        <ul>
+          <li><a href="https://rpx-100.net/files/RPX-100_BOM_V1.2.pdf" target="_blank">Bill of Material as PDF
+              file</a><br /><br /></li>
+          <li><a href="https://rpx-100.net/files/RPX-100_BOM_V1.2.csv" target="_blank">Bill of Material as CSV
+              file</a><br /><br /></li>
+          <li><a href="https://rpx-100.net/files/RPX-100_BOM_V1.2.xlsx" target="_blank">Bill of Material as XLS
+              file</a><br /><br /></li>
+        </ul>
+        </p>
+      </div>
+      <div class="col-sm-1"></div>
+    </div>
+    <div class="row">
+      <div class="col-sm-1"></div>
+      <div class="col-sm-10 text" style="margin-right: 20px; margin-left: 20px;">
+        <p>
+          A Wifi interface connects the RPX-100 with the LAN for remote operation, debugging and programming. The
+          software id written C++ using liquid-dsp libraries. The concpet of the WRAN software uses the IEEE
+          802.22 frame structure for prototyping to make use of super
+          frames and preambles for cognitive channel management, which allows a dynamic resource allocation between base
+          stations, but also between multiple users at one base station. Orthogonal Frequency Division Multiple Access
+          (OFDMA) is used in the upper layers, as Modulation techniques QPSK, 16-QAM and 64-QAM is supported. The
+          software will support a connection-oriented MAC layer with cognitive functionality for dynamic and adaptive
+          scheduling and management of coexistence of base stations in the same time-frequency domain (superframes).
+        </p>
+      </div>
+      <div class="col-sm-1"></div>
+    </div>
+    <div class="row menu" id="WRAN">
+      <div class="col-sm-1"></div>
+      <div class="col-sm-10 text" style="margin-right: 20px; margin-left: 20px;">
+        <p>
+          <b><a href="https://standards.ieee.org/standard/802_22-2019.html" target="_blank">The Wireless Regional Area
+              Network – WRAN</a></b> is establishing a new digital transmission procedure allowing high speed data
+          communication in Sub-GHz Frequency bands usinf the IEEE 802.22 standard. This research project implements of
+          a new digital communication system will be based on the concept of a software defined radio using
+          commercially available hardware and open source software.</br></br>Hardware and software design of a base
+          station and CPE-like user device shall allow a modular use with different radio front ends supporting all
+          possible Sub-GHz frequency bands. The <a href="https://oevsv.at/" target="_blank">Austrian Radio Amateur
+            Society (&Ouml;VSV)</a> together with the Institute of Telecommunication of the <a
+            href="https://www.tuwien.at/" target="_blank">Vienna University of Technology</a> have been granted a
+          permit by the Austrian government to test operation of such a new digital communication system in HF, VHF
+          and UHF frequency bands.
+        </p>
+      </div>
+      <div class="col-sm-1"></div>
+    </div>
+    <div class="row">
+      <div class="col-sm-1"></div>
+      <div class="col-sm-5" style="margin-right: 20px; margin-left: 20px;">
+        <img src="images/SWStack.png" width="80%" frameborder="0">
+      </div>
+      <div class="col-sm-5 list">
+        <p>
+          <b>Goals of the WRAN project:</b></br>
+        <ul>
+          <li>Evaluate and select appropriate wireless communication protocol similar to existing Wireless LAN protocols
+            but suitable for the VHF and UHF bands.</br></br></li>
+          <li>Define a new transmission protocol for wideband data communication for efficient use of a 2Mhz spectrum
+            in
+            the 6m or 70cm band and suitable as “last mile” connection for existing backbone networks.</br></br></li>
+          <li>Software development and implementation of the transmission protocol on a prototype SRD hardware for a
+            base station and end users devices.</br></br></li>
+          <li>Test and evaluation the new transmission protocol in lab- and field environments on selected Radio
+            Amateur
+            Relay locations in Austria.</br></br></li>
+          <li>Benchmark how reliability and scalability such a new transmission protocol can be operated in the HF,
+            VHF
+            and UHF band.</br></br></li>
+          <li>Provide a kit for Radio Amateurs to build and develop their own base stations and end-user devices for
+            the new transmission protocol.</br></br></li>
+        </ul>
+        </p>
+      </div>
+      <div class="col-sm-1"></div>
+    </div>
+    <div class="row">
+      <div class="col-sm-1"></div>
+      <div class="col-sm-5 list" style="margin-right: 20px; margin-left: 20px;">
+        <p>
+          <b>Project Milestones:</b></br>
+        <ul>
+          <li>The Institute of Telecommunications of TU Wien has been granted a test permit by the Federal Ministry of
+            Agriculture, Regions and Tourism to test and operate the new transmission scheme at a 2 MHz Band from 52-54
+            MHz at 2 selected location in Austria. The permit has been extended for one year till May 2022.</br></br>
+          </li>
+          <li>The IEEE 802.22 frame structure has been selected for prototyping the software and hardware to make use of
+            super frames and preambles for cognitive channel management, which allows a dynamic resource allocation
+            between base stations, but also between multiple users at one base station.</br></br></li>
+          <li>The new hardware and software stack has been successfully tested using the Raspberry Compute Module CM4 in
+            combination with LimeSDR mini. The advantages are a small form factor, performance and the 12V supply
+            Voltage for mobile operation.</br></br></li>
+          <li>A Radio Frontend has been developed and tested for VHF and UHF (6m, 2m and 70cm Band) with a design to fit
+            as hat-board to the Raspberry CM4 IO board and operates with 12V supply voltage. The Output power can be
+            regulated via software between 0 - 10W.</br></br></li>
+        </ul>
+        </p>
+      </div>
+      <div class="col-sm-5">
+        </br>
+        <img src="images/Concept2021.png" width="100%" frameborder="0">
+      </div>
+      <div class="col-sm-1"></div>
+    </div>
+  </div>
+  </div>
+  <div class="footer">
+    <div class="row">
+      <div class="col-sm-4">
+        OE3BIA, OE1VMC, OE3MZC, OE1MCU<br /> and OE1XTU
+      </div>
+      <div class="col-sm-4">
+        <br />&copy; Bernhard Isemann <img src="images/logo8.png" />, 2022<br />
+      </div>
+      <div class="col-sm-4">
+        Phone: +43 664 5703430<br />
+        Email: <a href="mailto:bernhard@isemann.at">bernhard@isemann.at</a>
+      </div>
+    </div>
+  </div>
+  <script src="scripts/main.js"></script>
+</body>
+
+</html>
