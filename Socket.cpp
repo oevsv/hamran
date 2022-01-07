@@ -1,4 +1,13 @@
-// Implementation of the Socket class.
+/******************************************************************************
+ * C++ source of RPX-100S
+ *
+ * File:   Socket.cpp
+ * Author: Bernhard Isemann
+ *
+ * Created on 06 Jan 2022, 12:37
+ * Updated on 07 Jan 2022, 17:00
+ * Version 1.00
+ *****************************************************************************/
 
 
 #include "Socket.h"
