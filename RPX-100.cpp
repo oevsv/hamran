@@ -10,21 +10,16 @@
  *****************************************************************************/
 
 #include "RPX-100.h"
+#include <pthread.h>
 
 using namespace std;
-
-string mode = "RX";
-int modeSel = 0;
-std::stringstream msg;
-std::stringstream HEXmsg;
-RPX_SDR RPX_LimeSDR;
 
 int main(int argc, char *argv[])
 {
     if (argc == 1)
     {
         cout << "Starting RPX-100 with default settings:\n";
-        cout << "Mode: " << RPX_LimeSDR.modeName[0] << endl;
+        cout << "Mode: RX" << endl;
         cout << endl;
         cout << "type \033[36m'RF-test help'\033[0m to see all options !" << endl;
     }
@@ -153,12 +148,31 @@ int main(int argc, char *argv[])
     Logger(msg.str());
 
     // Initialize LimeSDR
-    if (RPX_LimeSDR.SDRinit(52.8e6, 2e6, modeSel, 1) != 0)
+    if (SDRinit(52.8e6, 2e6, modeSel, 1) != 0)
     {
         msg.str("");
         msg << "ERROR: " << LMS_GetLastErrorMessage();
         Logger(msg.str());
-        return -1;
     }
-    return 0;
+
+    pthread_t threads[NUM_THREADS];
+    pthread_mutex_init(&SDRmutex,0);
+
+    // Start thread for SocketServer
+    if (pthread_create(&threads[1], NULL, startSocketServer, (void *)1) != 0)
+    {
+        msg.str("");
+        msg << "ERROR starting thread 1";
+        Logger(msg.str());
+    }
+    
+    // Start thread for SDR Stream
+    if (pthread_create(&threads[2], NULL, startSDRStream, (void *)2) != 0)
+    {
+        msg.str("");
+        msg << "ERROR starting thread 2";
+        Logger(msg.str());
+    }
+    pthread_mutex_destroy(&SDRmutex);
+    pthread_exit(NULL);
 }
