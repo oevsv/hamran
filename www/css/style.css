@@ -1,5 +1,6 @@
 body {
     font-family: sans-serif;
+    height: 100%
   }
   
   /* Make content area fill the entire browser window */
@@ -43,19 +44,6 @@ body {
   padding-left: 30px;
 }
 
-.footer {
-  position:sticky;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  background-color: #343A40;
-  color: white;
-  text-align: center;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  font-size: smaller;
-}
-
 a:link {
   text-decoration: none !important;
   color:royalblue;
@@ -91,5 +79,24 @@ a:hover {
 }
 
 .navbar-brand {
-  font-size: x-large;
+  font-size: 16px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
+.time {
+  float: right;
+}
+
+.container {
+  height: 86vh !important;
+}
+
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  color: white;
+  text-align: center;
 }
