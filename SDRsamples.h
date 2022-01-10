@@ -38,6 +38,8 @@
 #include "ServerSocket.h"
 #include "SocketException.h"
 #include <iterator>
+#include "Util.h"
+#include "WebSocketServer.h"
 #pragma once
 
 #define NUM_CONNECTS 5 // max number of sockets connections
@@ -50,6 +52,7 @@ int SDRfrequency(lms_device_t *device, double frequency);
 void *startSocketServer(void *threadID);
 void *startSDRStream(void *threadID);
 void *startSocketConnect(void *threadID);
+void *startWebSocket(void *threadID);
 int error();
 
 // Radio Frontend - Define GPIO settings for CM4 hat module
@@ -85,3 +88,15 @@ string RPX_host = "10.0.0.5";
 ServerSocket RPX_socket[NUM_CONNECTS];
 int ConCurSocket;
 bool socketsON = true;
+
+class EchoServer : public WebSocketServer
+{
+public: 
+    EchoServer( int port );
+    ~EchoServer( );
+    virtual void onConnect(    int socketID                        );
+    virtual void onMessage(    int socketID, const string& data    );
+    virtual void onDisconnect( int socketID                        );
+    virtual void   onError(    int socketID, const string& message );
+};
+

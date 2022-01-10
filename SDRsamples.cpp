@@ -187,6 +187,13 @@ void *startSocketServer(void *threadID)
     pthread_exit(NULL);
 }
 
+void *startWebSocket(void *threadID)
+{
+    EchoServer es = EchoServer( 8084 );
+    es.run( );
+    pthread_exit(NULL);
+}
+
 void *startSDRStream(void *threadID)
 {
     // Initialize stream
@@ -250,4 +257,35 @@ void *startSocketConnect(void *threadID)
     }
 
     pthread_exit(NULL);
+}
+
+EchoServer::EchoServer( int port ) : WebSocketServer( port )
+{
+}
+
+EchoServer::~EchoServer( )
+{
+}
+
+
+void EchoServer::onConnect( int socketID )
+{
+    Util::log( "New connection" );
+}
+
+void EchoServer::onMessage( int socketID, const string& data )
+{
+    // Reply back with the same message
+    Util::log( "Received: " + data );
+    this->send( socketID, data );
+}
+
+void EchoServer::onDisconnect( int socketID )
+{
+    Util::log( "Disconnect" );
+}
+
+void EchoServer::onError( int socketID, const string& message )
+{
+    Util::log( "Error: " + message );
 }
