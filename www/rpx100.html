@@ -50,12 +50,7 @@
   <br>
 
   <div class="container">
-    <h3>52-54 MHz Waterfall Spectrum</h3>
-    <p>In this example, the navigation bar is hidden on small screens and replaced by a button in the top right corner
-      (try to re-size this window).</p>
-    <p>Only when the button is clicked, the navigation bar will be displayed.</p>
-    <p>Tip: You can also remove the .navbar-expand-md class to ALWAYS hide navbar links and display the toggler button.
-    </p>
+    <canvas style="width: 100%; height: 640px" id="waterfall"></canvas>
   </div>
 
   <footer class="bg-dark text-center footer" style="position: fixed; bottom: 0; left: 0; width: 100%;">
@@ -66,6 +61,9 @@
         target="_blank">Bernhard Isemann, OE3BIA</a>
     </div>
   </footer>
+  <script src="scripts/colormap.js"></script>
+  <script src="scripts/spectrum.js"></script>
+  <script src="scripts/script.js"></script>
 </body>
 
 </html>

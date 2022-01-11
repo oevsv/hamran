@@ -159,14 +159,14 @@ int main(int argc, char *argv[])
     pthread_mutex_init(&SDRmutex,0);
 
     // Start thread for SocketServer
-    if (pthread_create(&threads[1], NULL, startSocketServer, (void *)1) != 0)
-    {
-        msg.str("");
-        msg << "ERROR starting thread 1";
-        Logger(msg.str());
-    }
+    // if (pthread_create(&threads[1], NULL, startSocketServer, (void *)1) != 0)
+    // {
+    //     msg.str("");
+    //     msg << "ERROR starting thread 1";
+    //     Logger(msg.str());
+    // }
 
-    sleep(1);
+    // sleep(1);
 
     // Start thread for WebSocket
     if (pthread_create(&threads[2], NULL, startWebSocket, (void *)2) != 0)

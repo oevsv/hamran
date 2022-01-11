@@ -192,8 +192,8 @@ void *startWebSocket(void *threadID)
     msgSDR.str("");
     msgSDR << "WebSockets started as thread no: " << threadID << " using port " << WEBSOCKET_port;
     Logger(msgSDR.str());
-    EchoServer es = EchoServer( WEBSOCKET_port );
-    es.run( );
+    EchoServer es = EchoServer(WEBSOCKET_port);
+    es.run();
     pthread_exit(NULL);
 }
 
@@ -262,34 +262,45 @@ void *startSocketConnect(void *threadID)
     pthread_exit(NULL);
 }
 
-EchoServer::EchoServer( int port ) : WebSocketServer( port )
-{
-
-}
-
-EchoServer::~EchoServer( )
+EchoServer::EchoServer(int port) : WebSocketServer(port)
 {
 }
 
-
-void EchoServer::onConnect( int socketID )
+EchoServer::~EchoServer()
 {
-    Util::log( "New connection" );
 }
 
-void EchoServer::onMessage( int socketID, const string& data )
+void EchoServer::onConnect(int socketID)
+{
+    Util::log("New connection");
+    
+}
+
+void EchoServer::onMessage(int socketID, const string &data)
 {
     // Reply back with the same message
-    Util::log( "Received: " + data );
-    this->send( socketID, data );
+    // Util::log("Received: " + data);
+    // this->send(socketID, data);
+    while (socketsON)
+    {
+        msgSDR.str("");
+        int i = 0;
+        while (i < samplesRead)
+        {
+            msgSDR << buffer[i] << "i" << buffer[i + 1] << ",";
+            i = i + 2;
+        }
+        msgSDR << endl;
+        this->send(socketID, msgSDR.str());
+    }
 }
 
-void EchoServer::onDisconnect( int socketID )
+void EchoServer::onDisconnect(int socketID)
 {
-    Util::log( "Disconnect" );
+    Util::log("Disconnect");
 }
 
-void EchoServer::onError( int socketID, const string& message )
+void EchoServer::onError(int socketID, const string &message)
 {
-    Util::log( "Error: " + message );
+    Util::log("Error: " + message);
 }
