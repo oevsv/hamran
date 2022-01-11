@@ -189,7 +189,10 @@ void *startSocketServer(void *threadID)
 
 void *startWebSocket(void *threadID)
 {
-    EchoServer es = EchoServer( 8084 );
+    msgSDR.str("");
+    msgSDR << "WebSockets started as thread no: " << threadID << " using port " << WEBSOCKET_port;
+    Logger(msgSDR.str());
+    EchoServer es = EchoServer( WEBSOCKET_port );
     es.run( );
     pthread_exit(NULL);
 }
@@ -261,6 +264,7 @@ void *startSocketConnect(void *threadID)
 
 EchoServer::EchoServer( int port ) : WebSocketServer( port )
 {
+
 }
 
 EchoServer::~EchoServer( )

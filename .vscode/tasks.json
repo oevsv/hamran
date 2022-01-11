@@ -17,6 +17,8 @@
 				"-lasound",
 				"-L/usr/lib",
 				"-lliquid",
+				"-L/usr/lib",
+				"-lwebsockets",
 				"-L/usr/lib"
 			],
 			"options": {

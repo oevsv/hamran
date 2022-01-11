@@ -166,6 +166,8 @@ int main(int argc, char *argv[])
         Logger(msg.str());
     }
 
+    sleep(1);
+
     // Start thread for WebSocket
     if (pthread_create(&threads[2], NULL, startWebSocket, (void *)2) != 0)
     {

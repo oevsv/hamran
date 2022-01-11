@@ -96,7 +96,7 @@ WebSocketServer::WebSocketServer( int port, const string certPath, const string&
     info.iface = NULL;
     info.protocols = protocols;
 #ifndef LWS_NO_EXTENSIONS
-    info.extensions = lws_get_internal_extensions( );
+    //info.extensions = lws_get_internal_extensions( );
 #endif
 
     if( !this->_certPath.empty( ) && !this->_keyPath.empty( ) )

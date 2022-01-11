@@ -75,6 +75,7 @@ void print_gpio(uint8_t gpio_val);
 std::stringstream msgSDR;
 std::stringstream HEXmsgSDR;
 
+
 // Initialize data buffers
 const int sampleCnt = 2048;  // complex samples per buffer --> a "sample" is I + Q values in float or int
 float buffer[sampleCnt * 2]; // buffer to hold samples (each I + Q) --> buffer size = 2 * no of samples
@@ -89,6 +90,8 @@ ServerSocket RPX_socket[NUM_CONNECTS];
 int ConCurSocket;
 bool socketsON = true;
 
+// WebSocket facility
+int WEBSOCKET_port = 8084;
 class EchoServer : public WebSocketServer
 {
 public: 
