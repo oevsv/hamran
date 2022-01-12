@@ -254,9 +254,6 @@ void *startSocketConnect(void *threadID)
     int flags = 0;                 // FFT flags (typically ignored)
     int i = 0;
 
-    // create FFT plan
-    fftplan q = fft_create_plan(sampleCnt, c_buffer, c_fft, type, flags);
-
     while (socketsON)
     {
         msgSDR.str("");
@@ -268,22 +265,26 @@ void *startSocketConnect(void *threadID)
             i++;
         }
 
+        // create FFT plan
+        fftplan q = fft_create_plan(sampleCnt, c_buffer, c_fft, type, flags);
+
         // execute FFT (repeat as necessary)
-        pthread_mutex_lock(&FFTmutex);
+        // pthread_mutex_lock(&FFTmutex);
         fft_execute(q);
-        pthread_mutex_unlock(&FFTmutex);
+        // pthread_mutex_unlock(&FFTmutex);
         i = 0;
 
         while (i < sampleCnt)
         {
-            msgSDR << c_fft[i].real() << "," << c_fft[i].imag() << ",";
+            msgSDR << c_buffer[i].real() << "," << c_buffer[i].imag() << ",";
             i++;
         }
         msgSDR << endl;
         RPX_socket[(int)threadID] << msgSDR.str();
         // destroy FFT plan and free memory arrays
+        msgSDR.str("");
+        fft_destroy_plan(q);
     }
-    fft_destroy_plan(q);
     pthread_exit(NULL);
 }
 
@@ -299,8 +300,8 @@ void EchoServer::onConnect(int socketID)
 {
     Util::log("New connection");
     msgSDR.str("");
-    msgSDR << "Transfer starting ...";
-    Logger(msgSDR.str());
+    msgSDR << "{'center':" << 0.8 << ", 'span':" << 12.0 << "}" << endl;;
+    this->send(socketID, msgSDR.str());
 }
 
 void EchoServer::onMessage(int socketID, const string &data)
