@@ -175,12 +175,14 @@ void *startSocketServer(void *threadID)
         {
             RPX_server.accept(RPX_socket[ConCurSocket]);
             // Start thread for SocketServer
+            pthread_mutex_init(&FFTmutex, 0);
             if (pthread_create(&connects[ConCurSocket], NULL, startSocketConnect, (void *)ConCurSocket) != 0)
             {
                 msgSDR.str("");
                 msgSDR << "ERROR starting thread " << ConCurSocket;
                 Logger(msgSDR.str());
             }
+            pthread_mutex_destroy(&FFTmutex);
             ConCurSocket++;
         }
     }
@@ -246,19 +248,42 @@ void *startSocketConnect(void *threadID)
     msgSDR << "Socket connection started as connect no: " << (int)threadID << " using port: " << RPX_port << ", rxON=" << rxON;
     Logger(msgSDR.str());
 
+    // FFT on IQ samples to feed waterfall
+    unsigned int n = 16;    // input data size
+    int type = LIQUID_FFT_FORWARD; //
+    int flags = 0;                 // FFT flags (typically ignored)
+    int i = 0;
+
+    // create FFT plan
+    fftplan q = fft_create_plan(sampleCnt, c_buffer, c_fft, type, flags);
+
     while (socketsON)
     {
         msgSDR.str("");
-        int i = 0;
-        while (i < samplesRead)
+        i = 0;
+
+        while (i < sampleCnt)
         {
-            msgSDR << buffer[i] << "i" << buffer[i + 1] << ",";
-            i = i + 2;
+            c_buffer[i] = buffer[2 * i] + buffer[2 * i + 1] * complex_i;
+            i++;
+        }
+
+        // execute FFT (repeat as necessary)
+        pthread_mutex_lock(&FFTmutex);
+        fft_execute(q);
+        pthread_mutex_unlock(&FFTmutex);
+        i = 0;
+
+        while (i < sampleCnt)
+        {
+            msgSDR << c_fft[i].real() << "," << c_fft[i].imag() << ",";
+            i++;
         }
         msgSDR << endl;
         RPX_socket[(int)threadID] << msgSDR.str();
+        // destroy FFT plan and free memory arrays
     }
-
+    fft_destroy_plan(q);
     pthread_exit(NULL);
 }
 
@@ -273,7 +298,9 @@ EchoServer::~EchoServer()
 void EchoServer::onConnect(int socketID)
 {
     Util::log("New connection");
-    
+    msgSDR.str("");
+    msgSDR << "Transfer starting ...";
+    Logger(msgSDR.str());
 }
 
 void EchoServer::onMessage(int socketID, const string &data)
@@ -281,18 +308,6 @@ void EchoServer::onMessage(int socketID, const string &data)
     // Reply back with the same message
     // Util::log("Received: " + data);
     // this->send(socketID, data);
-    while (socketsON)
-    {
-        msgSDR.str("");
-        int i = 0;
-        while (i < samplesRead)
-        {
-            msgSDR << buffer[i] << "i" << buffer[i + 1] << ",";
-            i = i + 2;
-        }
-        msgSDR << endl;
-        this->send(socketID, msgSDR.str());
-    }
 }
 
 void EchoServer::onDisconnect(int socketID)

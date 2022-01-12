@@ -44,6 +44,7 @@
 
 #define NUM_CONNECTS 5 // max number of sockets connections
 extern pthread_mutex_t SDRmutex;
+extern pthread_mutex_t FFTmutex;
 
 // SDR facility
 lms_device_t *device = NULL;
@@ -79,6 +80,9 @@ std::stringstream HEXmsgSDR;
 // Initialize data buffers
 const int sampleCnt = 2048;  // complex samples per buffer --> a "sample" is I + Q values in float or int
 float buffer[sampleCnt * 2]; // buffer to hold samples (each I + Q) --> buffer size = 2 * no of samples
+liquid_float_complex c_buffer[sampleCnt]; // complex buffer to hold SDR sample in complex domain
+liquid_float_complex c_fft[sampleCnt]; // complex buffer to hold FFT result
+liquid_float_complex complex_i(0,1);
 int samplesRead = 2048;
 
 bool rxON = true;

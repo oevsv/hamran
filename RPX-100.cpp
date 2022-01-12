@@ -159,22 +159,22 @@ int main(int argc, char *argv[])
     pthread_mutex_init(&SDRmutex,0);
 
     // Start thread for SocketServer
-    // if (pthread_create(&threads[1], NULL, startSocketServer, (void *)1) != 0)
-    // {
-    //     msg.str("");
-    //     msg << "ERROR starting thread 1";
-    //     Logger(msg.str());
-    // }
-
-    // sleep(1);
-
-    // Start thread for WebSocket
-    if (pthread_create(&threads[2], NULL, startWebSocket, (void *)2) != 0)
+    if (pthread_create(&threads[1], NULL, startSocketServer, (void *)1) != 0)
     {
         msg.str("");
-        msg << "ERROR starting thread 2";
+        msg << "ERROR starting thread 1";
         Logger(msg.str());
     }
+
+    sleep(1);
+
+    // Start thread for WebSocket
+    // if (pthread_create(&threads[2], NULL, startWebSocket, (void *)2) != 0)
+    // {
+    //     msg.str("");
+    //     msg << "ERROR starting thread 2";
+    //     Logger(msg.str());
+    // }
     
     // Start thread for SDR Stream
     if (pthread_create(&threads[3], NULL, startSDRStream, (void *)3) != 0)
@@ -183,6 +183,7 @@ int main(int argc, char *argv[])
         msg << "ERROR starting thread 3";
         Logger(msg.str());
     }
+    
     pthread_mutex_destroy(&SDRmutex);
     pthread_exit(NULL);
 }
