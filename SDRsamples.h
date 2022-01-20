@@ -35,24 +35,12 @@
 #include <math.h>
 #include "alsa/asoundlib.h"
 #include "liquid/liquid.h"
-#include "ServerSocket.h"
-#include "SocketException.h"
-#include "websocketpp/config/core.hpp"
-#include "websocketpp/server.hpp"
-#include "fstream"
+#include "sockets/ServerSocket.h"
+#include "sockets/SocketException.h"
 #include <iterator>
 #pragma once
 
-typedef websocketpp::server<websocketpp::config::core> server;
-
 #define NUM_CONNECTS 5 // max number of sockets connections
-
-using websocketpp::lib::placeholders::_1;
-using websocketpp::lib::placeholders::_2;
-using websocketpp::lib::bind;
-
-// pull out the type of messages sent from config
-typedef server::message_ptr message_ptr;
 
 extern pthread_mutex_t SDRmutex;
 
@@ -64,7 +52,6 @@ void *startSocketServer(void *threadID);
 void *startSDRStream(void *threadID);
 void *startSocketConnect(void *threadID);
 void *startWebSocket(void *threadID);
-void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg);
 int error();
 
 // Radio Frontend - Define GPIO settings for CM4 hat module

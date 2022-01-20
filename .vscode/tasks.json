@@ -8,8 +8,12 @@
 			"args": [
 				"-g",
 				"${workspaceFolder}/*.cpp",
+				"-g",
+				"${workspaceFolder}/sockets/*.cpp",
 				"-o",
 				"${workspaceFolder}/${fileBasenameNoExtension}",
+				"-o",
+				"${workspaceFolder}/sockets/${fileBasenameNoExtension}",
 				"-lLimeSuite",
 				"-L/usr/lib",
 				"-lpthread",
@@ -17,8 +21,6 @@
 				"-lasound",
 				"-L/usr/lib",
 				"-lliquid",
-				"-L/usr/lib",
-				"-lwebsockets",
 				"-L/usr/lib"
 			],
 			"options": {
