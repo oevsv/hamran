@@ -162,24 +162,24 @@ int main(int argc, char *argv[])
     if (pthread_create(&threads[1], NULL, startSDRStream, (void *)1) != 0)
     {
         msg.str("");
-        msg << "ERROR starting thread 3";
+        msg << "ERROR starting thread 1";
         Logger(msg.str());
     }
 
     // Start thread for SocketServer
-    if (pthread_create(&threads[2], NULL, startSocketServer, (void *)2) != 0)
-    {
-        msg.str("");
-        msg << "ERROR starting thread 1";
-        Logger(msg.str());
-    }
-    sleep(1);
+    // if (pthread_create(&threads[2], NULL, startSocketServer, (void *)2) != 0)
+    // {
+    //     msg.str("");
+    //     msg << "ERROR starting thread 2";
+    //     Logger(msg.str());
+    // }
+    // sleep(1);
 
     // Start thread for WebSocket
     if (pthread_create(&threads[3], NULL, startWebSocket, (void *)3) != 0)
     {
         msg.str("");
-        msg << "ERROR starting thread 2";
+        msg << "ERROR starting thread 3";
         Logger(msg.str());
     }  
     

@@ -83,13 +83,3 @@ a:hover {
   padding-top: 0px;
   padding-bottom: 0px;
 }
-
-.time {
-  float: right;
-}
-
-#waterfall {
-  display: block;
-  width: 100%;
-  height: 100%;
-}

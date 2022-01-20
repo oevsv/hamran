@@ -175,14 +175,12 @@ void *startSocketServer(void *threadID)
         {
             RPX_server.accept(RPX_socket[ConCurSocket]);
             // Start thread for SocketServer
-            pthread_mutex_init(&FFTmutex, 0);
             if (pthread_create(&connects[ConCurSocket], NULL, startSocketConnect, (void *)ConCurSocket) != 0)
             {
                 msgSDR.str("");
                 msgSDR << "ERROR starting thread " << ConCurSocket;
                 Logger(msgSDR.str());
             }
-            pthread_mutex_destroy(&FFTmutex);
             ConCurSocket++;
         }
     }
@@ -192,10 +190,62 @@ void *startSocketServer(void *threadID)
 void *startWebSocket(void *threadID)
 {
     msgSDR.str("");
-    msgSDR << "WebSockets started as thread no: " << threadID << " using port " << WEBSOCKET_port;
+    msgSDR << "WebSockets started as thread no: " << threadID;
     Logger(msgSDR.str());
-    EchoServer es = EchoServer(WEBSOCKET_port);
-    es.run();
+    server s;
+    std::ofstream log;
+
+    try {
+        // set up access channels to only log interesting things
+        s.clear_access_channels(websocketpp::log::alevel::all);
+        s.set_access_channels(websocketpp::log::alevel::connect);
+        s.set_access_channels(websocketpp::log::alevel::disconnect);
+        s.set_access_channels(websocketpp::log::alevel::app);
+
+        // Log to a file rather than stdout, as we are using stdout for real
+        // output
+        log.open("output.log");
+        s.get_alog().set_ostream(&log);
+        s.get_elog().set_ostream(&log);
+
+        // print all output to stdout
+        s.register_ostream(&std::cout);
+
+        // Register our message handler
+        s.set_message_handler(bind(&on_message,&s,::_1,::_2));
+
+        server::connection_ptr con = s.get_connection();
+
+        con->start();
+
+        // C++ iostream's don't support the idea of asynchronous i/o. As such
+        // there are two input strategies demonstrated here. Buffered I/O will
+        // read from stdin in chunks until EOF. This works very well for
+        // replaying canned connections as would be done in automated testing.
+        //
+        // If the server is being used live however, assuming input is being
+        // piped from elsewhere in realtime, this strategy will result in small
+        // messages being buffered forever. The non-buffered strategy below
+        // reads characters from stdin one at a time. This is inefficient and
+        // for more serious uses should be replaced with a platform specific
+        // asyncronous i/o technique like select, poll, IOCP, etc
+        bool buffered_io = false;
+
+        if (buffered_io) {
+            std::cin >> *con;
+            con->eof();
+        } else {
+            char a;
+            while(std::cin.get(a)) {
+                con->read_some(&a,1);
+            }
+            con->eof();
+        }
+    } catch (websocketpp::exception const & e) {
+        std::cout << e.what() << std::endl;
+    }
+    log.close();
+
     pthread_exit(NULL);
 }
 
@@ -248,75 +298,55 @@ void *startSocketConnect(void *threadID)
     msgSDR << "Socket connection started as connect no: " << (int)threadID << " using port: " << RPX_port << ", rxON=" << rxON;
     Logger(msgSDR.str());
 
-    // FFT on IQ samples to feed waterfall
-    unsigned int n = 16;    // input data size
-    int type = LIQUID_FFT_FORWARD; //
-    int flags = 0;                 // FFT flags (typically ignored)
-    int i = 0;
-
     while (socketsON)
     {
         msgSDR.str("");
-        i = 0;
+        int i = 0;
 
         while (i < sampleCnt)
         {
             c_buffer[i] = buffer[2 * i] + buffer[2 * i + 1] * complex_i;
             i++;
         }
+        // create spectral periodogram
+        spgramcf q = spgramcf_create_default(nfft);
 
-        // create FFT plan
-        fftplan q = fft_create_plan(sampleCnt, c_buffer, c_fft, type, flags);
+        // write block of samples to spectral periodogram object
+        spgramcf_write(q, c_buffer, sampleCnt);
 
-        // execute FFT (repeat as necessary)
-        // pthread_mutex_lock(&FFTmutex);
-        fft_execute(q);
-        // pthread_mutex_unlock(&FFTmutex);
+        // compute power spectral density output (repeat as necessary)
+        spgramcf_get_psd(q, sp_psd);
+
         i = 0;
 
-        while (i < sampleCnt)
+        while (i < nfft)
         {
-            msgSDR << c_buffer[i].real() << "," << c_buffer[i].imag() << ",";
+            msgSDR << sp_psd[i] << ",";
             i++;
         }
         msgSDR << endl;
         RPX_socket[(int)threadID] << msgSDR.str();
-        // destroy FFT plan and free memory arrays
         msgSDR.str("");
-        fft_destroy_plan(q);
+        spgramcf_destroy(q);
     }
+
     pthread_exit(NULL);
 }
 
-EchoServer::EchoServer(int port) : WebSocketServer(port)
-{
-}
+// Define a callback to handle incoming messages
+void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
+    if (msg->get_opcode() == websocketpp::frame::opcode::text) {
+        s->get_alog().write(websocketpp::log::alevel::app,
+                    "Text Message Received: "+msg->get_payload());
+    } else {
+        s->get_alog().write(websocketpp::log::alevel::app,
+                    "Binary Message Received: "+websocketpp::utility::to_hex(msg->get_payload()));
+    }
 
-EchoServer::~EchoServer()
-{
-}
-
-void EchoServer::onConnect(int socketID)
-{
-    Util::log("New connection");
-    msgSDR.str("");
-    msgSDR << "{'center':" << 0.8 << ", 'span':" << 12.0 << "}" << endl;;
-    this->send(socketID, msgSDR.str());
-}
-
-void EchoServer::onMessage(int socketID, const string &data)
-{
-    // Reply back with the same message
-    // Util::log("Received: " + data);
-    // this->send(socketID, data);
-}
-
-void EchoServer::onDisconnect(int socketID)
-{
-    Util::log("Disconnect");
-}
-
-void EchoServer::onError(int socketID, const string &message)
-{
-    Util::log("Error: " + message);
+    try {
+        s->send(hdl, msg->get_payload(), msg->get_opcode());
+    } catch (websocketpp::exception const & e) {
+        s->get_alog().write(websocketpp::log::alevel::app,
+                    std::string("Echo Failed: ")+e.what());
+    }
 }

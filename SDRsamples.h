@@ -37,15 +37,24 @@
 #include "liquid/liquid.h"
 #include "ServerSocket.h"
 #include "SocketException.h"
+#include "websocketpp/config/core.hpp"
+#include "websocketpp/server.hpp"
+#include "fstream"
 #include <iterator>
-#include "Util.h"
-#include "WebSocketServer.h"
-#include "json.hpp"
 #pragma once
 
+typedef websocketpp::server<websocketpp::config::core> server;
+
 #define NUM_CONNECTS 5 // max number of sockets connections
+
+using websocketpp::lib::placeholders::_1;
+using websocketpp::lib::placeholders::_2;
+using websocketpp::lib::bind;
+
+// pull out the type of messages sent from config
+typedef server::message_ptr message_ptr;
+
 extern pthread_mutex_t SDRmutex;
-extern pthread_mutex_t FFTmutex;
 
 // SDR facility
 lms_device_t *device = NULL;
@@ -55,6 +64,7 @@ void *startSocketServer(void *threadID);
 void *startSDRStream(void *threadID);
 void *startSocketConnect(void *threadID);
 void *startWebSocket(void *threadID);
+void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg);
 int error();
 
 // Radio Frontend - Define GPIO settings for CM4 hat module
@@ -78,13 +88,17 @@ std::stringstream msgSDR;
 std::stringstream HEXmsgSDR;
 
 
-// Initialize data buffers
+// Initialize sdr buffers
 const int sampleCnt = 1024;  // complex samples per buffer --> a "sample" is I + Q values in float or int
 float buffer[sampleCnt * 2]; // buffer to hold samples (each I + Q) --> buffer size = 2 * no of samples
 liquid_float_complex c_buffer[sampleCnt]; // complex buffer to hold SDR sample in complex domain
-liquid_float_complex c_fft[sampleCnt]; // complex buffer to hold FFT result
 liquid_float_complex complex_i(0,1);
 int samplesRead = 1024;
+
+// Initialize buffer for spectogram
+const int nfft = 2048;
+liquid_float_complex c_sp_buf[sampleCnt]; // complex buffer to hold spectogram data result
+float sp_psd[nfft];
 
 bool rxON = true;
 
@@ -95,16 +109,4 @@ ServerSocket RPX_socket[NUM_CONNECTS];
 int ConCurSocket;
 bool socketsON = true;
 
-// WebSocket facility
-int WEBSOCKET_port = 8084;
-class EchoServer : public WebSocketServer
-{
-public: 
-    EchoServer( int port );
-    ~EchoServer( );
-    virtual void onConnect(    int socketID                        );
-    virtual void onMessage(    int socketID, const string& data    );
-    virtual void onDisconnect( int socketID                        );
-    virtual void   onError(    int socketID, const string& message );
-};
 

@@ -2,7 +2,7 @@ let a;
 let time;
 setInterval(() => {
     a = new Date();
-    time = formatDate(a, "dddd dd MMM yyyy,  HH:mm:ss");
+    time = formatDate(a, "dddd dd MMM yyyy</br>HH:mm:ss");
     document.getElementById('time').innerHTML = time;
 }, 1000);
 

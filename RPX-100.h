@@ -42,7 +42,6 @@
 
 #define NUM_THREADS 5 // max number of main threads
 pthread_mutex_t SDRmutex;
-pthread_mutex_t FFTmutex;
 
 // SDR facility
 
