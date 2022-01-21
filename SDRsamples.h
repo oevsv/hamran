@@ -51,8 +51,13 @@ int SDRfrequency(lms_device_t *device, double frequency);
 void *startSocketServer(void *threadID);
 void *startSDRStream(void *threadID);
 void *startSocketConnect(void *threadID);
-void *startWebSocket(void *threadID);
 int error();
+extern double frequency;
+extern double sampleRate;
+extern int modeSelector;
+extern double normalizedGain;
+double startFreq = frequency - sampleRate/2;
+double stopFreq = frequency + sampleRate/2;
 
 // Radio Frontend - Define GPIO settings for CM4 hat module
 uint8_t setRX = 0x18;       // GPIO0=LOW - RX, GPIO3=HIGH - PTT off,
@@ -86,6 +91,8 @@ int samplesRead = 1024;
 const int nfft = 2048;
 liquid_float_complex c_sp_buf[sampleCnt]; // complex buffer to hold spectogram data result
 float sp_psd[nfft];
+int colormap = 3;
+double step = sampleRate / (nfft);
 
 bool rxON = true;
 

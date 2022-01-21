@@ -58,6 +58,7 @@ void print_gpio(uint8_t gpio_val);
 std::stringstream msg;
 std::stringstream HEXmsg;
 
+// SDR values
 double frequency;
 double sampleRate;
 int modeSelector;

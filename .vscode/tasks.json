@@ -12,8 +12,6 @@
 				"${workspaceFolder}/sockets/*.cpp",
 				"-o",
 				"${workspaceFolder}/${fileBasenameNoExtension}",
-				"-o",
-				"${workspaceFolder}/sockets/${fileBasenameNoExtension}",
 				"-lLimeSuite",
 				"-L/usr/lib",
 				"-lpthread",

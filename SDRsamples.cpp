@@ -106,6 +106,9 @@ int SDRinit(double frequency, double sampleRate, int modeSelector, double normal
     msgSDR.str("");
     msgSDR << "Center frequency: " << frequency / 1e6 << " MHz" << endl;
     Logger(msgSDR.str());
+    startFreq = frequency - sampleRate/2;
+    stopFreq = frequency + sampleRate/2;
+    step = sampleRate / (nfft);
 
     // select Low TX path for LimeSDR mini --> TX port 2 (misslabed in MINI, correct in USB)
     if (LMS_SetAntenna(device, LMS_CH_TX, 0, LMS_PATH_TX2) != 0)
@@ -138,6 +141,9 @@ int SDRfrequency(lms_device_t *device, double frequency)
     msgSDR.str("");
     msgSDR << "Center frequency: " << frequency / 1e6 << " MHz" << endl;
     Logger(msgSDR.str());
+    startFreq = frequency - sampleRate/2;
+    stopFreq = frequency + sampleRate/2;
+    step = sampleRate / (nfft);
 
     return 0;
 }
@@ -185,16 +191,6 @@ void *startSocketServer(void *threadID)
             ConCurSocket++;
         }
     }
-    pthread_exit(NULL);
-}
-
-void *startWebSocket(void *threadID)
-{
-    msgSDR.str("");
-    msgSDR << "WebSockets started as thread no: " << threadID;
-    Logger(msgSDR.str());
-    
-
     pthread_exit(NULL);
 }
 
@@ -251,7 +247,17 @@ void *startSocketConnect(void *threadID)
     {
         msgSDR.str("");
         int i = 0;
+        time_t rawtime;
+        struct tm * timeinfo;
+        char dateStr[10];
+        char timeStr[8];
 
+        time (&rawtime);
+        timeinfo = localtime (&rawtime);
+
+        strftime(dateStr, 10, "%F", timeinfo);
+        strftime(timeStr, 8, "%T", timeinfo);
+        
         while (i < sampleCnt)
         {
             c_buffer[i] = buffer[2 * i] + buffer[2 * i + 1] * complex_i;
@@ -270,11 +276,11 @@ void *startSocketConnect(void *threadID)
 
         while (i < nfft)
         {
-            msgSDR << sp_psd[i] << ",";
+            msgSDR << dateStr << ", " << timeStr << ", " << to_string(startFreq) << ", " << to_string(stopFreq) << ", " << to_string(step) << ", " << colormap << ", " << sp_psd[i] << endl;
+            RPX_socket[(int)threadID] << msgSDR.str();
             i++;
+            msgSDR.str("");
         }
-        msgSDR << endl;
-        RPX_socket[(int)threadID] << msgSDR.str();
         msgSDR.str("");
         spgramcf_destroy(q);
     }
