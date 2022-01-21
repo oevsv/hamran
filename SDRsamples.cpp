@@ -14,6 +14,7 @@
 
 using namespace std;
 
+
 int SDRinit(double frequency, double sampleRate, int modeSelector, double normalizedGain)
 {
     // Find devices
