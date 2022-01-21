@@ -249,14 +249,14 @@ void *startSocketConnect(void *threadID)
         int i = 0;
         time_t rawtime;
         struct tm * timeinfo;
-        char dateStr[10];
-        char timeStr[8];
+        char dateStr[12];
+        char timeStr[10];
 
         time (&rawtime);
         timeinfo = localtime (&rawtime);
 
-        strftime(dateStr, 10, "%F", timeinfo);
-        strftime(timeStr, 8, "%T", timeinfo);
+        strftime(dateStr, 12, "%F", timeinfo);
+        strftime(timeStr, 10, "%T", timeinfo);
         
         while (i < sampleCnt)
         {
@@ -276,7 +276,7 @@ void *startSocketConnect(void *threadID)
 
         while (i < nfft)
         {
-            msgSDR << dateStr << ", " << timeStr << ", " << to_string(startFreq) << ", " << to_string(stopFreq) << ", " << to_string(step) << ", " << colormap << ", " << sp_psd[i] << endl;
+            msgSDR << string(dateStr) << ", " << string(timeStr) << ", " << to_string(startFreq) << ", " << to_string(stopFreq) << ", " << to_string(step) << ", " << colormap << ", " << sp_psd[i] << endl;
             RPX_socket[(int)threadID] << msgSDR.str();
             i++;
             msgSDR.str("");
