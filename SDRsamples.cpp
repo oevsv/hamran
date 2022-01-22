@@ -284,7 +284,8 @@ void *startSocketConnect(void *threadID)
 
         while (i < nfft)
         {
-            msgSOCKET << string(dateStr) << ", " << string(timeStr) << ", " << to_string(startFreq) << ", " << to_string(stopFreq) << ", " << to_string(step) << ", " << colormap << ", " << sp_psd[i] << endl;
+            //msgSOCKET << string(dateStr) << ", " << string(timeStr) << ", " << to_string(startFreq) << ", " << to_string(stopFreq) << ", " << to_string(step) << ", " << colormap << ", " << sp_psd[i] << endl;
+            msgSOCKET << to_string(sampleRate) << "," << to_string(startFreq) << "," << sp_psd[i] << "," << to_string(step) << "," << 25 << endl;
             RPX_socket[(int)threadID] << msgSOCKET.str();
             i++;
             msgSOCKET.str("");

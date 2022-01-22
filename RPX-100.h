@@ -59,9 +59,9 @@ std::stringstream msg;
 std::stringstream HEXmsg;
 
 // SDR values
-double frequency;
-double sampleRate;
+double frequency = 52.8e6;
+double sampleRate = 2e6;
 int modeSelector;
-double normalizedGain;
+double normalizedGain = 1;
 string mode = "RX";
 int modeSel = 0;
