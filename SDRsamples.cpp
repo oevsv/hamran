@@ -196,7 +196,7 @@ void *startSocketServer(void *threadID)
 void *startWSproxy(void *threadID)
 {
     string status = "";
-    while(exec("wsproxy -p 8084 -a 127.0.0.1:5254") == "WSproxyStop");
+    while(exec("wsproxy -p 8084 -a localhost:5254") == "WSproxyStop");
     pthread_exit(NULL);
 }
 
@@ -314,7 +314,7 @@ string exec(string command) {
       {
           result.str("");
           result << "WSproxy: " << buffer;
-          Logger(result.str());
+          Logger(result.str().substr(0, result.str().size()-1));
       }
    }
    pclose(pipe);
