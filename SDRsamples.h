@@ -38,6 +38,9 @@
 #include "sockets/ServerSocket.h"
 #include "sockets/SocketException.h"
 #include <iterator>
+#include <signal.h>
+#include <pthread.h>
+
 #pragma once
 
 #define NUM_CONNECTS 5 // max number of sockets connections
@@ -48,9 +51,11 @@ extern pthread_mutex_t SDRmutex;
 lms_device_t *device = NULL;
 int SDRinit(double frequency, double sampleRate, int modeSelector, double normalizedGain);
 int SDRfrequency(lms_device_t *device, double frequency);
+string exec(string command);
 void *startSocketServer(void *threadID);
 void *startSDRStream(void *threadID);
 void *startSocketConnect(void *threadID);
+void *startWSproxy(void *threadID);
 int error();
 extern double frequency;
 extern double sampleRate;
@@ -102,5 +107,4 @@ string RPX_host = "10.0.0.5";
 ServerSocket RPX_socket[NUM_CONNECTS];
 int ConCurSocket;
 bool socketsON = true;
-
 

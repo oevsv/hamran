@@ -173,7 +173,14 @@ int main(int argc, char *argv[])
         msg << "ERROR starting thread 2";
         Logger(msg.str());
     }
-    sleep(1);
+    
+    // Start thread for WebSocket proxy
+    if (pthread_create(&threads[3], NULL, startWSproxy, (void *)3) != 0)
+    {
+        msg.str("");
+        msg << "ERROR starting thread 3";
+        Logger(msg.str());
+    }
     
     pthread_mutex_destroy(&SDRmutex);
     pthread_exit(NULL);

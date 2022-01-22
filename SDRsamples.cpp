@@ -10,7 +10,6 @@
  *****************************************************************************/
 
 #include "SDRsamples.h"
-#include <pthread.h>
 
 using namespace std;
 
@@ -194,6 +193,13 @@ void *startSocketServer(void *threadID)
     pthread_exit(NULL);
 }
 
+void *startWSproxy(void *threadID)
+{
+    string status = "";
+    while(exec("wsproxy -p 8084 -a 127.0.0.1:5254") == "WSproxyStop");
+    pthread_exit(NULL);
+}
+
 void *startSDRStream(void *threadID)
 {
     // Initialize stream
@@ -243,9 +249,11 @@ void *startSocketConnect(void *threadID)
     msgSDR << "Socket connection started as connect no: " << (int)threadID << " using port: " << RPX_port << ", rxON=" << rxON;
     Logger(msgSDR.str());
 
+    stringstream msgSOCKET;
+
     while (socketsON)
     {
-        msgSDR.str("");
+        msgSOCKET.str("");
         int i = 0;
         time_t rawtime;
         struct tm * timeinfo;
@@ -276,14 +284,39 @@ void *startSocketConnect(void *threadID)
 
         while (i < nfft)
         {
-            msgSDR << string(dateStr) << ", " << string(timeStr) << ", " << to_string(startFreq) << ", " << to_string(stopFreq) << ", " << to_string(step) << ", " << colormap << ", " << sp_psd[i] << endl;
-            RPX_socket[(int)threadID] << msgSDR.str();
+            msgSOCKET << string(dateStr) << ", " << string(timeStr) << ", " << to_string(startFreq) << ", " << to_string(stopFreq) << ", " << to_string(step) << ", " << colormap << ", " << sp_psd[i] << endl;
+            RPX_socket[(int)threadID] << msgSOCKET.str();
             i++;
-            msgSDR.str("");
+            msgSOCKET.str("");
         }
-        msgSDR.str("");
+        msgSOCKET.str("");
         spgramcf_destroy(q);
     }
 
     pthread_exit(NULL);
+}
+
+string exec(string command) {
+   char buffer[128];
+   stringstream result;
+
+   // Open pipe to file
+   FILE* pipe = popen(command.c_str(), "r");
+   if (!pipe) {
+      return "popen failed!";
+   }
+
+   // read till end of process:
+   while (!feof(pipe)) {
+
+      // use buffer to read and add to result
+      if (fgets(buffer, 128, pipe) != NULL)
+      {
+          result.str("");
+          result << "WSproxy: " << buffer;
+          Logger(result.str());
+      }
+   }
+   pclose(pipe);
+   return "WSproxyStop";
 }

@@ -5,6 +5,7 @@
 // isAnimatable: whether to enable animation during drawing.
 // isSelectable: whether to enable user selection of different color interpolators.
 // isZoomable: whether to enable user pan/zoom of the waterfall.
+
 function Waterfall(id, dataURL, annotationURL, isAnimatable, isSelectable, isZoomable) {
     // Assume a 50px margin around the waterfall display
     this.margin = 50;
@@ -52,13 +53,13 @@ function Waterfall(id, dataURL, annotationURL, isAnimatable, isSelectable, isZoo
     this.tooltipGroup = this.svgGroup.append("g");
 
     // Build the drop-down selection for the interpolator
-    this.interpolators = [ "Viridis", "Inferno", "Magma", "Plasma", "Warm", "Cool", "Rainbow", "CubehelixDefault" ];
+    this.interpolators = ["Viridis", "Inferno", "Magma", "Plasma", "Warm", "Cool", "Rainbow", "CubehelixDefault"];
     this.interpolateSelect = (isSelectable === true) ? this.div.append("select")
         .on("change", onInterpolateChange).selectAll("option").data(this.interpolators)
         .enter()
         .append("option")
-        .attr("value", function(d) { return d; })
-        .text(function(d) { return d; }) : null;
+        .attr("value", function (d) { return d; })
+        .text(function (d) { return d; }) : null;
 }
 
 // Callback for when the selected color interpolator is changed.
@@ -109,7 +110,7 @@ function onTooltipMouseover(d, i) {
 // Event listener to hide tooltip when losing mouse focus
 function onTooltipMouseout(d, i) {
     onSignalMouseout(d, i);
- }
+}
 
 // Event listener to show tooltip when signal gaining mouse focus
 // Highlight the signal and set the tooltip.
@@ -117,40 +118,46 @@ function onSignalMouseover(d, i) {
     w.signal = d3.select(this);
 
     w.signal.transition(d3.transition().duration(100))
-                   .style("opacity", 0.5);
+        .style("opacity", 0.5);
     w.tooltip.style("left", d3.event.offsetX + 5 + "px")
-             .style("top", d3.event.offsetY + 5 + "px");
+        .style("top", d3.event.offsetY + 5 + "px");
     w.tooltip.transition(d3.transition().duration(100))
-             .style("visibility", "visible");
+        .style("visibility", "visible");
     w.tooltip.html("<a href=\"" + d.url + "\" target=\"_blank\"><strong>" + d.description + "</strong></a><br><strong>Frequency:</strong> " + formatFrequency(d.freqStart) + " - " + formatFrequency(d.freqStop));
 }
 
 // Event listener to hide tooltip when signal losing mouse focus
 function onSignalMouseout(d, i) {
     w.signal.transition(d3.transition().delay(100).duration(100))
-                   .style("opacity", 0);
+        .style("opacity", 0);
     w.tooltip.transition(d3.transition().delay(100).duration(100))
-             .style("visibility", "hidden");
+        .style("visibility", "hidden");
 }
 
 // Downloads and parses the data and annotation files
 // cb: Function to call when completed. Generally should be set to initDisplay.
 function getData(w, cb) {
-    var data = d3.request(w.dataURL).mimeType("application/json"),
-        annotations = (w.annotationURL) ? d3.request(w.annotationURL).mimeType("application/json") : null;
-    d3.queue()
-        .defer(handleRequest, data, parseJSONData)
-        .defer(handleRequest, annotations, parseJSONData)
-        .awaitAll(function(error) {
-            if (error) throw error;
-            if (cb) cb(w);
-        });
+    // Socket client
+    const net = require('net');
+    const client = new net.Socket();
+    client.connect({ port: 5254, host: localhost });
+    client.on('data', (data) => {
+        var data = d3.request(w.dataURL).mimeType("text/plain"),
+            annotations = (w.annotationURL) ? d3.request(w.annotationURL).mimeType("application/json") : null;
+        d3.queue()
+            .defer(handleRequest, data, parseCSVData)
+            .defer(handleRequest, annotations, parseJSONData)
+            .awaitAll(function (error) {
+                if (error) throw error;
+                if (cb) cb(w);
+            });
+    });
 }
 
 // Wrapper that calls the d3-queue callback and the user handler
 function handleRequest(request, handler, cb) {
     if (request) {
-        request.get(function(error, r) {
+        request.get(function (error, r) {
             if (error) cb(r.status, error);
             else cb(null, handler ? handler(r.responseText) : null);
         });
@@ -203,7 +210,7 @@ function parseCSVData(response) {
     // and M is the number of readings in each sweep.
     var values = [];
     var i = -1;
-    array.forEach(function(d) {
+    array.forEach(function (d) {
         for (j = 0; j < d.length; j++) {
             if (d[j].freq != array[0][0].freq) {
                 values[i].values.push({
@@ -246,8 +253,8 @@ function initDisplay(w) {
 
     // Set the svg size and add margin for labels
     w.svg.attr("width", width)
-         .attr("height", height)
-         .style("position", "absolute");
+        .attr("height", height)
+        .style("position", "absolute");
     w.svgGroup.attr("transform", "translate(" + w.margin + "," + w.margin + ")");
 
     // Create the scaling functions from the actual values to the size of the drawing surface on the canvas.
@@ -262,59 +269,59 @@ function initDisplay(w) {
 
     // Set the canvas size to the element size, and draw an invisible svg rectangle on top
     w.canvas.attr("width", elementWidth)
-            .attr("height", elementHeight)
-            .style("padding", w.margin + "px")
-            .style("position", "absolute");
+        .attr("height", elementHeight)
+        .style("padding", w.margin + "px")
+        .style("position", "absolute");
     w.rectangle.attr("width", elementWidth)
-               .attr("height", elementHeight)
-               .style("fill", "#fff")
-               .style("opacity", 0)
-               .call(w.zoom);
+        .attr("height", elementHeight)
+        .style("fill", "#fff")
+        .style("opacity", 0)
+        .call(w.zoom);
 
     // Set the ticks on the axes, with a custom formatter for units
     w.xAxis = d3.axisTop(w.x).ticks(16).tickFormat(formatFrequency);
     w.xAxisGroup.attr("class", "axis x-axis")
-                .call(w.xAxis);
+        .call(w.xAxis);
     w.yAxis = d3.axisLeft(w.y);
     w.yAxisGroup.attr("class", "axis y-axis")
-                .call(w.yAxis);
+        .call(w.yAxis);
 
     // Set the text labels on the axes
     w.xAxisLabel.attr("class", "axis x-axis")
-                .attr("text-anchor", "middle")
-                .attr("transform", "translate(" + elementWidth / 2 + "," + -w.margin / 2 + ")")
-                .text("Frequency");
+        .attr("text-anchor", "middle")
+        .attr("transform", "translate(" + elementWidth / 2 + "," + -w.margin / 2 + ")")
+        .text("Frequency");
     w.yAxisLabel.attr("class", "axis y-axis")
-                .attr("text-anchor", "middle")
-                .attr("transform", "translate(" + -w.margin / 2 + "," + (w.margin / 4) + ")")
-                .text("Time");
+        .attr("text-anchor", "middle")
+        .attr("transform", "translate(" + -w.margin / 2 + "," + (w.margin / 4) + ")")
+        .text("Time");
 
     // Create the tooltips, with clamping enabled
     if (w.annotations) {
         w.x.clamp(true);
 
         w.tooltip = w.div.append("div")
-                         .attr("class", "tooltip")
-                         .style("opacity", 0.75)
-                         .style("position", "absolute")
-                         .style("visibility", "hidden")
-                         .on("mouseover", onTooltipMouseover)
-                         .on("mouseout", onTooltipMouseout);
+            .attr("class", "tooltip")
+            .style("opacity", 0.75)
+            .style("position", "absolute")
+            .style("visibility", "hidden")
+            .on("mouseover", onTooltipMouseover)
+            .on("mouseout", onTooltipMouseout);
 
         // Display the annotations by highlighting the signal and showing the tooltip
         w.tooltipGroup.selectAll("rect")
-                      .data(w.annotations)
-                      .enter().append("rect")
-                              .attr("class", "signal")
-                              .attr("x", function(d) { return w.x(d.freqStart); })
-                              .attr("y", w.y(+w.y.domain()[0]))
-                              .attr("width", function(d) { return w.x(d.freqStop) - w.x(d.freqStart); })
-                              .attr("height",  w.y(+w.y.domain()[1]) - w.y(+w.y.domain()[0]))
-                              .style("fill", "#fff")
-                              .style("opacity", 0)
-                              .on("mouseover", onSignalMouseover)
-                              .on("mouseout", onSignalMouseout)
-                              .call(w.zoom);
+            .data(w.annotations)
+            .enter().append("rect")
+            .attr("class", "signal")
+            .attr("x", function (d) { return w.x(d.freqStart); })
+            .attr("y", w.y(+w.y.domain()[0]))
+            .attr("width", function (d) { return w.x(d.freqStop) - w.x(d.freqStart); })
+            .attr("height", w.y(+w.y.domain()[1]) - w.y(+w.y.domain()[0]))
+            .style("fill", "#fff")
+            .style("opacity", 0)
+            .on("mouseover", onSignalMouseover)
+            .on("mouseout", onSignalMouseout)
+            .call(w.zoom);
 
         w.x.clamp(false);
     }
@@ -333,14 +340,14 @@ function renderDisplay(w) {
 
     if (w.isAnimatable && window.requestAnimationFrame) {
         var i = 0;
-        var drawStep = function(timestamp) {
+        var drawStep = function (timestamp) {
             drawRow.call({ context: context, x: w.x, y: w.y, z: w.z }, i, w.data.values);
 
             // Cache the image data if done
             if (++i < w.data.values.length) {
                 w.animation = window.requestAnimationFrame(drawStep);
             } else if (w.isZoomable && createImageBitmap) {
-                createImageBitmap(context.getImageData(0, 0, context.canvas.width, context.canvas.height)).then(function(resolve, reject) {
+                createImageBitmap(context.getImageData(0, 0, context.canvas.width, context.canvas.height)).then(function (resolve, reject) {
                     if (reject) throw reject;
                     w.image = resolve;
                 });
@@ -358,7 +365,7 @@ function renderDisplay(w) {
 // TODO: Memoize this function for better performance.
 function drawRow(i, array) {
     for (j = 0; j < array[i].values.length; ++j) {
-        var rowWidth = (i != array.length - 1 && j < array[i + 1].values.length) ? this.y(+array[i + 1].dateTime) - this.y(+array[i].dateTime): this.y(+array[i].dateTime) - this.y(+array[i - 1].dateTime);
+        var rowWidth = (i != array.length - 1 && j < array[i + 1].values.length) ? this.y(+array[i + 1].dateTime) - this.y(+array[i].dateTime) : this.y(+array[i].dateTime) - this.y(+array[i - 1].dateTime);
         this.context.fillStyle = this.z(array[i].values[j].dB);
         this.context.fillRect(this.x(array[i].values[j].freq), this.y(array[i].dateTime), this.x(array[i].values[j].freq + w.data.freqStep) - this.x(array[i].values[j].freq), rowWidth);
     }
