@@ -194,8 +194,49 @@ void *startSocketServer(void *threadID)
 
 void *startWebsocketServer(void *threadID)
 {
-    rpxServer es = rpxServer( PORT_NUMBER );
-    es.run( );
+    rpxServer es = rpxServer(PORT_NUMBER);
+    stringstream msgSOCKET;
+    while (socketsON)
+    {
+        // Handle websocket stuff
+        es.wait(TIMEOUT);
+
+        // Handle SDR FFT
+        msgSOCKET.clear();
+        msgSOCKET.str("");
+        msgSOCKET << "{\"s\":[";
+        int i = 0;
+
+        while (i < sampleCnt)
+        {
+            c_buffer[i] = buffer[2 * i] + buffer[2 * i + 1] * complex_i;
+            i++;
+        }
+        // create spectral periodogram
+        spgramcf q = spgramcf_create_default(nfft);
+
+        // write block of samples to spectral periodogram object
+        spgramcf_write(q, c_buffer, sampleCnt);
+
+        // compute power spectral density output (repeat as necessary)
+        spgramcf_get_psd(q, sp_psd);
+
+        i = 0;
+
+        while (i < nfft)
+        {
+            msgSOCKET << to_string((int)sp_psd[i]);
+            if (i < nfft - 1)
+            {
+                msgSOCKET << ",";
+            }
+            i++;
+        }
+        msgSOCKET << "]}";
+        //msgSOCKET.seekp(-1, std::ios_base::end);
+        es.broadcast(msgSOCKET.str());
+        spgramcf_destroy(q);
+    }
 
     pthread_exit(NULL);
 }
@@ -287,55 +328,57 @@ void *startSocketConnect(void *threadID)
     pthread_exit(NULL);
 }
 
-rpxServer::rpxServer( int port ) : WebSocketServer( port )
+rpxServer::rpxServer(int port) : WebSocketServer(port)
 {
 }
 
-rpxServer::~rpxServer( )
+rpxServer::~rpxServer()
 {
 }
 
-
-void rpxServer::onConnect( int socketID )
+void rpxServer::onConnect(int socketID)
 {
-    const string& handle = "User #" + Util::toString( socketID );
+    const string &handle = "User #" + Util::toString(socketID);
     msgSDR.str("");
     msgSDR << "New connection: " << handle;
     Logger(msgSDR.str());
-    this->setValue( socketID, "handle", handle );
- // Let everyone know the new user has connected
-    this->broadcast( handle + " has connected." );
+    //this->setValue(socketID, "handle", handle);
 
+    // Transmitt FFT data
+    // while (socketsON)
+    //{
+
+    //}
 }
 
-void rpxServer::onMessage( int socketID, const string& data )
+void rpxServer::onMessage(int socketID, const string &data)
 {
     // Send the received message to all connected clients in the form of 'User XX: message...'
     msgSDR.str("");
-    msgSDR <<"Received: " << data;
+    msgSDR << "Received: " << data;
     Logger(msgSDR.str());
-    const string& message = this->getValue( socketID, "handle" ) + ": " + data;
+    //const string &message = this->getValue(socketID, "handle") + ": " + data;
 
-    this->broadcast( message );
+    //this->broadcast(message);
 }
 
-void rpxServer::onDisconnect( int socketID )
+void rpxServer::onDisconnect(int socketID)
 {
-    const string& handle = this->getValue( socketID, "handle" );
+    const string &handle = this->getValue(socketID, "handle");
     msgSDR.str("");
     msgSDR << "Disconnected: " << handle;
     Logger(msgSDR.str());
-    
+
     // Let everyone know the user has disconnected
-    const string& message = handle + " has disconnected.";
-    for( map<int,Connection*>::const_iterator it = this->connections.begin( ); it != this->connections.end( ); ++it )
-        if( it->first != socketID )
+    const string &message = handle + " has disconnected.";
+    for (map<int, Connection *>::const_iterator it = this->connections.begin(); it != this->connections.end(); ++it)
+        if (it->first != socketID)
             // The disconnected connection gets deleted after this function runs, so don't try to send to it
             // (It's still around in case the implementing class wants to perform any clean up actions)
-            this->send( it->first, message );
+            this->send(it->first, message);
 }
 
-void rpxServer::onError( int socketID, const string& message )
+void rpxServer::onError(int socketID, const string &message)
 {
     msgSDR.str("");
     msgSDR << "Error: " << message;

@@ -1,7 +1,13 @@
 'use strict';
 
+var spectrum, logger, ws;
+
 function connectWebSocket(spectrum) {
-    var ws = new WebSocket("ws://" + window.location.host.substring(0, window.location.host.length-4) + "8084/127.0.0.1:5254");
+
+    ws = new WebSocket("ws://" + window.location.host.substring(0, window.location.host.length-4) + "8084");
+
+    spectrum.setWebSocket(ws);
+  
     ws.onopen = function(evt) {
         console.log("connected!");
     }
@@ -15,8 +21,7 @@ function connectWebSocket(spectrum) {
         console.log("error: " + evt.message);
     }
     ws.onmessage = function (evt) {
-        var data = evt.data;//JSON.parse(evt.data);
-        console.log(JSON.parse(data));
+        var data = JSON.parse(evt.data);
         if (data.s) {
             spectrum.addData(data.s);
         } else {
@@ -26,15 +31,25 @@ function connectWebSocket(spectrum) {
             if (data.span) {
                 spectrum.setSpanHz(data.span);
             }
+            if (data.gain) {
+                spectrum.setGain(data.gain);
+            }
+            if (data.framerate) {
+                spectrum.setFps(data.framerate);
+            }
+            spectrum.log(" > Freq:" + data.center / 1000000 + " MHz | Span: " + data.span / 1000000 + " MHz | Gain: " + data.gain + "dB | Fps: " + data.framerate);
         }
     }
 }
 
+
 function main() {
+    
     // Create spectrum object on canvas with ID "waterfall"
-    var spectrum = new Spectrum(
+    spectrum = new Spectrum(
         "waterfall", {
-            spectrumPercent: 20
+            spectrumPercent: 25,
+            logger: 'log',            
     });
 
     // Connect to websocket
@@ -44,6 +59,8 @@ function main() {
     window.addEventListener("keydown", function (e) {
         spectrum.onKeypress(e);
     });
+
+    
 }
 
 window.onload = main;

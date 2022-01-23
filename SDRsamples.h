@@ -49,6 +49,7 @@
 
 #define NUM_CONNECTS 5 // max number of sockets connections
 #define PORT_NUMBER 8084
+#define TIMEOUT 500
 
 extern pthread_mutex_t SDRmutex;
 
@@ -98,7 +99,7 @@ liquid_float_complex complex_i(0,1);
 int samplesRead = 1024;
 
 // Initialize buffer for spectogram
-const int nfft = 2048;
+const int nfft = 512;
 liquid_float_complex c_sp_buf[sampleCnt]; // complex buffer to hold spectogram data result
 float sp_psd[nfft];
 int colormap = 3;

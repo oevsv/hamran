@@ -19,11 +19,13 @@
 #include "libwebsockets.h"
 #include "Util.h"
 #include "WebSocketServer.h"
+#include "log.h"
 
 using namespace std;
 
 // 0 for unlimited
 #define MAX_BUFFER_SIZE 0
+std::stringstream msgWS;
 
 // Nasty hack because certain callbacks are statically defined
 WebSocketServer *self;
@@ -122,7 +124,9 @@ WebSocketServer::WebSocketServer( int port, const string certPath, const string&
     this->_context = lws_create_context( &info );
     if( !this->_context )
         throw "libwebsocket init failed";
-    Util::log( "Server started on port " + Util::toString( this->_port ) );
+    msgWS.str("");
+    msgWS << "Server started on port " << Util::toString( this->_port );
+    Logger(msgWS.str());
 
     // Some of the libwebsocket stuff is define statically outside the class. This
     // allows us to call instance variables from the outside.  Unfortunately this
