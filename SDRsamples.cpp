@@ -13,7 +13,6 @@
 
 using namespace std;
 
-
 int SDRinit(double frequency, double sampleRate, int modeSelector, double normalizedGain)
 {
     // Find devices
@@ -105,8 +104,8 @@ int SDRinit(double frequency, double sampleRate, int modeSelector, double normal
     msgSDR.str("");
     msgSDR << "Center frequency: " << frequency / 1e6 << " MHz" << endl;
     Logger(msgSDR.str());
-    startFreq = frequency - sampleRate/2;
-    stopFreq = frequency + sampleRate/2;
+    startFreq = frequency - sampleRate / 2;
+    stopFreq = frequency + sampleRate / 2;
     step = sampleRate / (nfft);
 
     // select Low TX path for LimeSDR mini --> TX port 2 (misslabed in MINI, correct in USB)
@@ -140,8 +139,8 @@ int SDRfrequency(lms_device_t *device, double frequency)
     msgSDR.str("");
     msgSDR << "Center frequency: " << frequency / 1e6 << " MHz" << endl;
     Logger(msgSDR.str());
-    startFreq = frequency - sampleRate/2;
-    stopFreq = frequency + sampleRate/2;
+    startFreq = frequency - sampleRate / 2;
+    stopFreq = frequency + sampleRate / 2;
     step = sampleRate / (nfft);
 
     return 0;
@@ -193,10 +192,11 @@ void *startSocketServer(void *threadID)
     pthread_exit(NULL);
 }
 
-void *startWSproxy(void *threadID)
+void *startWebsocketServer(void *threadID)
 {
-    string status = "";
-    while(exec("wsproxy -p 8084 -a localhost:5254") == "WSproxyStop");
+    rpxServer es = rpxServer( PORT_NUMBER );
+    es.run( );
+
     pthread_exit(NULL);
 }
 
@@ -249,23 +249,12 @@ void *startSocketConnect(void *threadID)
     msgSDR << "Socket connection started as connect no: " << (int)threadID << " using port: " << RPX_port << ", rxON=" << rxON;
     Logger(msgSDR.str());
 
-    stringstream msgSOCKET;
-
     while (socketsON)
     {
-        msgSOCKET.str("");
+        stringstream msgSOCKET;
+        msgSOCKET << "{\"s\":[";
         int i = 0;
-        time_t rawtime;
-        struct tm * timeinfo;
-        char dateStr[12];
-        char timeStr[10];
 
-        time (&rawtime);
-        timeinfo = localtime (&rawtime);
-
-        strftime(dateStr, 12, "%F", timeinfo);
-        strftime(timeStr, 10, "%T", timeinfo);
-        
         while (i < sampleCnt)
         {
             c_buffer[i] = buffer[2 * i] + buffer[2 * i + 1] * complex_i;
@@ -284,40 +273,71 @@ void *startSocketConnect(void *threadID)
 
         while (i < nfft)
         {
-            //msgSOCKET << string(dateStr) << ", " << string(timeStr) << ", " << to_string(startFreq) << ", " << to_string(stopFreq) << ", " << to_string(step) << ", " << colormap << ", " << sp_psd[i] << endl;
-            msgSOCKET << to_string(sampleRate) << "," << to_string(startFreq) << "," << sp_psd[i] << "," << to_string(step) << "," << 25 << endl;
-            RPX_socket[(int)threadID] << msgSOCKET.str();
+            msgSOCKET << to_string(sp_psd[i]);
+            if (i < nfft - 1)
+            {
+                msgSOCKET << ",";
+            }
             i++;
-            msgSOCKET.str("");
         }
-        msgSOCKET.str("");
+        msgSOCKET << "]}" << endl;
+        RPX_socket[(int)threadID] << msgSOCKET.str();
         spgramcf_destroy(q);
     }
-
     pthread_exit(NULL);
 }
 
-string exec(string command) {
-   char buffer[128];
-   stringstream result;
+rpxServer::rpxServer( int port ) : WebSocketServer( port )
+{
+}
 
-   // Open pipe to file
-   FILE* pipe = popen(command.c_str(), "r");
-   if (!pipe) {
-      return "popen failed!";
-   }
+rpxServer::~rpxServer( )
+{
+}
 
-   // read till end of process:
-   while (!feof(pipe)) {
 
-      // use buffer to read and add to result
-      if (fgets(buffer, 128, pipe) != NULL)
-      {
-          result.str("");
-          result << "WSproxy: " << buffer;
-          Logger(result.str().substr(0, result.str().size()-1));
-      }
-   }
-   pclose(pipe);
-   return "WSproxyStop";
+void rpxServer::onConnect( int socketID )
+{
+    const string& handle = "User #" + Util::toString( socketID );
+    msgSDR.str("");
+    msgSDR << "New connection: " << handle;
+    Logger(msgSDR.str());
+    this->setValue( socketID, "handle", handle );
+ // Let everyone know the new user has connected
+    this->broadcast( handle + " has connected." );
+
+}
+
+void rpxServer::onMessage( int socketID, const string& data )
+{
+    // Send the received message to all connected clients in the form of 'User XX: message...'
+    msgSDR.str("");
+    msgSDR <<"Received: " << data;
+    Logger(msgSDR.str());
+    const string& message = this->getValue( socketID, "handle" ) + ": " + data;
+
+    this->broadcast( message );
+}
+
+void rpxServer::onDisconnect( int socketID )
+{
+    const string& handle = this->getValue( socketID, "handle" );
+    msgSDR.str("");
+    msgSDR << "Disconnected: " << handle;
+    Logger(msgSDR.str());
+    
+    // Let everyone know the user has disconnected
+    const string& message = handle + " has disconnected.";
+    for( map<int,Connection*>::const_iterator it = this->connections.begin( ); it != this->connections.end( ); ++it )
+        if( it->first != socketID )
+            // The disconnected connection gets deleted after this function runs, so don't try to send to it
+            // (It's still around in case the implementing class wants to perform any clean up actions)
+            this->send( it->first, message );
+}
+
+void rpxServer::onError( int socketID, const string& message )
+{
+    msgSDR.str("");
+    msgSDR << "Error: " << message;
+    Logger(msgSDR.str());
 }

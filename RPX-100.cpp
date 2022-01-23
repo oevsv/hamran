@@ -114,6 +114,7 @@ int main(int argc, char *argv[])
     }
 
     pid_t pid, sid;
+
     pid = fork();
     if (pid < 0)
     {
@@ -175,7 +176,7 @@ int main(int argc, char *argv[])
     }
     
     // Start thread for WebSocket proxy
-    if (pthread_create(&threads[3], NULL, startWSproxy, (void *)3) != 0)
+    if (pthread_create(&threads[3], NULL, startWebsocketServer, (void *)3) != 0)
     {
         msg.str("");
         msg << "ERROR starting thread 3";

@@ -9,17 +9,18 @@
  * Version 1.00
  *****************************************************************************/
 
+#include <iostream>
+#include <fstream>
+#include <unistd.h>
+#include <sstream>
+#include <syslog.h>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
 #include <errno.h>
-#include <unistd.h>
-#include <sstream>
-#include <syslog.h>
-#include <string.h>
-#include <iostream>
 #include <cstdio>
 #include <ctime>
 #include <math.h>
@@ -40,10 +41,14 @@
 #include <iterator>
 #include <signal.h>
 #include <pthread.h>
+#include "Util.h"
+#include "WebSocketServer.h"
+
 
 #pragma once
 
 #define NUM_CONNECTS 5 // max number of sockets connections
+#define PORT_NUMBER 8084
 
 extern pthread_mutex_t SDRmutex;
 
@@ -55,7 +60,7 @@ string exec(string command);
 void *startSocketServer(void *threadID);
 void *startSDRStream(void *threadID);
 void *startSocketConnect(void *threadID);
-void *startWSproxy(void *threadID);
+void *startWebsocketServer(void *threadID);
 int error();
 extern double frequency;
 extern double sampleRate;
@@ -108,3 +113,14 @@ ServerSocket RPX_socket[NUM_CONNECTS];
 int ConCurSocket;
 bool socketsON = true;
 
+// For any real project this should be defined separately in a header file
+class rpxServer : public WebSocketServer
+{
+public: 
+    rpxServer( int port );
+    ~rpxServer( );
+    virtual void onConnect(    int socketID                        );
+    virtual void onMessage(    int socketID, const string& data    );
+    virtual void onDisconnect( int socketID                        );
+    virtual void   onError(    int socketID, const string& message );
+};

@@ -50,7 +50,7 @@ int SDRfrequency(lms_device_t *device, double frequency);
 void *startSocketServer(void *threadID);
 void *startSDRStream(void *threadID);
 void *startSocketConnect(void *threadID);
-void *startWSproxy(void *threadID);
+void *startWebsocketServer(void *threadID);
 int error();
 
 // Log facility

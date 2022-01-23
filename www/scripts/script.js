@@ -15,7 +15,8 @@ function connectWebSocket(spectrum) {
         console.log("error: " + evt.message);
     }
     ws.onmessage = function (evt) {
-        var data = JSON.parse(evt.data);
+        var data = evt.data;//JSON.parse(evt.data);
+        console.log(JSON.parse(data));
         if (data.s) {
             spectrum.addData(data.s);
         } else {
