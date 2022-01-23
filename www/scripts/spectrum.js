@@ -41,10 +41,10 @@ Spectrum.prototype.addWaterfallRow = function(bins) {
     if (this.wfrowcount % 100 == 0)
     {
         var timeString = new Date().toLocaleTimeString();
-        this.ctx_wf.font = "30px sans-serif";
+        this.ctx_wf.font = "12 sans-serif";
         this.ctx_wf.fillStyle = "white";
         this.ctx_wf.textBaseline = "top";
-        this.ctx_wf.fillText(timeString, 0, 0); // TODO: Fix font scaling
+        //this.ctx_wf.fillText(timeString, 0, 0); // TODO: Fix font scaling
     }
 
     var width = this.ctx.canvas.width;
@@ -569,7 +569,7 @@ function Spectrum(id, options) {
     // Setup state
     this.paused = false;
     this.fullscreen = false;
-    this.min_db = -120;
+    this.min_db = -130;
     this.max_db = -20;
     this.spectrumHeight = 0;
     this.tuningStep = 100000;
