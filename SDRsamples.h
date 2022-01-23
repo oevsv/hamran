@@ -67,8 +67,6 @@ extern double frequency;
 extern double sampleRate;
 extern int modeSelector;
 extern double normalizedGain;
-double startFreq;
-double stopFreq;
 
 // Radio Frontend - Define GPIO settings for CM4 hat module
 uint8_t setRX = 0x18;       // GPIO0=LOW - RX, GPIO3=HIGH - PTT off,

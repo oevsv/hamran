@@ -104,9 +104,6 @@ int SDRinit(double frequency, double sampleRate, int modeSelector, double normal
     msgSDR.str("");
     msgSDR << "Center frequency: " << frequency / 1e6 << " MHz" << endl;
     Logger(msgSDR.str());
-    startFreq = frequency - sampleRate / 2;
-    stopFreq = frequency + sampleRate / 2;
-    step = sampleRate / (nfft);
 
     // select Low TX path for LimeSDR mini --> TX port 2 (misslabed in MINI, correct in USB)
     if (LMS_SetAntenna(device, LMS_CH_TX, 0, LMS_PATH_TX2) != 0)
@@ -139,9 +136,6 @@ int SDRfrequency(lms_device_t *device, double frequency)
     msgSDR.str("");
     msgSDR << "Center frequency: " << frequency / 1e6 << " MHz" << endl;
     Logger(msgSDR.str());
-    startFreq = frequency - sampleRate / 2;
-    stopFreq = frequency + sampleRate / 2;
-    step = sampleRate / (nfft);
 
     return 0;
 }
@@ -256,8 +250,6 @@ void *startSDRStream(void *threadID)
     // Start streaming
     LMS_StartStream(&streamId);
 
-    // Streaming
-    auto t1 = chrono::high_resolution_clock::now();
     // Start streaming
     msgSDR.str("");
     msgSDR << "SDR stream started as thread no: " << threadID << " with sampleCnt (I+Q): " << sampleCnt;
