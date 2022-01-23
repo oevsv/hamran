@@ -199,13 +199,7 @@ void *startWebsocketServer(void *threadID)
         msgSOCKET.clear();
         msgSOCKET.str("");
         msgSOCKET << "{\"s\":[";
-        int i = 0;
-
-        while (i < sampleCnt)
-        {
-            c_buffer[i] = buffer[2 * i] + buffer[2 * i + 1] * complex_i;
-            i++;
-        }
+        
         // create spectral periodogram
         spgramcf q = spgramcf_create_default(nfft);
 
@@ -215,7 +209,7 @@ void *startWebsocketServer(void *threadID)
         // compute power spectral density output (repeat as necessary)
         spgramcf_get_psd(q, sp_psd);
 
-        i = 0;
+        int i = 0;
 
         while (i < nfft)
         {
@@ -259,6 +253,13 @@ void *startSDRStream(void *threadID)
     {
         pthread_mutex_lock(&SDRmutex);
         samplesRead = LMS_RecvStream(&streamId, buffer, sampleCnt, NULL, 1000);
+        int i = 0;
+
+        while (i < samplesRead)
+        {
+            c_buffer[i] = buffer[2 * i] + buffer[2 * i + 1] * complex_i;
+            i++;
+        }
         pthread_mutex_unlock(&SDRmutex);
     }
 
