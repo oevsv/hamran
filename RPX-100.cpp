@@ -113,34 +113,35 @@ int main(int argc, char *argv[])
         }
     }
 
-    pid_t pid, sid;
+    // fork if run in terminal
+    // pid_t pid, sid;
 
-    pid = fork();
-    if (pid < 0)
-    {
-        return 1;
-    }
-    if (pid > 0)
-    {
-        return 1;
-    }
+    // pid = fork();
+    // if (pid < 0)
+    // {
+    //     return 1;
+    // }
+    // if (pid > 0)
+    // {
+    //     return 1;
+    // }
 
-    umask(0);
+    // umask(0);
 
-    sid = setsid();
-    if (sid < 0)
-    {
-        return 1;
-    }
+    // sid = setsid();
+    // if (sid < 0)
+    // {
+    //     return 1;
+    // }
 
-    if ((chdir("/")) < 0)
-    {
-        return 1;
-    }
+    // if ((chdir("/")) < 0)
+    // {
+    //     return 1;
+    // }
 
-    close(STDIN_FILENO);
-    close(STDOUT_FILENO);
-    close(STDERR_FILENO);
+    // close(STDIN_FILENO);
+    // close(STDOUT_FILENO);
+    // close(STDERR_FILENO);
 
     LogInit();
     Logger("RPX-100 was started succesfully with following settings:");

@@ -199,7 +199,7 @@ void *startWebsocketServer(void *threadID)
         msgSOCKET.clear();
         msgSOCKET.str("");
         msgSOCKET << "{\"s\":[";
-        
+
         // create spectral periodogram
         spgramcf q = spgramcf_create_default(nfft);
 
@@ -221,7 +221,7 @@ void *startWebsocketServer(void *threadID)
             i++;
         }
         msgSOCKET << "]}";
-        //msgSOCKET.seekp(-1, std::ios_base::end);
+        // msgSOCKET.seekp(-1, std::ios_base::end);
         es.broadcast(msgSOCKET.str());
         spgramcf_destroy(q);
     }
@@ -335,13 +335,6 @@ void rpxServer::onConnect(int socketID)
     msgSDR.str("");
     msgSDR << "New connection: " << handle;
     Logger(msgSDR.str());
-    //this->setValue(socketID, "handle", handle);
-
-    // Transmitt FFT data
-    // while (socketsON)
-    //{
-
-    //}
 }
 
 void rpxServer::onMessage(int socketID, const string &data)
@@ -350,9 +343,9 @@ void rpxServer::onMessage(int socketID, const string &data)
     msgSDR.str("");
     msgSDR << "Received: " << data;
     Logger(msgSDR.str());
-    //const string &message = this->getValue(socketID, "handle") + ": " + data;
+    // const string &message = this->getValue(socketID, "handle") + ": " + data;
 
-    //this->broadcast(message);
+    // this->broadcast(message);
 }
 
 void rpxServer::onDisconnect(int socketID)
@@ -363,12 +356,12 @@ void rpxServer::onDisconnect(int socketID)
     Logger(msgSDR.str());
 
     // Let everyone know the user has disconnected
-    const string &message = handle + " has disconnected.";
-    for (map<int, Connection *>::const_iterator it = this->connections.begin(); it != this->connections.end(); ++it)
-        if (it->first != socketID)
-            // The disconnected connection gets deleted after this function runs, so don't try to send to it
-            // (It's still around in case the implementing class wants to perform any clean up actions)
-            this->send(it->first, message);
+    // const string &message = handle + " has disconnected.";
+    // for (map<int, Connection *>::const_iterator it = this->connections.begin(); it != this->connections.end(); ++it)
+    //     if (it->first != socketID)
+    //         // The disconnected connection gets deleted after this function runs, so don't try to send to it
+    //         // (It's still around in case the implementing class wants to perform any clean up actions)
+    //         this->send(it->first, message);
 }
 
 void rpxServer::onError(int socketID, const string &message)
