@@ -82,7 +82,7 @@ int SDRinit(double frequency, double sampleRate, int modeSelector, double normal
     Logger(msgSDR.str());
 
     // Enable TX channel,Channels are numbered starting at 0
-    if (LMS_EnableChannel(device, LMS_CH_TX, 0, true) != 0)
+    if (LMS_EnableChannel(device, LMS_CH_RX, 0, true) != 0)
     {
         error();
     }
@@ -97,7 +97,7 @@ int SDRinit(double frequency, double sampleRate, int modeSelector, double normal
     Logger(msgSDR.str());
 
     // Set center frequency
-    if (LMS_SetLOFrequency(device, LMS_CH_TX, 0, frequency) != 0)
+    if (LMS_SetLOFrequency(device, LMS_CH_RX, 0, frequency) != 0)
     {
         error();
     }
@@ -106,19 +106,19 @@ int SDRinit(double frequency, double sampleRate, int modeSelector, double normal
     Logger(msgSDR.str());
 
     // select Low TX path for LimeSDR mini --> TX port 2 (misslabed in MINI, correct in USB)
-    if (LMS_SetAntenna(device, LMS_CH_TX, 0, LMS_PATH_TX2) != 0)
+    if (LMS_SetAntenna(device, LMS_CH_RX, 0, LMS_PATH_LNAL) != 0)
     {
         error();
     }
 
     // set TX gain
-    if (LMS_SetNormalizedGain(device, LMS_CH_TX, 0, normalizedGain) != 0)
+    if (LMS_SetNormalizedGain(device, LMS_CH_RX, 0, normalizedGain) != 0)
     {
         error();
     }
 
     // calibrate Tx, continue on failure
-    LMS_Calibrate(device, LMS_CH_TX, 0, sampleRate, 0);
+    LMS_Calibrate(device, LMS_CH_RX, 0, sampleRate, 0);
 
     // Wait 12sec and send status LoRa message
     sleep(2);
