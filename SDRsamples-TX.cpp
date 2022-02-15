@@ -13,46 +13,48 @@
 
 using namespace std;
 
-
-void *OFDMframeAssemble(void *threadID)
+int OFDMframeAssemble() // Marek to complete code !!!
 {
     string message = "OE1XTU WRAN at 52.8 MHz";
-    
+
     int dataCarrier = 480;
     int subCarrier = 1024;
-    int useful_symbols = 22; 
+    int useful_symbols = 22;
     int sampleRate = 3328000;
     int cycl_pref = 4;
     int PHYmode = 1;
-    liquid_float_complex complex_i(0,1);
+    liquid_float_complex complex_i(0, 1);
 
-    switch(cycl_pref)
+    switch (cycl_pref)
     {
-    case 8:     useful_symbols = 24; 
-                sampleRate = 3225600;
-                break;
-    case 16:    useful_symbols = 26;
-                sampleRate = 3264000;
-                break;
-    case 32:    useful_symbols = 27;
-                sampleRate = 3273600;
-                break;
+    case 8:
+        useful_symbols = 24;
+        sampleRate = 3225600;
+        break;
+    case 16:
+        useful_symbols = 26;
+        sampleRate = 3264000;
+        break;
+    case 32:
+        useful_symbols = 27;
+        sampleRate = 3273600;
+        break;
     }
 
     // define frame parameters
     unsigned int cp_len = (int)subCarrier / cycl_pref; // cyclic prefix length
-    unsigned int taper_len = (int)cp_len / 4;  // taper length
+    unsigned int taper_len = (int)cp_len / 4;          // taper length
 
     int i;
     int l;
-    
+
     // define frame parameters
     unsigned int cp_len = (int)subCarrier / cycl_pref; // cyclic prefix length
-    unsigned int taper_len = (int)cp_len / 4;  // taper length
+    unsigned int taper_len = (int)cp_len / 4;          // taper length
 
     // number of bits per symbol
     float bits_per_symbol = 1;
-    
+
     // initialize frame generator properties
     ofdmflexframegenprops_s fgprops;
     ofdmflexframegenprops_init_default(&fgprops);
@@ -60,114 +62,109 @@ void *OFDMframeAssemble(void *threadID)
     fgprops.fec0 = LIQUID_FEC_NONE;
     fgprops.fec1 = LIQUID_FEC_NONE;
     fgprops.mod_scheme = LIQUID_MODEM_PSK2;
-    
-    
-    switch(PHYmode)
+
+    switch (PHYmode)
     {
-    case 1:         //presetted
-            break;
+    case 1: // presetted
+        break;
     case 2:
-                    //not supported
-            break;
+        // not supported
+        break;
     case 3:
-            fgprops.fec0 = LIQUID_FEC_CONV_V27;
-            fgprops.mod_scheme = LIQUID_MODEM_QPSK;
-            bits_per_symbol = 2.0f/2.0f;
-            break;
+        fgprops.fec0 = LIQUID_FEC_CONV_V27;
+        fgprops.mod_scheme = LIQUID_MODEM_QPSK;
+        bits_per_symbol = 2.0f / 2.0f;
+        break;
     case 4:
-            fgprops.fec0 = LIQUID_FEC_CONV_V27P23;
-            fgprops.mod_scheme = LIQUID_MODEM_QPSK;
-            bits_per_symbol = 2.0f*3.0f/2.0f;
-            break;
+        fgprops.fec0 = LIQUID_FEC_CONV_V27P23;
+        fgprops.mod_scheme = LIQUID_MODEM_QPSK;
+        bits_per_symbol = 2.0f * 3.0f / 2.0f;
+        break;
     case 5:
-            fgprops.fec0 = LIQUID_FEC_CONV_V27P34;
-            fgprops.mod_scheme = LIQUID_MODEM_QPSK;
-            bits_per_symbol = 2.0f*4.0f/3.0f;
-            break;
+        fgprops.fec0 = LIQUID_FEC_CONV_V27P34;
+        fgprops.mod_scheme = LIQUID_MODEM_QPSK;
+        bits_per_symbol = 2.0f * 4.0f / 3.0f;
+        break;
     case 6:
-            fgprops.fec0 = LIQUID_FEC_CONV_V27P56;
-            fgprops.mod_scheme = LIQUID_MODEM_QPSK;
-            bits_per_symbol = 2.0f*6.0f/5.0f;
-            break;
+        fgprops.fec0 = LIQUID_FEC_CONV_V27P56;
+        fgprops.mod_scheme = LIQUID_MODEM_QPSK;
+        bits_per_symbol = 2.0f * 6.0f / 5.0f;
+        break;
     case 7:
-            fgprops.fec0 = LIQUID_FEC_CONV_V27;
-            fgprops.mod_scheme = LIQUID_MODEM_QAM16;
-            bits_per_symbol = 4.0f/2.0f;
-            break;
+        fgprops.fec0 = LIQUID_FEC_CONV_V27;
+        fgprops.mod_scheme = LIQUID_MODEM_QAM16;
+        bits_per_symbol = 4.0f / 2.0f;
+        break;
     case 8:
-            fgprops.fec0 = LIQUID_FEC_CONV_V27P23;
-            fgprops.mod_scheme = LIQUID_MODEM_QAM16;
-            bits_per_symbol = 4.0f*3.0f/2.0f;
-            break;
+        fgprops.fec0 = LIQUID_FEC_CONV_V27P23;
+        fgprops.mod_scheme = LIQUID_MODEM_QAM16;
+        bits_per_symbol = 4.0f * 3.0f / 2.0f;
+        break;
     case 9:
-            fgprops.fec0 = LIQUID_FEC_CONV_V27P34;
-            fgprops.mod_scheme = LIQUID_MODEM_QAM16;
-            bits_per_symbol = 4.0f*4.0f/3.0f;
-            break;
+        fgprops.fec0 = LIQUID_FEC_CONV_V27P34;
+        fgprops.mod_scheme = LIQUID_MODEM_QAM16;
+        bits_per_symbol = 4.0f * 4.0f / 3.0f;
+        break;
     case 10:
-            fgprops.fec0 = LIQUID_FEC_CONV_V27P56;
-            fgprops.mod_scheme = LIQUID_MODEM_QAM16;
-            bits_per_symbol = 4.0f*6.0f/5.0f;
-            break;
+        fgprops.fec0 = LIQUID_FEC_CONV_V27P56;
+        fgprops.mod_scheme = LIQUID_MODEM_QAM16;
+        bits_per_symbol = 4.0f * 6.0f / 5.0f;
+        break;
     case 11:
-            fgprops.fec0 = LIQUID_FEC_CONV_V27;
-            fgprops.mod_scheme = LIQUID_MODEM_QAM64;
-            bits_per_symbol = 6.0f/2.0f;
-            break;
+        fgprops.fec0 = LIQUID_FEC_CONV_V27;
+        fgprops.mod_scheme = LIQUID_MODEM_QAM64;
+        bits_per_symbol = 6.0f / 2.0f;
+        break;
     case 12:
-            fgprops.fec0 = LIQUID_FEC_CONV_V27P23;
-            fgprops.mod_scheme = LIQUID_MODEM_QAM64;
-            bits_per_symbol = 6.0f*3.0f/2.0f;
-            break;
+        fgprops.fec0 = LIQUID_FEC_CONV_V27P23;
+        fgprops.mod_scheme = LIQUID_MODEM_QAM64;
+        bits_per_symbol = 6.0f * 3.0f / 2.0f;
+        break;
     case 13:
-            fgprops.fec0 = LIQUID_FEC_CONV_V27P34;
-            fgprops.mod_scheme = LIQUID_MODEM_QAM64;
-            bits_per_symbol = 6.0f*4.0f/3.0f;
-            break;
+        fgprops.fec0 = LIQUID_FEC_CONV_V27P34;
+        fgprops.mod_scheme = LIQUID_MODEM_QAM64;
+        bits_per_symbol = 6.0f * 4.0f / 3.0f;
+        break;
     case 14:
-            fgprops.fec0 = LIQUID_FEC_CONV_V27P56;
-            fgprops.mod_scheme = LIQUID_MODEM_QAM64;
-            bits_per_symbol = 6.0f*6.0f/5.0f;
-            break;
+        fgprops.fec0 = LIQUID_FEC_CONV_V27P56;
+        fgprops.mod_scheme = LIQUID_MODEM_QAM64;
+        bits_per_symbol = 6.0f * 6.0f / 5.0f;
+        break;
     }
-    
 
     // length of payload (bytes)
-    unsigned int payload_len = floor(dataCarrier * useful_symbols * bits_per_symbol / 8); 
+    unsigned int payload_len = floor(dataCarrier * useful_symbols * bits_per_symbol / 8);
     unsigned int c_buffer_len = subCarrier + cp_len; // length of buffer
 
     // buffers
     liquid_float_complex c_buffer[c_buffer_len]; // time-domain buffer
-    unsigned char header[8];                 // header data
-    unsigned char payload[payload_len];      // payload data
-    unsigned char p[subCarrier];             // subcarrier allocation (null/pilot/data)
-    unsigned int r_buffer[2*c_buffer_len];
+    unsigned char header[8];                     // header data
+    unsigned char payload[payload_len];          // payload data
+    unsigned char p[subCarrier];                 // subcarrier allocation (null/pilot/data)
+    unsigned int r_buffer[2 * c_buffer_len];
 
-
-    //subcarrier allocation
+    // subcarrier allocation
     for (i = 0; i < 1024; i++)
     {
         if (i < 232)
-            p[i] = 0; //guard band
+            p[i] = 0; // guard band
 
         if (231 < i && i < 792)
             if (i % 7 == 0)
-                p[i] = 1; //every 7th carrier pilot
+                p[i] = 1; // every 7th carrier pilot
             else
-                p[i] = 2; //rest data
+                p[i] = 2; // rest data
 
         if (i > 791)
-            p[i] = 0; //guard band
-
+            p[i] = 0; // guard band
     }
 
     // create frame generator
     ofdmflexframegen fg = ofdmflexframegen_create(subCarrier, cp_len, taper_len, p, &fgprops);
 
     // ... initialize header/payload ...
-    
-    strcpy((char *)payload, message.c_str() );
 
+    strcpy((char *)payload, message.c_str());
 
     header[0] = '0';
     header[1] = '0';
@@ -178,7 +175,6 @@ void *OFDMframeAssemble(void *threadID)
     header[6] = '0';
     header[7] = '0';
 
-
     // assemble frame
     ofdmflexframegen_assemble(fg, header, payload, payload_len);
 
@@ -187,26 +183,69 @@ void *OFDMframeAssemble(void *threadID)
     l = 0;
 
     while (!last_symbol)
-    {    
+    {
         pthread_mutex_lock(&SDRmutex);
         // generate each OFDM symbol
         last_symbol = ofdmflexframegen_write(fg, c_buffer, c_buffer_len);
 
-        for (i=0; i<c_buffer_len; i++)
+        for (i = 0; i < c_buffer_len; i++)
         {
-            r_buffer[2*i]=c_buffer.real;
-            r_buffer[2*i+1]=c_buffer.imag;
+            // r_buffer[2*i]=c_buffer.real;
+            // r_buffer[2*i+1]=c_buffer.imag;
         }
         pthread_mutex_unlock(&SDRmutex);
     }
-
-
 }
 
-void *startSDR-TX-Stream(void *threadID) // NOT FINISHED !!!
+void *sendBeacon(void *threadID)
 {
-    uint16_t interval = 10; //time between beacon frames
-    
+    uint16_t interval = 10; // time in minutes between beacon frames
+    auto t1 = chrono::high_resolution_clock::now();
+    auto t2 = t1;
+
+    while (txON)
+    {
+        if (chrono::high_resolution_clock::now() - t2 > chrono::seconds(60 * interval))
+        {
+            t2 = chrono::high_resolution_clock::now();
+
+            // call OFDMframeAssemble()
+            // Marek to add code !!!
+
+            // call SDRinitTX (TX6mPTT)
+            modeSelector = 6;
+            if (SDRinitTX(52.8e6, 2e6, modeSelector, 1) != 0)
+            {
+                msgSDR.str("");
+                msgSDR << "ERROR: " << LMS_GetLastErrorMessage();
+                Logger(msgSDR.str());
+            }
+
+            // call startSDRTXStream()
+            // Marek to add code !!!
+
+            // call SDRiniTX(RX)
+            modeSelector = 0;
+            if (SDRinitTX(52.8e6, 2e6, modeSelector, 1) != 0)
+            {
+                msgSDR.str("");
+                msgSDR << "ERROR: " << LMS_GetLastErrorMessage();
+                Logger(msgSDR.str());
+            }
+
+            msgSDR.str("");
+            msgSDR << "Send Beacon";
+            Logger(msgSDR.str());
+        }
+    }
+
+    pthread_exit(NULL);
+}
+
+int startSDRTXStream() // Marek to complete code !!!
+{
+    uint16_t interval = 10; // time between beacon frames
+
     // Initialize stream
     lms_stream_t streamId;                        // stream structure
     streamId.channel = 0;                         // channel number
@@ -220,23 +259,15 @@ void *startSDR-TX-Stream(void *threadID) // NOT FINISHED !!!
     // Start streaming
     LMS_StartStream(&streamId);
 
-    // Start streaming
-    msgSDR.str("");
-    msgSDR << "SDR stream started as thread no: " << threadID << " with sampleCnt (I+Q): " << sampleCnt;
-    Logger(msgSDR.str());
-
-    
-
     auto t1 = chrono::high_resolution_clock::now();
     pthread_mutex_lock(&SDRmutex);
-        
+
     // transmitting the buffer
-    int ret = LMS_SendStream(&streamID, r_buffer, c_buffer_len, nullptr, 1000);
-        
+    // int ret = LMS_SendStream(&streamId, r_buffer, c_buffer_len, nullptr, 1000);
+
     pthread_mutex_unlock(&SDRmutex);
-        
+
     //    while (chrono::high_resolution_clock::now() - t1 < chrono::seconds(interval)); // wait for another transmission
-    
 
     // Stop streaming
     LMS_StopStream(&streamId);            // stream is stopped but can be started again with LMS_StartStream()
@@ -249,11 +280,9 @@ void *startSDR-TX-Stream(void *threadID) // NOT FINISHED !!!
         msgSDR << "Closed" << endl;
         Logger(msgSDR.str());
     }
-    pthread_exit(NULL);
 }
 
-
-int SDRinit-TX(double frequency, double sampleRate, int modeSelector, double normalizedGain)
+int SDRinitTX(double frequency, double sampleRate, int modeSelector, double normalizedGain)
 {
     // Find devices
     int n;
@@ -366,133 +395,6 @@ int SDRinit-TX(double frequency, double sampleRate, int modeSelector, double nor
     return 0;
 }
 
-int SDRinit(double frequency, double sampleRate, int modeSelector, double normalizedGain)
-{
-    // Find devices
-    int n;
-    lms_info_str_t list[8]; // should be large enough to hold all detected devices
-    if ((n = LMS_GetDeviceList(list)) < 0)
-    {
-        error(); // NULL can be passed to only get number of devices
-    }
-    msgSDR.str("");
-    msgSDR << "Number of devices found: " << n;
-    Logger(msgSDR.str()); // print number of devices
-    if (n < 1)
-    {
-        return -1;
-    }
-
-    // open the first device
-    if (LMS_Open(&device, list[0], NULL))
-    {
-        error();
-    }
-    sleep(1);
-
-    // Initialize device with default configuration
-    if (LMS_Init(device) != 0)
-    {
-        error();
-    }
-    sleep(1);
-
-    // Set SDR GPIO diretion GPIO0-5 to output and GPIO6-7 to input
-    uint8_t gpio_dir = 0xFF;
-    if (LMS_GPIODirWrite(device, &gpio_dir, 1) != 0)
-    {
-        error();
-    }
-
-    // Read and log GPIO direction settings
-    uint8_t gpio_val = 0;
-    if (LMS_GPIODirRead(device, &gpio_val, 1) != 0)
-    {
-        error();
-    }
-    msgSDR.str("");
-    msgSDR << "Set GPIOs direction to output.\n";
-    Logger(msgSDR.str());
-
-    // Set GPIOs to RX mode (initial settings)
-    if (LMS_GPIOWrite(device, &modeGPIO[modeSelector], 1) != 0)
-    {
-        error();
-    }
-
-    // Read and log GPIO values
-    if (LMS_GPIORead(device, &gpio_val, 1) != 0)
-    {
-        error();
-    }
-    msgSDR.str("");
-    msgSDR << "GPIO Output to High Level:\n";
-    print_gpio(gpio_val);
-    Logger(msgSDR.str());
-
-    msgSDR.str("");
-    msgSDR << "LimeRFE set to " << modeName[modeSelector] << endl;
-    Logger(msgSDR.str());
-
-    // Enable TX channel,Channels are numbered starting at 0
-    if (LMS_EnableChannel(device, LMS_CH_RX, 0, true) != 0)
-    {
-        error();
-    }
-
-    // Set sample rate
-    if (LMS_SetSampleRate(device, sampleRate, 0) != 0)
-    {
-        error();
-    }
-    msgSDR.str("");
-    msgSDR << "Sample rate: " << sampleRate / 1e6 << " MHz" << endl;
-    Logger(msgSDR.str());
-
-    // Set center frequency
-    if (LMS_SetLOFrequency(device, LMS_CH_RX, 0, frequency) != 0)
-    {
-        error();
-    }
-    msgSDR.str("");
-    msgSDR << "Center frequency: " << frequency / 1e6 << " MHz" << endl;
-    Logger(msgSDR.str());
-
-    // select Low TX path for LimeSDR mini --> TX port 2 (misslabed in MINI, correct in USB)
-    if (LMS_SetAntenna(device, LMS_CH_RX, 0, LMS_PATH_LNAL) != 0)
-    {
-        error();
-    }
-
-    // set TX gain
-    if (LMS_SetNormalizedGain(device, LMS_CH_RX, 0, normalizedGain) != 0)
-    {
-        error();
-    }
-
-    // calibrate Tx, continue on failure
-    LMS_Calibrate(device, LMS_CH_RX, 0, sampleRate, 0);
-
-    // Wait 12sec and send status LoRa message
-    sleep(2);
-
-    return 0;
-}
-
-int SDRfrequency(lms_device_t *device, double frequency)
-{
-    // Set center frequency
-    if (LMS_SetLOFrequency(device, LMS_CH_TX, 0, frequency) != 0)
-    {
-        error();
-    }
-    msgSDR.str("");
-    msgSDR << "Center frequency: " << frequency / 1e6 << " MHz" << endl;
-    Logger(msgSDR.str());
-
-    return 0;
-}
-
 int error()
 {
     msgSDR.str("");
@@ -510,216 +412,4 @@ void print_gpio(uint8_t gpio_val)
         bool set = gpio_val & (0x01 << i);
         msgSDR << "GPIO" << i << ": " << (set ? "High" : "Low") << std::endl;
     }
-}
-
-void *startSocketServer(void *threadID)
-{
-    ServerSocket RPX_server(RPX_port);
-    msgSDR.str("");
-    msgSDR << "Socket server started as thread no: " << threadID << " using port: " << RPX_port << ", rxON=" << rxON;
-    Logger(msgSDR.str());
-    pthread_t connects[NUM_CONNECTS];
-    ConCurSocket = 0;
-    while (socketsON)
-    {
-        // ServerSocket RPX_socket[NUM_CONNECTS];
-        if (ConCurSocket < NUM_CONNECTS)
-        {
-            RPX_server.accept(RPX_socket[ConCurSocket]);
-            // Start thread for SocketServer
-            if (pthread_create(&connects[ConCurSocket], NULL, startSocketConnect, (void *)ConCurSocket) != 0)
-            {
-                msgSDR.str("");
-                msgSDR << "ERROR starting thread " << ConCurSocket;
-                Logger(msgSDR.str());
-            }
-            ConCurSocket++;
-        }
-    }
-    pthread_exit(NULL);
-}
-
-void *startWebsocketServer(void *threadID)
-{
-    rpxServer es = rpxServer(PORT_NUMBER);
-    stringstream msgSOCKET;
-    while (socketsON)
-    {
-        // Handle websocket stuff
-        es.wait(TIMEOUT);
-
-        // Handle SDR FFT
-        msgSOCKET.clear();
-        msgSOCKET.str("");
-        msgSOCKET << "{\"s\":[";
-
-        // create spectral periodogram
-        spgramcf q = spgramcf_create_default(nfft);
-
-        // write block of samples to spectral periodogram object
-        spgramcf_write(q, c_buffer, sampleCnt);
-
-        // compute power spectral density output (repeat as necessary)
-        spgramcf_get_psd(q, sp_psd);
-
-        int i = 0;
-
-        while (i < nfft)
-        {
-            msgSOCKET << to_string((int)sp_psd[i]);
-            if (i < nfft - 1)
-            {
-                msgSOCKET << ",";
-            }
-            i++;
-        }
-        msgSOCKET << "]}";
-        // msgSOCKET.seekp(-1, std::ios_base::end);
-        es.broadcast(msgSOCKET.str());
-        spgramcf_destroy(q);
-    }
-
-    pthread_exit(NULL);
-}
-
-void *startSDRStream(void *threadID)
-{
-    // Initialize stream
-    lms_stream_t streamId;                        // stream structure
-    streamId.channel = 0;                         // channel number
-    streamId.fifoSize = 1024 * 1024;              // fifo size in samples
-    streamId.throughputVsLatency = 1.0;           // optimize for max throughput
-    streamId.isTx = false;                        // RX channel
-    streamId.dataFmt = lms_stream_t::LMS_FMT_F32; // 12-bit integers
-    if (LMS_SetupStream(device, &streamId) != 0)
-        error();
-
-    // Start streaming
-    LMS_StartStream(&streamId);
-
-    // Start streaming
-    msgSDR.str("");
-    msgSDR << "SDR stream started as thread no: " << threadID << " with sampleCnt (I+Q): " << sampleCnt;
-    Logger(msgSDR.str());
-
-    while (rxON)
-    {
-        pthread_mutex_lock(&SDRmutex);
-        samplesRead = LMS_RecvStream(&streamId, buffer, sampleCnt, NULL, 1000);
-        int i = 0;
-
-        while (i < samplesRead)
-        {
-            c_buffer[i] = buffer[2 * i] + buffer[2 * i + 1] * complex_i;
-            i++;
-        }
-        pthread_mutex_unlock(&SDRmutex);
-    }
-
-    // Stop streaming
-    LMS_StopStream(&streamId);            // stream is stopped but can be started again with LMS_StartStream()
-    LMS_DestroyStream(device, &streamId); // stream is deallocated and can no longer be used
-
-    // Close device
-    if (LMS_Close(device) == 0)
-    {
-        msgSDR.str("");
-        msgSDR << "Closed" << endl;
-        Logger(msgSDR.str());
-    }
-    pthread_exit(NULL);
-}
-
-void *startSocketConnect(void *threadID)
-{
-    msgSDR.str("");
-    msgSDR << "Socket connection started as connect no: " << (int)threadID << " using port: " << RPX_port << ", rxON=" << rxON;
-    Logger(msgSDR.str());
-
-    while (socketsON)
-    {
-        stringstream msgSOCKET;
-        msgSOCKET << "{\"s\":[";
-        int i = 0;
-
-        while (i < sampleCnt)
-        {
-            c_buffer[i] = buffer[2 * i] + buffer[2 * i + 1] * complex_i;
-            i++;
-        }
-        // create spectral periodogram
-        spgramcf q = spgramcf_create_default(nfft);
-
-        // write block of samples to spectral periodogram object
-        spgramcf_write(q, c_buffer, sampleCnt);
-
-        // compute power spectral density output (repeat as necessary)
-        spgramcf_get_psd(q, sp_psd);
-
-        i = 0;
-
-        while (i < nfft)
-        {
-            msgSOCKET << to_string(sp_psd[i]);
-            if (i < nfft - 1)
-            {
-                msgSOCKET << ",";
-            }
-            i++;
-        }
-        msgSOCKET << "]}" << endl;
-        RPX_socket[(int)threadID] << msgSOCKET.str();
-        spgramcf_destroy(q);
-    }
-    pthread_exit(NULL);
-}
-
-rpxServer::rpxServer(int port) : WebSocketServer(port)
-{
-}
-
-rpxServer::~rpxServer()
-{
-}
-
-void rpxServer::onConnect(int socketID)
-{
-    const string &handle = "User #" + Util::toString(socketID);
-    msgSDR.str("");
-    msgSDR << "New connection: " << handle;
-    Logger(msgSDR.str());
-}
-
-void rpxServer::onMessage(int socketID, const string &data)
-{
-    // Send the received message to all connected clients in the form of 'User XX: message...'
-    msgSDR.str("");
-    msgSDR << "Received: " << data;
-    Logger(msgSDR.str());
-    // const string &message = this->getValue(socketID, "handle") + ": " + data;
-
-    // this->broadcast(message);
-}
-
-void rpxServer::onDisconnect(int socketID)
-{
-    const string &handle = this->getValue(socketID, "handle");
-    msgSDR.str("");
-    msgSDR << "Disconnected: " << handle;
-    Logger(msgSDR.str());
-
-    // Let everyone know the user has disconnected
-    // const string &message = handle + " has disconnected.";
-    // for (map<int, Connection *>::const_iterator it = this->connections.begin(); it != this->connections.end(); ++it)
-    //     if (it->first != socketID)
-    //         // The disconnected connection gets deleted after this function runs, so don't try to send to it
-    //         // (It's still around in case the implementing class wants to perform any clean up actions)
-    //         this->send(it->first, message);
-}
-
-void rpxServer::onError(int socketID, const string &message)
-{
-    msgSDR.str("");
-    msgSDR << "Error: " << message;
-    Logger(msgSDR.str());
 }

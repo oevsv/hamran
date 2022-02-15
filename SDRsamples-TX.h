@@ -55,16 +55,11 @@ extern pthread_mutex_t SDRmutex;
 
 // SDR facility
 lms_device_t *device = NULL;
-int SDRinit(double frequency, double sampleRate, int modeSelector, double normalizedGain);
-int SDRinit-TX(double frequency, double sampleRate, int modeSelector, double normalizedGain);
-int SDRfrequency(lms_device_t *device, double frequency);
+int SDRinitTX(double frequency, double sampleRate, int modeSelector, double normalizedGain);
 string exec(string command);
-void *startSocketServer(void *threadID);
-void *startSDRStream(void *threadID);
-void *startSDR-TX-Stream(void *threadID);
-void *startSocketConnect(void *threadID);
-void *startWebsocketServer(void *threadID);
-void *OFDMframeAssemble(void *threadID);
+int startSDRTXStream();
+int OFDMframeAssemble();
+void *sendBeacon(void *threadID);
 int error();
 extern double frequency;
 extern double sampleRate;
@@ -100,31 +95,6 @@ liquid_float_complex c_buffer[sampleCnt]; // complex buffer to hold SDR sample i
 liquid_float_complex complex_i(0,1);
 int samplesRead = 1048;
 
-// Initialize buffer for spectogram
-const int nfft = 512;
-liquid_float_complex c_sp_buf[sampleCnt]; // complex buffer to hold spectogram data result
-float sp_psd[nfft];
-int colormap = 3;
-double step = sampleRate / (nfft);
-
 bool rxON = true;
 bool txON = true;
 
-// Socket Server facility
-int RPX_port = 5254;
-string RPX_host = "10.0.0.5";
-ServerSocket RPX_socket[NUM_CONNECTS];
-int ConCurSocket;
-bool socketsON = true;
-
-// For any real project this should be defined separately in a header file
-class rpxServer : public WebSocketServer
-{
-public: 
-    rpxServer( int port );
-    ~rpxServer( );
-    virtual void onConnect(    int socketID                        );
-    virtual void onMessage(    int socketID, const string& data    );
-    virtual void onDisconnect( int socketID                        );
-    virtual void   onError(    int socketID, const string& message );
-};

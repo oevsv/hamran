@@ -151,7 +151,7 @@ int main(int argc, char *argv[])
     Logger(msg.str());
 
     // Initialize LimeSDR
-    if (SDRinit-TX(52.8e6, 2e6, modeSel, 1) != 0)
+    if (SDRinitTX(52.8e6, 2e6, modeSel, 1) != 0)
     {
         msg.str("");
         msg << "ERROR: " << LMS_GetLastErrorMessage();
@@ -159,46 +159,15 @@ int main(int argc, char *argv[])
     }
 
     pthread_t threads[NUM_THREADS];
-    pthread_mutex_init(&SDRmutex,0);
+    pthread_mutex_init(&SDRmutex, 0);
 
-    // Start thread for SDR Stream
-    // if (pthread_create(&threads[1], NULL, startSDRStream, (void *)1) != 0)
-    // {
-    //     msg.str("");
-    //     msg << "ERROR starting thread 1";
-    //     Logger(msg.str());
-    // }
-
-    // Start thread for SocketServer
-    // if (pthread_create(&threads[2], NULL, startSocketServer, (void *)2) != 0)
-    // {
-    //     msg.str("");
-    //     msg << "ERROR starting thread 2";
-    //     Logger(msg.str());
-    // }
-    
-    // Start thread for WebSocket proxy
-    // if (pthread_create(&threads[3], NULL, startWebsocketServer, (void *)3) != 0)
-    // {
-    //     msg.str("");
-    //     msg << "ERROR starting thread 3";
-    //     Logger(msg.str());
-    // }
-
-        if (pthread_create(&threads[4], NULL, OFDMframeAssemble, (void *)4) != 0)
+    if (pthread_create(&threads[4], NULL, sendBeacon, (void *)4) != 0)
     {
         msg.str("");
         msg << "ERROR starting thread 4";
         Logger(msg.str());
     }
 
-        if (pthread_create(&threads[5], NULL, startSDR-TX-Stream, (void *)5) != 0)
-    {
-        msg.str("");
-        msg << "ERROR starting thread 5";
-        Logger(msg.str());
-    }
-    
     pthread_mutex_destroy(&SDRmutex);
     pthread_exit(NULL);
 }

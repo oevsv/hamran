@@ -47,14 +47,13 @@ pthread_mutex_t SDRmutex;
 // SDR facility
 
 int SDRinit(double frequency, double sampleRate, int modeSelector, double normalizedGain);
-int SDRinit-TX(double frequency, double sampleRate, int modeSelector, double normalizedGain);
+int SDRinitTX(double frequency, double sampleRate, int modeSelector, double normalizedGain);
 int SDRfrequency(lms_device_t *device, double frequency);
 void *startSocketServer(void *threadID);
 void *startSDRStream(void *threadID);
-void *startSDR-TX-Stream(void *threadID);
 void *startSocketConnect(void *threadID);
 void *startWebsocketServer(void *threadID);
-void *OFDMframeAssemble(void *threadID);
+void *sendBeacon(void *threadID);
 int error();
 
 // Log facility
