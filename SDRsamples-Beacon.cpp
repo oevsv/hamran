@@ -5,11 +5,11 @@
  * Author: Bernhard Isemann
  *
  * Created on 06 Jan 2022, 10:35
- * Updated on 10 Feb 2022, 17:20
+ * Updated on 15 Feb 2022, 17:20
  * Version 2.00
  *****************************************************************************/
 
-#include "SDRsamples-TX.h"
+#include "SDRsamples-Beacon.h"
 
 using namespace std;
 

@@ -6,7 +6,7 @@
  *         Marek Honek
  *
  * Created on 19 Sep 2021, 12:37
- * Updated on 10 Feb 2022, 17:00
+ * Updated on 15 Feb 2022, 17:00
  * Version 2.00
  *****************************************************************************/
 
@@ -67,4 +67,4 @@ double sampleRate = 2e6;
 int modeSelector;
 double normalizedGain = 1;
 string mode = "TX6m";
-int modeSel = 2;
+int modeSel = 6;
