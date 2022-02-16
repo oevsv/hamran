@@ -197,6 +197,8 @@ int OFDMframeAssemble(int PHYmode, int cycl_pref, int *r_frame_buffer, int *samp
     }
 }
 
+//
+
 void *sendBeacon(void *threadID)
 {
     uint16_t interval = 10; // time in minutes between beacon frames
