@@ -75,8 +75,6 @@ uint8_t modeGPIO[9] = {setRX, setTXDirect, setTX6m, setTX2m, setTX70cm, setTXDir
 lms_device_t *device = NULL;
 int SDRinitTX(double frequency, int modeSelector, double normalizedGain);
 int SDRfrequency(lms_device_t *device, double frequency);
-int startSDRTXStream();
-int BeaconFrameAssemble();
 void *startSocketServer(void *threadID);
 void *startSDRStream(void *threadID);
 void *startSocketConnect(void *threadID);
@@ -98,8 +96,6 @@ string mode = "TX6m";
 int modeSel = 6;
 
 // Initialize sdr buffers
-const int sampleCnt = 1048;  // complex samples per buffer --> a "sample" is I + Q values in float or int
-float buffer[sampleCnt * 2]; // buffer to hold samples (each I + Q) --> buffer size = 2 * no of samples
 liquid_float_complex c_buffer[sampleCnt]; // complex buffer to hold SDR sample in complex domain
 liquid_float_complex complex_i(0,1);
 int samplesRead = 1048;
@@ -111,8 +107,7 @@ bool txON = true;
 unsigned int cp_len
 unsigned int taper_len
 
-//frame generator properties
-ofdmflexframegenprops_s fgprops;
-
-int subcarrier_allocation (int *array);
-int DefineFrameGenerator (int dp_cycl_pref; int dp_PHYmode, ofdmflexframegen *generator);
+int startSDRTXStream(int tx_buffer, int FrameSampleCnt);
+int BeaconFrameAssemble(int *symbols, int *r_frame_buffer);
+void subcarrier_allocation (int *array);
+int DefineFrameGenerator (int dfg_cycl_pref, int dfg_PHYmode, ofdmflexframegen *generator, unsigned int *dfg_c_buffer_len, unsigned int *dfg_payload_len);
