@@ -7,21 +7,15 @@
 			"command": "/usr/bin/g++",
 			"args": [
 				"-g",
-				"${workspaceFolder}/*.cpp",
-				"-g",
-				"${workspaceFolder}/sockets/*.cpp",
+				"${file}",
 				"-o",
 				"${workspaceFolder}/${fileBasenameNoExtension}",
 				"-lLimeSuite",
 				"-L/usr/lib",
 				"-lpthread",
 				"-L/usr/lib",
-				"-lasound",
-				"-L/usr/lib",
 				"-lliquid",
 				"-L/usr/lib",
-				"-lwebsockets",
-				"-L/usr/lib"
 			],
 			"options": {
 				"cwd": "${workspaceFolder}"

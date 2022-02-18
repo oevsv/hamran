@@ -119,7 +119,7 @@ void *sendBeacon(void *threadID)
     
     while (txON)
     {
-        if (chrono::high_resolution_clock::now() - t2 > chrono::seconds(60 * interval))
+        if (chrono::high_resolution_clock::now() - t2 > chrono::seconds(/*60 * */ interval))
         {
             t2 = chrono::high_resolution_clock::now();
 
