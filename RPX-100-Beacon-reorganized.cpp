@@ -112,15 +112,16 @@ void *sendBeacon(void *threadID)
     auto t1 = chrono::high_resolution_clock::now();
     auto t2 = t1;
     int frameSymbols;
-    int buffer[32*(int)(SUBCARRIERS+SUBCARRIERS/4)]
-
+    int buffer[2*32*(int)(SUBCARRIERS+SUBCARRIERS/4)]
+    
+    
+    int symbolSampleCnt = BeaconFrameAssemble(&frameSymbols, buffer);
+    
     while (txON)
     {
         if (chrono::high_resolution_clock::now() - t2 > chrono::seconds(60 * interval))
         {
             t2 = chrono::high_resolution_clock::now();
-
-            int sampleCnt = BeaconFrameAssemble(&frameSymbols, buffer);
 
             // call SDRinitTX (TX6mPTT)
             if (SDRinitTX(52.8e6, 6, 1) != 0)
@@ -130,7 +131,7 @@ void *sendBeacon(void *threadID)
                 Logger(msgSDR.str());
             }
 
-            call startSDRTXStream(buffer, frameSymbols*sampleCnt);
+            startSDRTXStream(buffer, frameSymbols*symbolSampleCnt);
 
             // call SDRiniTX (RX)
             if (SDRinitTX(52.8e6, 0, 1) != 0)
@@ -156,7 +157,7 @@ int BeaconFrameAssemble(int *symbols, int *r_frame_buffer) // Marek to complete 
     liquid_float_complex complex_i(0, 1);
     
     unsigned int payload_len;
-    unsigned int c_buffer_len;
+    int c_buffer_len;
     // create frame generator
     ofdmflexframegen fg;
 
@@ -166,7 +167,6 @@ int BeaconFrameAssemble(int *symbols, int *r_frame_buffer) // Marek to complete 
     liquid_float_complex c_buffer[c_buffer_len]; // time-domain buffer
     unsigned char header[8];                     // header data
     unsigned char payload[payload_len];          // payload data
-    unsigned int r_buffer[2 * c_buffer_len];
 
     // ... initialize header/payload ...
 
