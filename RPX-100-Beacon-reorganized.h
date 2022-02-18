@@ -85,7 +85,7 @@ string exec(string command);
 
 // Log facility
 void print_gpio(uint8_t gpio_val);
-std::stringstream msg;
+std::stringstream msgSDR;
 std::stringstream HEXmsg;
 
 // SDR values
@@ -96,7 +96,6 @@ string mode = "TX6m";
 int modeSel = 6;
 
 // Initialize sdr buffers
-liquid_float_complex c_buffer[sampleCnt]; // complex buffer to hold SDR sample in complex domain
 liquid_float_complex complex_i(0,1);
 int samplesRead = 1048;
 
@@ -104,10 +103,10 @@ bool rxON = true;
 bool txON = true;
 
 //Beacon frame parameters
-unsigned int cp_len
-unsigned int taper_len
+unsigned int cp_len;
+unsigned int taper_len;
 
-int startSDRTXStream(int tx_buffer, int FrameSampleCnt);
+int startSDRTXStream(int *tx_buffer, int FrameSampleCnt);
 int BeaconFrameAssemble(int *symbols, int *r_frame_buffer);
-void subcarrier_allocation (int *array);
+void subcarrier_allocation (unsigned char *array);
 int DefineFrameGenerator (int dfg_cycl_pref, int dfg_PHYmode, ofdmflexframegen *generator, unsigned int *dfg_c_buffer_len, unsigned int *dfg_payload_len);

@@ -88,18 +88,18 @@ int main(int argc, char *argv[])
 
     LogInit();
     Logger("RPX-100-TX was started succesfully with following settings:");
-    msg.str("");
-    msg << "Mode: " << mode;
-    Logger(msg.str());
+    msgSDR.str("");
+    msgSDR << "Mode: " << mode;
+    Logger(msgSDR.str());
 
     pthread_t threads[NUM_THREADS];
     pthread_mutex_init(&SDRmutex, 0);
 
     if (pthread_create(&threads[4], NULL, sendBeacon, (void *)4) != 0)
     {
-        msg.str("");
-        msg << "ERROR starting thread 4";
-        Logger(msg.str());
+        msgSDR.str("");
+        msgSDR << "ERROR starting thread 4";
+        Logger(msgSDR.str());
     }
 
     pthread_mutex_destroy(&SDRmutex);
@@ -112,7 +112,7 @@ void *sendBeacon(void *threadID)
     auto t1 = chrono::high_resolution_clock::now();
     auto t2 = t1;
     int frameSymbols;
-    int buffer[2*32*(int)(SUBCARRIERS+SUBCARRIERS/4)]
+    int buffer[2*32*(int)(SUBCARRIERS+SUBCARRIERS/4)];
     
     
     int symbolSampleCnt = BeaconFrameAssemble(&frameSymbols, buffer);
@@ -157,11 +157,11 @@ int BeaconFrameAssemble(int *symbols, int *r_frame_buffer) // Marek to complete 
     liquid_float_complex complex_i(0, 1);
     
     unsigned int payload_len;
-    int c_buffer_len;
+    uint c_buffer_len;
     // create frame generator
     ofdmflexframegen fg;
 
-    symbols = DefineFrameGenerator (DEFAULT_CYCL_PREFIX, DEFAULT_PHY_MODE, &fg, &c_buffer_len, &payload_len)
+    *symbols = DefineFrameGenerator(DEFAULT_CYCL_PREFIX, DEFAULT_PHY_MODE, &fg, &c_buffer_len, &payload_len);
 
     // buffers
     liquid_float_complex c_buffer[c_buffer_len]; // time-domain buffer
@@ -185,8 +185,8 @@ int BeaconFrameAssemble(int *symbols, int *r_frame_buffer) // Marek to complete 
     ofdmflexframegen_assemble(fg, header, payload, payload_len);
 
     int last_symbol = 0;
-    i = 0;
-    l = 0;
+    int i = 0;
+    int l = 0;
 
     while (!last_symbol)
     {
@@ -197,8 +197,8 @@ int BeaconFrameAssemble(int *symbols, int *r_frame_buffer) // Marek to complete 
 
     for (i = 0; i < c_buffer_len; i++)
     {
-        r_frame_buffer[l*2*c_buffer_len+2*i]=c_buffer.real;
-        r_frame_buffer[l*2*c_buffer_len+2*i+1]=c_buffer.imag;
+        r_frame_buffer[l*2*c_buffer_len+2*i]=c_buffer->real();
+        r_frame_buffer[l*2*c_buffer_len+2*i+1]=c_buffer->imag();
     }
     l++;
     
@@ -208,7 +208,7 @@ int BeaconFrameAssemble(int *symbols, int *r_frame_buffer) // Marek to complete 
     return c_buffer_len;
 }
 
-int startSDRTXStream(int tx_buffer, int FrameSampleCnt) // Marek to complete code !!!
+int startSDRTXStream(int *tx_buffer, int FrameSampleCnt) // Marek to complete code !!!
 {
     uint16_t interval = 10; // time between beacon frames
 
@@ -246,6 +246,8 @@ int startSDRTXStream(int tx_buffer, int FrameSampleCnt) // Marek to complete cod
         msgSDR << "Closed" << endl;
         Logger(msgSDR.str());
     }
+
+    return 0;
 }
 
 int SDRinitTX(double frequency, int modeSelector, double normalizedGain)
@@ -383,7 +385,7 @@ void print_gpio(uint8_t gpio_val)
 int DefineFrameGenerator (int dfg_cycl_pref, int dfg_PHYmode, ofdmflexframegen *generator, unsigned int *dfg_c_buffer_len, unsigned int *dfg_payload_len)
 {
 
-    uint8_t = useful_symbols;
+    uint8_t useful_symbols;
     // initialize frame generator properties
     ofdmflexframegenprops_s fgprops;
     ofdmflexframegenprops_init_default(&fgprops);
@@ -414,10 +416,11 @@ int DefineFrameGenerator (int dfg_cycl_pref, int dfg_PHYmode, ofdmflexframegen *
 
     unsigned int cp_len = (int)SUBCARRIERS / dfg_cycl_pref; // cyclic prefix length
     unsigned int taper_len = (int)cp_len / 4;          // taper length
+    float bits_per_symbol;
 
     switch (dfg_PHYmode)
     {
-        float bits_per_symbol;
+        
     case 1: 
         fgprops.fec0 = LIQUID_FEC_NONE;
         fgprops.mod_scheme = LIQUID_MODEM_PSK2;
@@ -491,18 +494,18 @@ int DefineFrameGenerator (int dfg_cycl_pref, int dfg_PHYmode, ofdmflexframegen *
     }
 
     // length of payload (bytes)
-    dfg_payload_len = floor(DATACARRIERS * useful_symbols * bits_per_symbol / 8);
-    dfg_c_buffer_len = SUBCARRIERS + cp_len; // length of buffer
+    *dfg_payload_len = floor(DATACARRIERS * useful_symbols * bits_per_symbol / 8);
+    *dfg_c_buffer_len = SUBCARRIERS + cp_len; // length of buffer
 
     unsigned char allocation_array[SUBCARRIERS];      // subcarrier allocation array(null/pilot/data)
     subcarrier_allocation(allocation_array);
     
-    fg = ofdmflexframegen_create(SUBCARRIERS, cp_len, taper_len, allocation_array, &fgprops);
+    *generator = ofdmflexframegen_create(SUBCARRIERS, cp_len, taper_len, allocation_array, &fgprops);
 
-    return useful_symbols+4
+    return useful_symbols+4;
 }
 
-void subcarrier_allocation (int *array)
+void subcarrier_allocation (unsigned char *array)
 {
     for (int i = 0; i < 1024; i++)
     {
