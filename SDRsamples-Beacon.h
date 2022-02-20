@@ -5,7 +5,7 @@
  * Author: Bernhard Isemann
  *
  * Created on 06 Jan 2022, 12:37
- * Updated on 15 Feb 2022, 17:00
+ * Updated on 20 Feb 2022, 17:00
  * Version 2.00
  *****************************************************************************/
 
@@ -50,12 +50,17 @@
 #define NUM_CONNECTS 5 // max number of sockets connections
 #define PORT_NUMBER 8084
 #define TIMEOUT 500
+#define SUBCARRIERS 1024
+#define DATACARRIERS 480
+#define DEFAULT_PHY_MODE 1
+#define DEFAULT_CYCL_PREFIX 4
 
 extern pthread_mutex_t SDRmutex;
 
 // SDR facility
 lms_device_t *device = NULL;
 int SDRinitTX(double frequency, double sampleRate, int modeSelector, double normalizedGain);
+int SDRset(double frequency, double sampleRate, int modeSelector, double normalizedGain);
 string exec(string command);
 int startSDRTXStream();
 int OFDMframeAssemble();
@@ -98,3 +103,11 @@ int samplesRead = 1048;
 bool rxON = true;
 bool txON = true;
 
+//Beacon frame parameters
+unsigned int cp_len;
+unsigned int taper_len;
+
+int startSDRTXStream(int *tx_buffer, int FrameSampleCnt);
+int BeaconFrameAssemble(int *symbols, int *r_frame_buffer);
+void subcarrier_allocation (unsigned char *array);
+int DefineFrameGenerator (int dfg_cycl_pref, int dfg_PHYmode, ofdmflexframegen *generator, unsigned int *dfg_c_buffer_len, unsigned int *dfg_payload_len);
