@@ -15,7 +15,7 @@
 				"-lpthread",
 				"-L/usr/lib",
 				"-lliquid",
-				"-L/usr/lib",
+				"-L/usr/lib"
 			],
 			"options": {
 				"cwd": "${workspaceFolder}"

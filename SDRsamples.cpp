@@ -161,9 +161,10 @@ void print_gpio(uint8_t gpio_val)
 
 void *startSocketServer(void *threadID)
 {
+    int *thID = (int*)threadID;
     ServerSocket RPX_server(RPX_port);
     msgSDR.str("");
-    msgSDR << "Socket server started as thread no: " << threadID << " using port: " << RPX_port << ", rxON=" << rxON;
+    msgSDR << "Socket server started as thread no: " << thID << " using port: " << RPX_port << ", rxON=" << rxON;
     Logger(msgSDR.str());
     pthread_t connects[NUM_CONNECTS];
     ConCurSocket = 0;
@@ -279,8 +280,9 @@ void *startSDRStream(void *threadID)
 
 void *startSocketConnect(void *threadID)
 {
+    int *thID = (int*)threadID;
     msgSDR.str("");
-    msgSDR << "Socket connection started as connect no: " << (int)threadID << " using port: " << RPX_port << ", rxON=" << rxON;
+    msgSDR << "Socket connection started as connect no: " << thID << " using port: " << RPX_port << ", rxON=" << rxON;
     Logger(msgSDR.str());
 
     while (socketsON)
@@ -315,7 +317,7 @@ void *startSocketConnect(void *threadID)
             i++;
         }
         msgSOCKET << "]}" << endl;
-        RPX_socket[(int)threadID] << msgSOCKET.str();
+        RPX_socket[*thID] << msgSOCKET.str();
         spgramcf_destroy(q);
     }
     pthread_exit(NULL);

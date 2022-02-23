@@ -33,7 +33,6 @@
 #include "lime/LimeSuite.h"
 #include <chrono>
 #include <math.h>
-#include "alsa/asoundlib.h"
 #include "liquid/liquid.h"
 #include "sockets/ServerSocket.h"
 #include "sockets/SocketException.h"
@@ -59,8 +58,8 @@ std::stringstream msg;
 std::stringstream HEXmsg;
 
 // SDR values
-double frequency = 52.8e6;
-double sampleRate = 2e6;
+double frequency = 433.5e6;
+double sampleRate = 4e6;
 int modeSelector;
 double normalizedGain = 1;
 string mode = "RX";
