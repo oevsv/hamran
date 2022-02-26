@@ -32,7 +32,6 @@
 #include "ini.h"
 #include "log.h"
 #include "lime/LimeSuite.h"
-#include "alsa/asoundlib.h"
 #include "liquid/liquid.h"
 #include "sockets/ServerSocket.h"
 #include "sockets/SocketException.h"
@@ -101,3 +100,5 @@ float kf = 0.1f;                 // modulation factor
 float SNRdB = 30.0f;             // signal-to-noise ratio [dB]
 string beaconMessage = "WRAN FSK Beacon at 52.8 MHz";
 int tx_time = 60;
+float modFactor = 0.2f;
+float toneFrequency = 2e3;

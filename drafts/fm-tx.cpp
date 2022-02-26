@@ -30,8 +30,6 @@
 #include <bitset>
 #include "ini.h"
 #include "log.h"
-#include <wiringPi.h>
-#include <wiringSerial.h>
 #include "lime/LimeSuite.h"
 #include <chrono>
 #include <math.h>
@@ -43,14 +41,14 @@ std::stringstream msg;
 std::stringstream HEXmsg;
 uint8_t setRX = 0x04;     //all other bit = 0 --> 6m
 uint8_t setTXwoBP = 0x0B; //all other bit = 0 --> direct path without BP
-uint8_t setTX6m = 0x08;   //all other bit = 0 --> 6m with BP
+uint8_t setTX6m = 0x05;   //all other bit = 0 --> 6m with BP
 uint8_t setTX2m = 0x09;   //all other bit = 0 --> 2m with BP
 uint8_t setTX70cm = 0x0A; //all other bit = 0 --> 70cm with BP
-float centerFrequency = 144.8e6;
-string mode = "TXwoBP";
+float centerFrequency = 52.8e6;
+string mode = "TX6m";
 float normalizedGain = 1;
 float modFactor = 0.2f;
-int modeSelector = 1;
+int modeSelector = 2;
 int duration = 10;
 float toneFrequency = 2e3;
 float sampleRate = 2e6;
@@ -234,12 +232,6 @@ int main(int argc, char *argv[])
     msg << "Sample Rate: " << sampleRate;
     Logger(msg.str());
 
-    if (wiringPiSetup() == -1) /* initializes wiringPi setup */
-    {
-        msg.str("");
-        msg << "Unable to start wiringPi: " << strerror(errno);
-        return 1;
-    }
 
     //Find devices
     int n;
@@ -308,14 +300,14 @@ int main(int argc, char *argv[])
         break;
 
     case 2:
-        if (LMS_GPIOWrite(device, &setTX2m, 1) != 0)
+        if (LMS_GPIOWrite(device, &setTX6m, 1) != 0)
         {
             error();
         }
         break;
 
     case 3:
-        if (LMS_GPIOWrite(device, &setTX6m, 1) != 0)
+        if (LMS_GPIOWrite(device, &setTX2m, 1) != 0)
         {
             error();
         }

@@ -79,32 +79,26 @@ int startSDRTXStream(string message)
     // Start streaming
     LMS_StartStream(&streamId);
 
-    // create mod/demod objects
-    freqmod mod = freqmod_create(kf); // modulator
-    freqdem dem = freqdem_create(kf); // demodulator
-    freqmod_print(mod);
+    //modulator
+    unsigned int num_samples = 1024;         // number of samples
+    freqmod mod = freqmod_create(modFactor); // modulator
+    float f_ratio = toneFrequency / sampleRate;
 
-    unsigned int i;
+    //Initialize data buffers
+    const int buffer_size = 1024 * 8;
+    liquid_float_complex mod_buffer[buffer_size]; //TX buffer to hold complex values - liquid library)
+    float test_tone[2*buffer_size];
 
-    // generate message signal (sum of sines)
-    for (i = 0; i < sampleCnt; i++)
+    msgSDR.str("");
+    msgSDR << "Modulation Factor: " << modFactor << endl;
+    Logger(msgSDR.str());
+
+    for (int t = 0; t < 2*buffer_size; t++)
     {
-        sig[i] = 0.3f * cosf(2 * M_PI * 0.013f * i + 0.0f) + 0.2f * cosf(2 * M_PI * 0.021f * i + 0.4f) + 0.4f * cosf(2 * M_PI * 0.037f * i + 1.7f);
+        float w = 2 * M_PI * t * f_ratio;
+        test_tone[t] = 5*sin(w+0.2);
     }
-
-    // modulate signal
-    freqmod_modulate_block(mod, sig, sampleCnt, c_buffer);
-
-    for (int i = 0; i < sampleCnt; i++)
-    {
-        int k = 0;
-        while (k < sampleCnt)
-        {
-            buffer[2 * k] = c_buffer[k].real();
-            buffer[2 * k + 1] = c_buffer[k].imag();
-            k++;
-        }
-    }
+    freqmod_modulate_block(mod, test_tone, buffer_size, mod_buffer);
 
     // transmitting the buffer
     auto t1 = chrono::high_resolution_clock::now();
