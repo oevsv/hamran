@@ -17,13 +17,12 @@ void *sendBeacon(void *threadID)
 {
     uint16_t interval = 1; // time in minutes between beacon frames
     auto t1 = chrono::high_resolution_clock::now();
-    auto t2 = t1;
 
     while (txON)
     {
-        if (chrono::high_resolution_clock::now() - t2 > chrono::seconds(60 * interval))
+        if (chrono::high_resolution_clock::now() - t1 > chrono::seconds(60 * interval))
         {
-            t2 = chrono::high_resolution_clock::now();
+            t1 = chrono::high_resolution_clock::now();
 
             // call SDRinitTX (TX6mPTT)
             if (SDRset(52.8e6, sampleRate, 6, 1.0) != 0)
@@ -33,10 +32,14 @@ void *sendBeacon(void *threadID)
                 Logger(msgSDR.str());
             }
 
+            sleep(1);
+
             startSDRTXStream(beaconMessage);
             msgSDR.str("");
             msgSDR << "Send Beacon";
             Logger(msgSDR.str());
+
+            sleep(1);
 
             // call SDRiniTX (RX)
             if (SDRset(52.8e6, sampleRate, 0, 1.0) != 0)
@@ -59,7 +62,7 @@ void *sendBeacon(void *threadID)
     pthread_exit(NULL);
 }
 
-int startSDRTXStream(string message) 
+int startSDRTXStream(string message)
 {
     uint16_t interval = 1; // time between beacon frames
 
@@ -77,15 +80,16 @@ int startSDRTXStream(string message)
     LMS_StartStream(&streamId);
 
     // create mod/demod objects
-    freqmod mod = freqmod_create(kf);   // modulator
-    freqdem dem = freqdem_create(kf);   // demodulator
+    freqmod mod = freqmod_create(kf); // modulator
+    freqdem dem = freqdem_create(kf); // demodulator
     freqmod_print(mod);
 
     unsigned int i;
 
     // generate message signal (sum of sines)
-    for (i=0; i<sampleCnt; i++) {
-        sig[i] = 0.3f*cosf(2*M_PI*0.013f*i + 0.0f) + 0.2f*cosf(2*M_PI*0.021f*i + 0.4f) + 0.4f*cosf(2*M_PI*0.037f*i + 1.7f);
+    for (i = 0; i < sampleCnt; i++)
+    {
+        sig[i] = 0.3f * cosf(2 * M_PI * 0.013f * i + 0.0f) + 0.2f * cosf(2 * M_PI * 0.021f * i + 0.4f) + 0.4f * cosf(2 * M_PI * 0.037f * i + 1.7f);
     }
 
     // modulate signal
@@ -96,15 +100,18 @@ int startSDRTXStream(string message)
         int k = 0;
         while (k < sampleCnt)
         {
-            buffer[2*k] = c_buffer[k].real();
-            buffer[2*k + 1] = c_buffer[k].imag();
+            buffer[2 * k] = c_buffer[k].real();
+            buffer[2 * k + 1] = c_buffer[k].imag();
             k++;
         }
     }
 
     // transmitting the buffer
-    int ret = LMS_SendStream(&streamId, buffer, sampleCnt*2, nullptr, 1000);
-
+    auto t1 = chrono::high_resolution_clock::now();
+    while (chrono::high_resolution_clock::now() - t1 < chrono::seconds(tx_time)) // run for 10 seconds
+    {
+        int ret = LMS_SendStream(&streamId, buffer, sampleCnt * 2, nullptr, 1000);
+    }
     // Stop streaming
     LMS_StopStream(&streamId);            // stream is stopped but can be started again with LMS_StartStream()
     LMS_DestroyStream(device, &streamId); // stream is deallocated and can no longer be used
@@ -351,4 +358,3 @@ void print_gpio(uint8_t gpio_val)
         msgSDR << "GPIO" << i << ": " << (set ? "High" : "Low") << std::endl;
     }
 }
-

@@ -100,3 +100,4 @@ float sig[sampleCnt];
 float kf = 0.1f;                 // modulation factor
 float SNRdB = 30.0f;             // signal-to-noise ratio [dB]
 string beaconMessage = "WRAN FSK Beacon at 52.8 MHz";
+int tx_time = 60;
