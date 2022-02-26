@@ -1,26 +1,26 @@
 /******************************************************************************
  * C++ source of RPX-100-TX
  *
- * File:   RPX-100-TX.h
+ * File:   SDRsamples-TX.h
  * Author: Bernhard Isemann
- *         Marek Honek
  *
- * Created on 19 Sep 2021, 12:37
- * Updated on 15 Feb 2022, 17:00
+ * Created on 06 Jan 2022, 12:37
+ * Updated on 20 Feb 2022, 17:00
  * Version 2.00
  *****************************************************************************/
 
+#include <iostream>
+#include <fstream>
+#include <unistd.h>
+#include <sstream>
+#include <syslog.h>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
 #include <errno.h>
-#include <unistd.h>
-#include <sstream>
-#include <syslog.h>
-#include <string.h>
-#include <iostream>
 #include <cstdio>
 #include <ctime>
 #include <math.h>
@@ -32,7 +32,6 @@
 #include "ini.h"
 #include "log.h"
 #include "lime/LimeSuite.h"
-#include <chrono>
 #include "alsa/asoundlib.h"
 #include "liquid/liquid.h"
 #include "sockets/ServerSocket.h"
@@ -42,22 +41,29 @@
 #include <pthread.h>
 #include "Util.h"
 #include "WebSocketServer.h"
+
 #pragma once
 
-pthread_mutex_t SDRmutex;
-#define NUM_THREADS 5 // max number of main threads
 #define NUM_CONNECTS 5 // max number of sockets connections
 #define PORT_NUMBER 8084
 #define TIMEOUT 500
-#define SUBCARRIERS 1024
-#define DATACARRIERS 480
-#define DEFAULT_PHY_MODE 1
-#define DEFAULT_CYCL_PREFIX 4
 
-#define TX_6m_MODE 6
-#define RX_MODE 1
+extern pthread_mutex_t SDRmutex;
 
+// SDR facility
+lms_device_t *device = NULL;
+int SDRinit(double frequency, double sampleRate, int modeSelector, double normalizedGain);
+int SDRset(double frequency, double sampleRate, int modeSelector, double normalizedGain);
+string exec(string command);
+void *sendBeacon(void *threadID);
+int startSDRTXStream(string message);
+int error();
 
+// external varibales
+extern double frequency;
+extern double sampleRate;
+extern int modeSelector;
+extern double normalizedGain;
 
 // Radio Frontend - Define GPIO settings for CM4 hat module
 uint8_t setRX = 0x18;       // GPIO0=LOW - RX, GPIO3=HIGH - PTT off,
@@ -74,45 +80,23 @@ uint8_t setTX70cmPTT = 0x03;   // GPIO0=HIGH - TX, GPIO3=LOW - PTT on, GPIO1=HIG
 string modeName[9] = {"RX", "TXDirect", "TX6m", "TX2m", "TX70cm", "TXDirectPTT", "TX6mPTT", "TX2mPTT", "TX70cmPTT"};
 uint8_t modeGPIO[9] = {setRX, setTXDirect, setTX6m, setTX2m, setTX70cm, setTXDirectPTT, setTX6mPTT, setTX2mPTT, setTX70cmPTT};
 
-
-// SDR facility
-lms_device_t *device = NULL;
-int SDRinitTX(double frequency, int modeSelector, double normalizedGain);
-int SDRsetTX(double frequency, int modeSelector, double normalizedGain);
-int SDRfrequency(lms_device_t *device, double frequency);
-void *startSocketServer(void *threadID);
-void *startSDRStream(void *threadID);
-void *startSocketConnect(void *threadID);
-void *startWebsocketServer(void *threadID);
-void *sendBeacon(void *threadID);
-int error();
-string exec(string command);
-
 // Log facility
 void print_gpio(uint8_t gpio_val);
 std::stringstream msgSDR;
-std::stringstream HEXmsg;
-
-// SDR values
-double sampleRate = 3328000; //default
-// double normalizedGain = 1; // if it works without this line, delete it
-string mode = "TX6m";
-// int modeSel = 6; // if it works without this line, delete it
-double normalizedGain = 1;
-double frequency = 52.8e6;
+std::stringstream HEXmsgSDR;
 
 // Initialize sdr buffers
-liquid_float_complex complex_i(0,1);
-int samplesRead = 1048;
+const int sampleCnt = 1024;               // complex samples per buffer --> a "sample" is I + Q values in float or int
+float buffer[sampleCnt * 2];              // buffer to hold samples (each I + Q) --> buffer size = 2 * no of samples
+liquid_float_complex c_buffer[sampleCnt]; // complex buffer to hold SDR sample in complex domain
+liquid_float_complex complex_i(0, 1);
+int samplesRead = 1024;
 
 bool rxON = true;
 bool txON = true;
 
-//Beacon frame parameters
-//unsigned int cp_len;    // if it works without this line, delete it
-//unsigned int taper_len; // if it works without this line, delete it
-
-int startSDRTXStream(int *tx_buffer, int FrameSampleCnt);
-int BeaconFrameAssemble(int *symbols, int *r_frame_buffer);
-void subcarrier_allocation (unsigned char *array);
-int DefineFrameGenerator (int dfg_cycl_pref, int dfg_PHYmode, ofdmflexframegen *generator, unsigned int *dfg_c_buffer_len, unsigned int *dfg_payload_len);
+// Beacon frame parameters
+float sig[sampleCnt];
+float kf = 0.1f;                 // modulation factor
+float SNRdB = 30.0f;             // signal-to-noise ratio [dB]
+string beaconMessage = "WRAN FSK Beacon at 52.8 MHz";

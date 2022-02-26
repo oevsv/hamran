@@ -40,7 +40,7 @@ void *sendBeacon(void *threadID)
             startSDRTXStream(buffer, frameSymbols * symbolSampleCnt);
 
             // call SDRiniTX (RX)
-            if (SDRset(52.8e6, sampleRate,0, 1.0) != 0)
+            if (SDRset(52.8e6, sampleRate, 0, 1.0) != 0)
             {
                 msgSDR.str("");
                 msgSDR << "ERROR: " << LMS_GetLastErrorMessage();
