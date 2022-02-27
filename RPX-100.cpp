@@ -150,7 +150,7 @@ int main(int argc, char *argv[])
     Logger(msg.str());
 
     // Initialize LimeSDR
-    if (SDRinit(frequency, sampleRate, modeSel, 1) != 0)
+    if (SDRinit(52.8e6, 4e6, 0, 1) != 0)
     {
         msg.str("");
         msg << "ERROR: " << LMS_GetLastErrorMessage();
