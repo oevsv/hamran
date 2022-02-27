@@ -6,7 +6,7 @@
  *         Marek Honek
  *
  * Created on 19 Sep 2021, 12:37
- * Updated on 15 Feb 2022, 17:00
+ * Updated on 27 Feb 2022, 17:00
  * Version 2.00
  *****************************************************************************/
 
@@ -31,6 +31,7 @@
 #include <bitset>
 #include "ini.h"
 #include "log.h"
+#include <pthread.h>
 #include "lime/LimeSuite.h"
 #include <chrono>
 #include <math.h>
@@ -44,25 +45,9 @@
 pthread_mutex_t SDRmutex;
 
 // SDR facility
-
-int SDRinit(double frequency, double sampleRate, int modeSelector, double normalizedGain);
-int SDRfrequency(lms_device_t *device, double frequency);
-void *startSocketServer(void *threadID);
-void *startSDRStream(void *threadID);
-void *startSocketConnect(void *threadID);
-void *startWebsocketServer(void *threadID);
+int SDRinit(double freq, double sampleR, int modeSel, double normGain);
+int SDRset(double freq, double sampleR, int modeSel, double normGain);
 void *sendBeacon(void *threadID);
-int error();
 
 // Log facility
-void print_gpio(uint8_t gpio_val);
-std::stringstream msg;
-std::stringstream HEXmsg;
-
-// SDR values
-double frequency = 52.8e6;
-double sampleRate = 4e6;
-int modeSelector;
-double normalizedGain = 1;
-string mode = "TX6m";
-int modeSel = 6;
+std::stringstream msgSDR;

@@ -6,14 +6,20 @@
  *         Marek Honek
  *
  * Created on 20 Feb 2022, 10:35
- * Updated on 20 Feb 2022, 17:20
+ * Updated on 27 Feb 2022, 17:20
  * Version 2.00
  *****************************************************************************/
 
 #include "RPX-100-FSK.h"
-#include <pthread.h>
 
 using namespace std;
+
+// SDR values
+double frequency = 52.8e6;
+double sampleRate = 4e6;
+double normalizedGain = 1;
+string mode = "TXDirectPTT";
+int modeSelector = 5;
 
 int main(int argc, char *argv[])
 {
@@ -36,31 +42,31 @@ int main(int argc, char *argv[])
                 {
                     cout << "Starting RPX-100-FSK with following setting:\n";
                     cout << "Mode: " << argv[c] << endl;
-                    modeSel = 0;
-                }           
+                    modeSelector = 0;
+                }
                 else if (mode == "TXDirectPTT")
                 {
                     cout << "Starting RPX-100-FSK with following setting:\n";
                     cout << "Mode: " << argv[c] << endl;
-                    modeSel = 5;
+                    modeSelector = 5;
                 }
                 else if (mode == "TX6mPTT")
                 {
                     cout << "Starting RPX-100-FSK with following setting:\n";
                     cout << "Mode: " << argv[c] << endl;
-                    modeSel = 6;
+                    modeSelector = 6;
                 }
                 else if (mode == "TX2mPTT")
                 {
                     cout << "Starting RPX-100-FSK with following setting:\n";
                     cout << "Mode: " << argv[c] << endl;
-                    modeSel = 7;
+                    modeSelector = 7;
                 }
                 else if (mode == "TX70cmPTT")
                 {
                     cout << "Starting RPX-100-FSK with following setting:\n";
                     cout << "Mode: " << argv[c] << endl;
-                    modeSel = 8;
+                    modeSelector = 8;
                 }
                 else if (mode == "help")
                 {
@@ -87,18 +93,26 @@ int main(int argc, char *argv[])
     }
 
     LogInit();
-    Logger("RPX-100-TX was started succesfully with following settings:");
-    msg.str("");
-    msg << "Mode: " << mode;
-    Logger(msg.str());
+    Logger("RPX-100-TX was started succesfully with following settings:\n");
+    msgSDR.str("");
+    msgSDR << "Mode: " << mode << endl;
+    Logger(msgSDR.str());
 
     // Initialize LimeSDR
-    modeSel = 0;
-    if (SDRinit(52.8e6, 4e6, modeSel, 1) != 0)
+    modeSelector = 0;
+    if (SDRinit(frequency, sampleRate, modeSelector, normalizedGain) != 0)
     {
-        msg.str("");
-        msg << "ERROR: " << LMS_GetLastErrorMessage();
-        Logger(msg.str());
+        msgSDR.str("");
+        msgSDR << "ERROR: " << LMS_GetLastErrorMessage();
+        Logger(msgSDR.str());
+    }
+
+    // call SDRiniTX (RX)
+    if (SDRset(frequency, sampleRate, 0, normalizedGain) != 0)
+    {
+        msgSDR.str("");
+        msgSDR << "ERROR: " << LMS_GetLastErrorMessage();
+        Logger(msgSDR.str());
     }
 
     pthread_t threads[NUM_THREADS];
@@ -106,9 +120,9 @@ int main(int argc, char *argv[])
 
     if (pthread_create(&threads[4], NULL, sendBeacon, (void *)4) != 0)
     {
-        msg.str("");
-        msg << "ERROR starting thread 4";
-        Logger(msg.str());
+        msgSDR.str("");
+        msgSDR << "ERROR starting thread 4";
+        Logger(msgSDR.str());
     }
 
     pthread_mutex_destroy(&SDRmutex);
