@@ -62,7 +62,7 @@ int SDRinit(double frequency, double sampleRate, int modeSelector, double normal
     Logger(msgSDR.str());
 
     // Set GPIOs to RX mode (initial settings)
-    if (LMS_GPIOWrite(device, &modeGPIO[modeSelector], 1) != 0)
+    if (LMS_GPIOWrite(device, &modeGPIO[0], 1) != 0)
     {
         error();
     }
@@ -78,7 +78,7 @@ int SDRinit(double frequency, double sampleRate, int modeSelector, double normal
     Logger(msgSDR.str());
 
     msgSDR.str("");
-    msgSDR << "LimeRFE set to " << modeName[modeSelector] << endl;
+    msgSDR << "LimeRFE set to " << modeName[0] << endl;
     Logger(msgSDR.str());
 
     // Enable TX channel,Channels are numbered starting at 0
@@ -88,21 +88,21 @@ int SDRinit(double frequency, double sampleRate, int modeSelector, double normal
     }
 
     // Set sample rate
-    if (LMS_SetSampleRate(device, sampleRate, 0) != 0)
+    if (LMS_SetSampleRate(device, 4e6, 0) != 0)
     {
         error();
     }
     msgSDR.str("");
-    msgSDR << "Sample rate: " << sampleRate / 1e6 << " MHz" << endl;
+    msgSDR << "Sample rate: " << 4e6/ 1e6 << " MHz" << endl;
     Logger(msgSDR.str());
 
     // Set center frequency
-    if (LMS_SetLOFrequency(device, LMS_CH_RX, 0, frequency) != 0)
+    if (LMS_SetLOFrequency(device, LMS_CH_RX, 0, 52.8e6) != 0)
     {
         error();
     }
     msgSDR.str("");
-    msgSDR << "Center frequency: " << frequency / 1e6 << " MHz" << endl;
+    msgSDR << "Center frequency: " << 52.8e6 / 1e6 << " MHz" << endl;
     Logger(msgSDR.str());
 
     // select Low TX path for LimeSDR mini --> TX port 2 (misslabed in MINI, correct in USB)
@@ -112,13 +112,13 @@ int SDRinit(double frequency, double sampleRate, int modeSelector, double normal
     }
 
     // set TX gain
-    if (LMS_SetNormalizedGain(device, LMS_CH_RX, 0, normalizedGain) != 0)
+    if (LMS_SetNormalizedGain(device, LMS_CH_RX, 0, 1) != 0)
     {
         error();
     }
 
     // calibrate Tx, continue on failure
-    LMS_Calibrate(device, LMS_CH_RX, 0, sampleRate, 0);
+    LMS_Calibrate(device, LMS_CH_RX, 0, 4e6, 0);
 
     // Wait 12sec and send status LoRa message
     sleep(2);
