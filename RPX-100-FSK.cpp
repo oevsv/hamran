@@ -17,9 +17,9 @@ using namespace std;
 // SDR values
 double frequency = 52.8e6;
 double sampleRate = 4e6;
-double normalizedGain = 1;
-string mode = "TXDirectPTT";
-int modeSelector = 5;
+double normalizedGain = 0.5;
+string mode = "TX6mPTT";
+int modeSelector = 6;
 
 int main(int argc, char *argv[])
 {
@@ -99,7 +99,6 @@ int main(int argc, char *argv[])
     Logger(msgSDR.str());
 
     // Initialize LimeSDR
-    modeSelector = 0;
     if (SDRinit(frequency, sampleRate, modeSelector, normalizedGain) != 0)
     {
         msgSDR.str("");
