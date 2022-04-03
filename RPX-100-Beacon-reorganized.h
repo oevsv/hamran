@@ -6,7 +6,7 @@
  *         Marek Honek
  *
  * Created on 19 Sep 2021, 12:37
- * Updated on 15 Feb 2022, 17:00
+ * Updated on 29 Mar 2022, 20:20
  * Version 2.00
  *****************************************************************************/
 
@@ -57,6 +57,8 @@ pthread_mutex_t SDRmutex;
 #define TX_6m_MODE 6
 #define RX_MODE 1
 
+// #define FREQUENCY 52.8e6
+// #define NORMALIZED_GAIN 1
 
 
 // Radio Frontend - Define GPIO settings for CM4 hat module
@@ -98,8 +100,10 @@ double sampleRate = 3328000; //default
 // double normalizedGain = 1; // if it works without this line, delete it
 string mode = "TX6m";
 // int modeSel = 6; // if it works without this line, delete it
-double normalizedGain = 1;
-double frequency = 52.8e6;
+double def_normalizedGain = 1;
+double def_frequency = 52.8e6;
+
+
 
 // Initialize sdr buffers
 liquid_float_complex complex_i(0,1);
@@ -116,3 +120,4 @@ int startSDRTXStream(int *tx_buffer, int FrameSampleCnt);
 int BeaconFrameAssemble(int *symbols, int *r_frame_buffer);
 void subcarrier_allocation (unsigned char *array);
 int DefineFrameGenerator (int dfg_cycl_pref, int dfg_PHYmode, ofdmflexframegen *generator, unsigned int *dfg_c_buffer_len, unsigned int *dfg_payload_len);
+int DefineFrameSynchronizer (int dfs_cycl_pref, int dfs_PHYmode, ofdmflexframegen *synchronizer, unsigned int *dfs_c_buffer_len, unsigned int *dfs_payload_len);

@@ -6,7 +6,7 @@
  *         Marek Honek
  *
  * Created on 01 Jan 2022, 10:35
- * Updated on 15 Feb 2022, 17:20
+ * Updated on 29 Mar 2022, 20:20
  * Version 2.00
  *****************************************************************************/
 
@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
     Logger(msgSDR.str());
 
     // call SDRinitTX (TX6mPTT)
-    if (SDRinitTX(FREQUENCY, RX_MODE, NORMALIZED_GAIN) != 0)
+    if (SDRinitTX(def_frequency, RX_MODE, def_normalizedGain) != 0)
     {
         msgSDR.str("");
         msgSDR << "ERROR: " << LMS_GetLastErrorMessage();
@@ -139,7 +139,7 @@ void *sendBeacon(void *threadID)
             t1 = chrono::high_resolution_clock::now();
 
             // call SDRinitTX (TX6mPTT)
-            if (SDRsetTX(FREQUENCY, TX_6m_MODE, NORMALIZED_GAIN) != 0)
+            if (SDRsetTX(def_frequency, TX_6m_MODE, def_normalizedGain) != 0)
             {
                 msgSDR.str("");
                 msgSDR << "ERROR: " << LMS_GetLastErrorMessage();
@@ -157,7 +157,7 @@ void *sendBeacon(void *threadID)
             cout << "frame was transmitted" << endl;
 
             // call SDRiniTX (RX)
-            if (SDRsetTX(FREQUENCY, RX_MODE, NORMALIZED_GAIN) != 0)
+            if (SDRsetTX(def_frequency, RX_MODE, def_normalizedGain) != 0)
             {
                 msgSDR.str("");
                 msgSDR << "ERROR: " << LMS_GetLastErrorMessage();
@@ -511,6 +511,8 @@ void print_gpio(uint8_t gpio_val)
         msgSDR << "GPIO" << i << ": " << (set ? "High" : "Low") << std::endl;
     }
 }
+
+int DefineFrameSynchronizer (int dfs_cycl_pref, int dfs_PHYmode, ofdmflexframegen *synchronizer, unsigned int *dfs_c_buffer_len, unsigned int *dfs_payload_len);
 
 int DefineFrameGenerator (int dfg_cycl_pref, int dfg_PHYmode, ofdmflexframegen *generator, unsigned int *dfg_c_buffer_len, unsigned int *dfg_payload_len)
 {
