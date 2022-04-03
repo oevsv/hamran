@@ -5,7 +5,7 @@
  * Author: Bernhard Isemann
  *
  * Created on 06 Jan 2022, 10:35
- * Updated on 20 Feb 2022, 17:20
+ * Updated on 27 Feb 2022, 17:20
  * Version 2.00
  *****************************************************************************/
 
@@ -15,17 +15,17 @@ using namespace std;
 
 void *sendBeacon(void *threadID)
 {
-    uint16_t interval = 1; // time in minutes between beacon frames
+    uint16_t interval = 1; // time in 30secs intervals between beacon frames
     auto t1 = chrono::high_resolution_clock::now();
 
     while (txON)
     {
-        if (chrono::high_resolution_clock::now() - t1 > chrono::seconds(60 * interval))
+        if (chrono::high_resolution_clock::now() - t1 > chrono::seconds(30 * interval))
         {
             t1 = chrono::high_resolution_clock::now();
 
             // call SDRinitTX (TX6mPTT)
-            if (SDRset(52.8e6, sampleRate, 6, 1.0) != 0)
+            if (SDRset(52.8e6, 4e6, 6, 1) != 0)
             {
                 msgSDR.str("");
                 msgSDR << "ERROR: " << LMS_GetLastErrorMessage();
@@ -36,13 +36,13 @@ void *sendBeacon(void *threadID)
 
             startSDRTXStream(beaconMessage);
             msgSDR.str("");
-            msgSDR << "Send Beacon";
+            msgSDR << "Send Beacon.\n";
             Logger(msgSDR.str());
 
             sleep(1);
 
             // call SDRiniTX (RX)
-            if (SDRset(52.8e6, sampleRate, 0, 1.0) != 0)
+            if (SDRset(52.8e6, 4e6, 0, 0.5) != 0)
             {
                 msgSDR.str("");
                 msgSDR << "ERROR: " << LMS_GetLastErrorMessage();
@@ -64,7 +64,6 @@ void *sendBeacon(void *threadID)
 
 int startSDRTXStream(string message)
 {
-    uint16_t interval = 1; // time between beacon frames
 
     // Initialize stream
     lms_stream_t streamId;                        // stream structure
@@ -73,44 +72,53 @@ int startSDRTXStream(string message)
     streamId.throughputVsLatency = 1.0;           // optimize for max throughput
     streamId.isTx = true;                         // TX channel
     streamId.dataFmt = lms_stream_t::LMS_FMT_F32; // 12-bit integers
+
+    lms_stream_meta_t meta_tx;   
+    meta_tx.waitForTimestamp = false;
+    meta_tx.flushPartialPacket = false;
+    meta_tx.timestamp = 0;
+
+
     if (LMS_SetupStream(device, &streamId) != 0)
         error();
 
     // Start streaming
     LMS_StartStream(&streamId);
 
-    // create mod/demod objects
-    freqmod mod = freqmod_create(kf); // modulator
-    freqdem dem = freqdem_create(kf); // demodulator
-    freqmod_print(mod);
+    //modulator
+    freqmod mod = freqmod_create(modFactor); // modulator
+    float f_ratio = toneFrequency / sampleRate;
 
-    unsigned int i;
+    //Initialize data buffers
+    liquid_float_complex mod_buffer[sampleCnt]; //TX buffer to hold complex values - liquid library)
+    float test_tone[2*sampleCnt];
+
+    msgSDR.str("");
+    msgSDR << "Modulation Factor: " << modFactor << endl;
+    Logger(msgSDR.str());
 
     // generate message signal (sum of sines)
-    for (i = 0; i < sampleCnt; i++)
+    for (int i = 0; i <sampleCnt; i++)
     {
-        sig[i] = 0.3f * cosf(2 * M_PI * 0.013f * i + 0.0f) + 0.2f * cosf(2 * M_PI * 0.021f * i + 0.4f) + 0.4f * cosf(2 * M_PI * 0.037f * i + 1.7f);
+        test_tone[2*i] = cos(2*M_PI*i/16.0);
+        test_tone[2*i+1] = sin(2*M_PI*i/16.0);
     }
 
-    // modulate signal
-    freqmod_modulate_block(mod, sig, sampleCnt, c_buffer);
+    freqmod_modulate_block(mod, test_tone, sampleCnt, mod_buffer);
 
-    for (int i = 0; i < sampleCnt; i++)
-    {
-        int k = 0;
-        while (k < sampleCnt)
-        {
-            buffer[2 * k] = c_buffer[k].real();
-            buffer[2 * k + 1] = c_buffer[k].imag();
-            k++;
-        }
-    }
+    int i = 0;
+    while (i < sampleCnt)
+     {
+         buffer[2 * i] = mod_buffer[i].real();
+         buffer[2*i + 1] = mod_buffer[i].imag();
+         i++;
+     }
 
     // transmitting the buffer
     auto t1 = chrono::high_resolution_clock::now();
     while (chrono::high_resolution_clock::now() - t1 < chrono::seconds(tx_time)) // run for 10 seconds
     {
-        int ret = LMS_SendStream(&streamId, buffer, sampleCnt * 2, nullptr, 1000);
+        int ret = LMS_SendStream(&streamId, buffer, sampleCnt, &meta_tx, 1000);
     }
     // Stop streaming
     LMS_StopStream(&streamId);            // stream is stopped but can be started again with LMS_StartStream()
@@ -119,7 +127,7 @@ int startSDRTXStream(string message)
     return 0;
 }
 
-int SDRinit(double frequency, double sampleRate, int modeSelector, double normalizedGain)
+int SDRinit(double freq, double sampleR, int modeSel, double normGain)
 {
     // Find devices
     int n;
@@ -129,7 +137,7 @@ int SDRinit(double frequency, double sampleRate, int modeSelector, double normal
         error(); // NULL can be passed to only get number of devices
     }
     msgSDR.str("");
-    msgSDR << "Number of devices found: " << n;
+    msgSDR << "Number of devices found: " << n << endl;
     Logger(msgSDR.str()); // print number of devices
     if (n < 1)
     {
@@ -157,23 +165,15 @@ int SDRinit(double frequency, double sampleRate, int modeSelector, double normal
         error();
     }
 
-    // Read and log GPIO direction settings
+    // Write and log GPIO values
     uint8_t gpio_val = 0;
-    if (LMS_GPIODirRead(device, &gpio_val, 1) != 0)
-    {
-        error();
-    }
-    msgSDR.str("");
-    msgSDR << "Set GPIOs direction to output.\n";
-    Logger(msgSDR.str());
 
     // Set GPIOs to RX mode (initial settings)
-    if (LMS_GPIOWrite(device, &modeGPIO[modeSelector], 1) != 0)
+    if (LMS_GPIOWrite(device, &modeGPIO[modeSel], 1) != 0)
     {
         error();
     }
 
-    // Read and log GPIO values
     if (LMS_GPIORead(device, &gpio_val, 1) != 0)
     {
         error();
@@ -184,7 +184,7 @@ int SDRinit(double frequency, double sampleRate, int modeSelector, double normal
     Logger(msgSDR.str());
 
     msgSDR.str("");
-    msgSDR << "LimeRFE set to " << modeName[modeSelector] << endl;
+    msgSDR << "LimeRFE set to " << modeName[modeSel] << endl;
     Logger(msgSDR.str());
 
     // Enable TX channel,Channels are numbered starting at 0
@@ -194,21 +194,21 @@ int SDRinit(double frequency, double sampleRate, int modeSelector, double normal
     }
 
     // Set sample rate
-    if (LMS_SetSampleRate(device, sampleRate, 0) != 0)
+    if (LMS_SetSampleRate(device, sampleR, 0) != 0)
     {
         error();
     }
     msgSDR.str("");
-    msgSDR << "Sample rate: " << sampleRate / 1e6 << " MHz" << endl;
+    msgSDR << "Sample rate: " << sampleR / 1e6 << " MHz" << endl;
     Logger(msgSDR.str());
 
     // Set center frequency
-    if (LMS_SetLOFrequency(device, LMS_CH_TX, 0, frequency) != 0)
+    if (LMS_SetLOFrequency(device, LMS_CH_TX, 0, freq) != 0)
     {
         error();
     }
     msgSDR.str("");
-    msgSDR << "Center frequency: " << frequency / 1e6 << " MHz" << endl;
+    msgSDR << "Center frequency: " << freq / 1e6 << " MHz" << endl;
     Logger(msgSDR.str());
 
     // select Low TX path for LimeSDR mini --> TX port 2 (misslabed in MINI, correct in USB)
@@ -216,33 +216,29 @@ int SDRinit(double frequency, double sampleRate, int modeSelector, double normal
     {
         error();
     }
+     if (LMS_SetAntenna(device, LMS_CH_RX, 0, LMS_PATH_LNAW) != 0)
+    {
+        error();
+    }
 
     // set TX gain
-    if (LMS_SetNormalizedGain(device, LMS_CH_TX, 0, normalizedGain) != 0)
+    if (LMS_SetNormalizedGain(device, LMS_CH_TX, 0, normGain) != 0)
     {
         error();
     }
 
     // calibrate Tx, continue on failure
-    LMS_Calibrate(device, LMS_CH_TX, 0, sampleRate, 0);
+    LMS_Calibrate(device, LMS_CH_TX, 0, sampleR, 0);
 
-    // Wait 12sec and send status LoRa message
-    sleep(2);
+    sleep(1);
 
     return 0;
 }
 
-int SDRset(double frequency, double sampleRate, int modeSelector, double normalizedGain)
+int SDRset(double freq, double sampleR, int modeSel, double normGain)
 {
-    // Set SDR GPIO diretion GPIO0-7 to output
-    uint8_t gpio_dir = 0xFF;
-    if (LMS_GPIODirWrite(device, &gpio_dir, 1) != 0)
-    {
-        error();
-    }
-
     // Set GPIOs for RXTX mode (modeselctor)
-    if (LMS_GPIOWrite(device, &modeGPIO[modeSelector], 1) != 0)
+    if (LMS_GPIOWrite(device, &modeGPIO[modeSel], 1) != 0)
     {
         error();
     }
@@ -259,11 +255,11 @@ int SDRset(double frequency, double sampleRate, int modeSelector, double normali
     Logger(msgSDR.str());
 
     msgSDR.str("");
-    msgSDR << "LimeRFE set to " << modeName[modeSelector] << endl;
+    msgSDR << "LimeRFE set to " << modeName[modeSel] << endl;
     Logger(msgSDR.str());
 
     // Enable RX or TX channel,Channels are numbered starting at 0
-    if (modeSelector == 0)
+    if (modeSel == 0)
     {
         if (LMS_EnableChannel(device, LMS_CH_RX, 0, true) != 0)
         {
@@ -287,38 +283,38 @@ int SDRset(double frequency, double sampleRate, int modeSelector, double normali
     }
 
     // Set sample rate
-    if (LMS_SetSampleRate(device, sampleRate, 0) != 0)
+    if (LMS_SetSampleRate(device, sampleR, 0) != 0)
     {
         error();
     }
     msgSDR.str("");
-    msgSDR << "Sample rate: " << sampleRate / 1e6 << " MHz" << endl;
+    msgSDR << "Sample rate: " << sampleR / 1e6 << " MHz" << endl;
     Logger(msgSDR.str());
 
     // Set center frequency
-    if (modeSelector == 0)
+    if (modeSel == 0)
     {
-        if (LMS_SetLOFrequency(device, LMS_CH_RX, 0, frequency) != 0)
+        if (LMS_SetLOFrequency(device, LMS_CH_RX, 0, freq) != 0)
         {
             error();
         }
     }
     else
     {
-        if (LMS_SetLOFrequency(device, LMS_CH_TX, 0, frequency) != 0)
+        if (LMS_SetLOFrequency(device, LMS_CH_TX, 0, freq) != 0)
         {
             error();
         }
     }
 
     msgSDR.str("");
-    msgSDR << "Center frequency: " << frequency / 1e6 << " MHz" << endl;
+    msgSDR << "Center frequency: " << freq / 1e6 << " MHz" << endl;
     Logger(msgSDR.str());
 
     // select Low TX path for LimeSDR mini --> TX port 2 (misslabed in MINI, correct in USB)
-    if (modeSelector == 0)
+    if (modeSel == 0)
     {
-        if (LMS_SetAntenna(device, LMS_CH_RX, 0, LMS_PATH_LNAL) != 0)
+        if (LMS_SetAntenna(device, LMS_CH_RX, 0, LMS_PATH_LNAW) != 0)
         {
             error();
         }
@@ -331,7 +327,7 @@ int SDRset(double frequency, double sampleRate, int modeSelector, double normali
         }
 
         // set TX gain
-        if (LMS_SetNormalizedGain(device, LMS_CH_TX, 0, normalizedGain) != 0)
+        if (LMS_SetNormalizedGain(device, LMS_CH_TX, 0, normGain) != 0)
         {
             error();
         }

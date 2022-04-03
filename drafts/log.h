@@ -31,7 +31,7 @@ inline void Logger(string logMsg)
     string filePath = "/var/log/RPX-100_" + getCurrentDateTime("date") + ".log";
     string now = getCurrentDateTime("now");
     ofstream ofs(filePath.c_str(), std::ios_base::out | std::ios_base::app);
-    ofs << now << '\t' << logMsg;
+    ofs << now << '\t' << logMsg << '\n';
     ofs.close();
 }
 
