@@ -25,7 +25,7 @@ void *sendBeacon(void *threadID)
             t1 = chrono::high_resolution_clock::now();
 
             // call SDRinitTX (TX6mPTT)
-            if (SDRset(52.8e6, 4e6, 6, 1) != 0)
+            if (SDRset(52.8e6, 4e6, 5, 1) != 0)
             {
                 msgSDR.str("");
                 msgSDR << "ERROR: " << LMS_GetLastErrorMessage();
