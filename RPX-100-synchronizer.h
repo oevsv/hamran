@@ -5,9 +5,10 @@
  * Author: Bernhard Isemann
  *         Marek Honek
  *
- * Created on 19 Sep 2021, 12:37
- * Updated on 29 Mar 2022, 20:20
- * Version 2.00
+ * Created on 19 Apr 2022, 18:20
+ * Updated on 01 May 2022, 20:40
+ * Version 1.00
+ * Predecessor RPX-100-Beacon-reorganized.h
  *****************************************************************************/
 
 #include <sys/types.h>
@@ -55,7 +56,7 @@ pthread_mutex_t SDRmutex;
 #define DEFAULT_CYCL_PREFIX 4
 
 #define TX_6m_MODE 6
-#define RX_MODE 0    //corrected 19Apr22 from 1 to 0
+#define RX_MODE 0
 
 // #define FREQUENCY 52.8e6
 // #define NORMALIZED_GAIN 1
@@ -80,10 +81,11 @@ uint8_t modeGPIO[9] = {setRX, setTXDirect, setTX6m, setTX2m, setTX70cm, setTXDir
 // SDR facility
 lms_device_t *device = NULL;
 int SDRinitTX(double frequency, int modeSelector, double normalizedGain);
-int SDRsetTX(double frequency, int modeSelector, double normalizedGain);
+int SDRset(double frequency, int modeSelector, double normalizedGain);
 int SDRfrequency(lms_device_t *device, double frequency);
 void *startSocketServer(void *threadID);
 void *startSDRStream(void *threadID);
+void *beaconReception(void *threadID);
 void *startSocketConnect(void *threadID);
 void *startWebsocketServer(void *threadID);
 void *sendBeacon(void *threadID);
@@ -117,7 +119,19 @@ bool txON = true;
 //unsigned int taper_len; // if it works without this line, delete it
 
 int startSDRTXStream(int *tx_buffer, int FrameSampleCnt);
+int startSDRBeaconReception(int *tx_buffer);
 int BeaconFrameAssemble(int *symbols, int *r_frame_buffer);
-void subcarrier_allocation (unsigned char *array);
+void subcarrierAllocation (unsigned char *array);
 int DefineFrameGenerator (int dfg_cycl_pref, int dfg_PHYmode, ofdmflexframegen *generator, unsigned int *dfg_c_buffer_len, unsigned int *dfg_payload_len);
-int DefineFrameSynchronizer (int dfs_cycl_pref, int dfs_PHYmode, ofdmflexframegen *synchronizer, unsigned int *dfs_c_buffer_len, unsigned int *dfs_payload_len);
+int frameSymbols(int cyclic_prefix);
+uint complexFrameBufferLength(int cyclic_prefix);
+unsigned int payloadLength(int cyclic_prefix, int phy_mode);
+
+
+int mycallback(unsigned char *_header,
+               int _header_valid,
+               unsigned char *_payload,
+               unsigned int _payload_len,
+               int _payload_valid,
+               framesyncstats_s _stats,
+               void *_userdata);
