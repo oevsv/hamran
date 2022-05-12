@@ -126,7 +126,7 @@ void *sendBeacon(void *threadID)
     auto t1 = chrono::high_resolution_clock::now();
  //   auto t2 = t1;
     int frame_symbols = frameSymbols(DEFAULT_CYCL_PREFIX);
-    int buffer[2*32*(int)(SUBCARRIERS+SUBCARRIERS/4)];  //buffer large enough to hold whole frame no matter on configuration (2 = I&Q; 32 symbols; (subcarriers + cyclic prefix 1/4))
+    int buffer[2*frame_symbols*(int)(SUBCARRIERS+SUBCARRIERS/DEFAULT_CYCL_PREFIX)];  //buffer large enough to hold whole frame no matter on configuration (2 = I&Q; 32 symbols; (subcarriers + cyclic prefix 1/4))
     
     int symbolSampleCnt = complexFrameBufferLength(DEFAULT_CYCL_PREFIX);
     BeaconFrameAssemble(buffer);
