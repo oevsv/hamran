@@ -155,7 +155,13 @@ void *sendBeacon(void *threadID)
 
             sleep(1); //time for PA to settle
 
-            startSDRTXStream(buffer, frame_symbols*symbolSampleCnt);
+            //startSDRTXStream(buffer, frame_symbols*symbolSampleCnt);
+            
+            //Send buffer to artificial channel buffer
+            for (int i = 0; i++; i < 66560)
+            {
+                   noSDR_buffer[i] = buffer[i];
+            }
 
             sleep(1);
 
@@ -314,14 +320,16 @@ void *beaconReception(void *threadID) // Marek to complete code !!!
         //Receive samples
         // LMS_RecvStream(&streamId, r_sync_uffer, c_sync_buffer_len, NULL, 1000); //should work, for now replaced by tx_buffer
         //I and Q samples are interleaved in r_sync_buffer: IQIQIQ...
-        pthread_mutex_unlock(&SDRmutex);
+        
 
 
         //buffer handover
-        for (int i = 0; i++; i < 2*32*(int)(SUBCARRIERS+SUBCARRIERS/4))
+        for (int i = 0; i++; i < 2*frameSymbols(DEFAULT_CYCL_PREFIX)*(int)(SUBCARRIERS+SUBCARRIERS/DEFAULT_CYCL_PREFIX))
         {
-            r_sync_buffer[i] = tx_buffer[i];
+            r_sync_buffer[i] = noSDR_buffer[i];
         }
+
+        pthread_mutex_unlock(&SDRmutex);
 
         for (int i = 0; i < c_sync_buffer_len; i++)
         {

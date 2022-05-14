@@ -127,6 +127,8 @@ int frameSymbols(int cyclic_prefix);
 uint complexFrameBufferLength(int cyclic_prefix);
 unsigned int payloadLength(int cyclic_prefix, int phy_mode);
 
+int noSDR_buffer[66560]; //buffer for artificial channel
+
 
 int mycallback(unsigned char *_header,
                int _header_valid,
@@ -135,3 +137,4 @@ int mycallback(unsigned char *_header,
                int _payload_valid,
                framesyncstats_s _stats,
                void *_userdata);
+
