@@ -32,7 +32,7 @@
 #include <bitset>
 #include "ini.h"
 #include "log.h"
-#include "lime/LimeSuite.h"
+//  #include "lime/LimeSuite.h"
 #include <chrono>
 #include "alsa/asoundlib.h"
 #include "liquid/liquid.h"
@@ -78,13 +78,13 @@ string modeName[9] = {"RX", "TXDirect", "TX6m", "TX2m", "TX70cm", "TXDirectPTT",
 uint8_t modeGPIO[9] = {setRX, setTXDirect, setTX6m, setTX2m, setTX70cm, setTXDirectPTT, setTX6mPTT, setTX2mPTT, setTX70cmPTT};
 
 
-// SDR facility
-lms_device_t *device = NULL;
-int SDRinitTX(double frequency, int modeSelector, double normalizedGain);
-int SDRset(double frequency, int modeSelector, double normalizedGain);
-int SDRfrequency(lms_device_t *device, double frequency);
+// // SDR facility
+// lms_device_t *device = NULL;
+// int SDRinitTX(double frequency, int modeSelector, double normalizedGain);
+// int SDRset(double frequency, int modeSelector, double normalizedGain);
+// int SDRfrequency(lms_device_t *device, double frequency);
 void *startSocketServer(void *threadID);
-void *startSDRStream(void *threadID);
+// void *startSDRStream(void *threadID);
 void *beaconReception(void *threadID);
 void *startSocketConnect(void *threadID);
 void *startWebsocketServer(void *threadID);
