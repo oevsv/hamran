@@ -6,7 +6,7 @@
  *         Marek Honek
  *
  * Created on 19 Apr 2022, 18:20
- * Updated on 01 May 2022, 20:40
+ * Updated on 20 May 2022, 12:40
  * Version 1.00
  * Predecessor  RPX-100-Beacon-reorganized.cpp
  * Goal         Create synchronizer and artificial channel
@@ -117,6 +117,18 @@ int main(int argc, char *argv[])
     }
 
     pthread_mutex_destroy(&SDRmutex);
+
+    pthread_mutex_init(&SDRmutex, 0);
+
+    if (pthread_create(&threads[3], NULL, beaconReception, (void *)3) != 0)
+    {
+        msgSDR.str("");
+        msgSDR << "ERROR starting thread 3";
+        Logger(msgSDR.str());
+    }
+
+    pthread_mutex_destroy(&SDRmutex);
+
     pthread_exit(NULL);
 }
 
@@ -762,7 +774,7 @@ uint complexFrameBufferLength(int cyclic_prefix)
     return SUBCARRIERS + ((int)SUBCARRIERS / cyclic_prefix);
 }
 
-unsigned int payloadLength(int cyclic_prefix, int phy_mode)
+uint payloadLength(int cyclic_prefix, int phy_mode)
 {
     uint8_t useful_symbols;
     float bits_per_symbol;
@@ -782,7 +794,7 @@ unsigned int payloadLength(int cyclic_prefix, int phy_mode)
         useful_symbols = 27;
         break;
     default:
-        return -1;
+        return 0;
     }
     
 
@@ -832,10 +844,10 @@ unsigned int payloadLength(int cyclic_prefix, int phy_mode)
         bits_per_symbol = 6.0f * 6.0f / 5.0f;
         break;
     default:
-        return -1;
+        return 0;
     }
 
-    return floor(DATACARRIERS * useful_symbols * bits_per_symbol / 8);
+    return (uint)floor(DATACARRIERS * useful_symbols * bits_per_symbol / 8);
 }
 
 // callback function

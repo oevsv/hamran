@@ -87711,7 +87711,7 @@ void subcarrierAllocation (unsigned char *array);
 int DefineFrameGenerator (int dfg_cycl_pref, int dfg_PHYmode, ofdmflexframegen *generator, unsigned int *dfg_c_buffer_len, unsigned int *dfg_payload_len);
 int frameSymbols(int cyclic_prefix);
 uint complexFrameBufferLength(int cyclic_prefix);
-unsigned int payloadLength(int cyclic_prefix, int phy_mode);
+uint payloadLength(int cyclic_prefix, int phy_mode);
 
 int noSDR_buffer[66560];
 
@@ -87822,10 +87822,26 @@ int main(int argc, char *argv[])
     }
 
     pthread_mutex_destroy(&SDRmutex);
+
+    pthread_mutex_init(&SDRmutex, 0);
+
+    if (pthread_create(&threads[3], 
+# 123 "/opt/build/RPX-100/RPX-100-synchronizer.cpp" 3 4
+                                   __null
+# 123 "/opt/build/RPX-100/RPX-100-synchronizer.cpp"
+                                       , beaconReception, (void *)3) != 0)
+    {
+        msgSDR.str("");
+        msgSDR << "ERROR starting thread 3";
+        Logger(msgSDR.str());
+    }
+
+    pthread_mutex_destroy(&SDRmutex);
+
     pthread_exit(
-# 120 "/opt/build/RPX-100/RPX-100-synchronizer.cpp" 3 4
+# 132 "/opt/build/RPX-100/RPX-100-synchronizer.cpp" 3 4
                 __null
-# 120 "/opt/build/RPX-100/RPX-100-synchronizer.cpp"
+# 132 "/opt/build/RPX-100/RPX-100-synchronizer.cpp"
                     );
 }
 
@@ -87851,7 +87867,7 @@ void *sendBeacon(void *threadID)
             t1 = chrono::high_resolution_clock::now();
 
             setSampleRate(4);
-# 154 "/opt/build/RPX-100/RPX-100-synchronizer.cpp"
+# 166 "/opt/build/RPX-100/RPX-100-synchronizer.cpp"
             cout << "SDR has set" << endl;
 
             sleep(1);
@@ -87867,7 +87883,7 @@ void *sendBeacon(void *threadID)
             sleep(1);
 
             cout << "frame was transmitted" << endl;
-# 178 "/opt/build/RPX-100/RPX-100-synchronizer.cpp"
+# 190 "/opt/build/RPX-100/RPX-100-synchronizer.cpp"
             msgSDR.str("");
             msgSDR << "Send Beacon";
             Logger(msgSDR.str());
@@ -87875,9 +87891,9 @@ void *sendBeacon(void *threadID)
     }
 
     pthread_exit(
-# 184 "/opt/build/RPX-100/RPX-100-synchronizer.cpp" 3 4
+# 196 "/opt/build/RPX-100/RPX-100-synchronizer.cpp" 3 4
                 __null
-# 184 "/opt/build/RPX-100/RPX-100-synchronizer.cpp"
+# 196 "/opt/build/RPX-100/RPX-100-synchronizer.cpp"
                     );
 }
 
@@ -87935,11 +87951,11 @@ void BeaconFrameAssemble(int *r_frame_buffer)
         pthread_mutex_unlock(&SDRmutex);
     }
 }
-# 284 "/opt/build/RPX-100/RPX-100-synchronizer.cpp"
+# 296 "/opt/build/RPX-100/RPX-100-synchronizer.cpp"
 void *beaconReception(void *threadID)
 {
     liquid_float_complex complex_i (0, 1);
-# 302 "/opt/build/RPX-100/RPX-100-synchronizer.cpp"
+# 314 "/opt/build/RPX-100/RPX-100-synchronizer.cpp"
     uint c_sync_buffer_len = 32*(int)(1024 +1024/4);
     liquid_float_complex c_sync_buffer[c_sync_buffer_len];
     uint r_sync_buffer[c_sync_buffer_len*2];
@@ -87951,9 +87967,9 @@ void *beaconReception(void *threadID)
     unsigned int taper_len = (int)cp_len / 4;
 
     ofdmflexframesync fs = ofdmflexframesync_create(1024, cp_len, taper_len, allocation_array, mycallback, 
-# 312 "/opt/build/RPX-100/RPX-100-synchronizer.cpp" 3 4
+# 324 "/opt/build/RPX-100/RPX-100-synchronizer.cpp" 3 4
                                                                                                                  __null
-# 312 "/opt/build/RPX-100/RPX-100-synchronizer.cpp"
+# 324 "/opt/build/RPX-100/RPX-100-synchronizer.cpp"
                                                                                                                      );
 
 
@@ -87961,7 +87977,7 @@ void *beaconReception(void *threadID)
     while(1)
     {
         pthread_mutex_lock(&SDRmutex);
-# 327 "/opt/build/RPX-100/RPX-100-synchronizer.cpp"
+# 339 "/opt/build/RPX-100/RPX-100-synchronizer.cpp"
         for (int i = 0; i++; i < 2*frameSymbols(4)*(int)(1024 +1024/4))
         {
             r_sync_buffer[i] = noSDR_buffer[i];
@@ -87977,14 +87993,14 @@ void *beaconReception(void *threadID)
 
         ofdmflexframesync_execute(fs, c_sync_buffer, c_sync_buffer_len);
     }
-# 356 "/opt/build/RPX-100/RPX-100-synchronizer.cpp"
+# 368 "/opt/build/RPX-100/RPX-100-synchronizer.cpp"
     pthread_exit(
-# 356 "/opt/build/RPX-100/RPX-100-synchronizer.cpp" 3 4
+# 368 "/opt/build/RPX-100/RPX-100-synchronizer.cpp" 3 4
                 __null
-# 356 "/opt/build/RPX-100/RPX-100-synchronizer.cpp"
+# 368 "/opt/build/RPX-100/RPX-100-synchronizer.cpp"
                     );
 }
-# 617 "/opt/build/RPX-100/RPX-100-synchronizer.cpp"
+# 629 "/opt/build/RPX-100/RPX-100-synchronizer.cpp"
 void print_gpio(uint8_t gpio_val)
 {
     for (int i = 0; i < 8; i++)
@@ -88085,9 +88101,9 @@ ofdmflexframegen DefineFrameGenerator (int dfg_cycl_pref, int dfg_PHYmode)
         break;
     default:
         return 
-# 716 "/opt/build/RPX-100/RPX-100-synchronizer.cpp" 3 4
+# 728 "/opt/build/RPX-100/RPX-100-synchronizer.cpp" 3 4
               __null
-# 716 "/opt/build/RPX-100/RPX-100-synchronizer.cpp"
+# 728 "/opt/build/RPX-100/RPX-100-synchronizer.cpp"
                   ;
     }
 
@@ -88137,7 +88153,7 @@ uint complexFrameBufferLength(int cyclic_prefix)
     return 1024 + ((int)1024 / cyclic_prefix);
 }
 
-unsigned int payloadLength(int cyclic_prefix, int phy_mode)
+uint payloadLength(int cyclic_prefix, int phy_mode)
 {
     uint8_t useful_symbols;
     float bits_per_symbol;
@@ -88157,7 +88173,7 @@ unsigned int payloadLength(int cyclic_prefix, int phy_mode)
         useful_symbols = 27;
         break;
     default:
-        return -1;
+        return 0;
     }
 
 
@@ -88207,10 +88223,10 @@ unsigned int payloadLength(int cyclic_prefix, int phy_mode)
         bits_per_symbol = 6.0f * 6.0f / 5.0f;
         break;
     default:
-        return -1;
+        return 0;
     }
 
-    return floor(480 * useful_symbols * bits_per_symbol / 8);
+    return (uint)floor(480 * useful_symbols * bits_per_symbol / 8);
 }
 
 

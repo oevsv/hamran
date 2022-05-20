@@ -6,7 +6,7 @@
  *         Marek Honek
  *
  * Created on 19 Apr 2022, 18:20
- * Updated on 01 May 2022, 20:40
+ * Updated on 20 May 2022, 12:40
  * Version 1.00
  * Predecessor RPX-100-Beacon-reorganized.h
  *****************************************************************************/
@@ -125,7 +125,7 @@ void subcarrierAllocation (unsigned char *array);
 int DefineFrameGenerator (int dfg_cycl_pref, int dfg_PHYmode, ofdmflexframegen *generator, unsigned int *dfg_c_buffer_len, unsigned int *dfg_payload_len);
 int frameSymbols(int cyclic_prefix);
 uint complexFrameBufferLength(int cyclic_prefix);
-unsigned int payloadLength(int cyclic_prefix, int phy_mode);
+uint payloadLength(int cyclic_prefix, int phy_mode);
 
 int noSDR_buffer[66560]; //buffer for artificial channel
 
