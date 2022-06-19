@@ -3,10 +3,9 @@
  *
  * File:   RPX-100-FSK.cpp
  * Author: Bernhard Isemann
- *         Marek Honek
  *
- * Created on 20 Feb 2022, 10:35
- * Updated on 27 Feb 2022, 17:20
+ * Created on 08 May 2022, 10:35
+ * Updated on 08 May 2022, 17:20
  * Version 2.00
  *****************************************************************************/
 
@@ -14,21 +13,14 @@
 
 using namespace std;
 
-// SDR values
-double frequency = 52.8e6;
-double sampleRate = 4e6;
-double normalizedGain = 0.5;
-string mode = "TX6mPTT";
-int modeSelector = 6;
-
 int main(int argc, char *argv[])
 {
     if (argc == 1)
     {
-        cout << "Starting RPX-100-FSK with default settings:\n";
-        cout << "Mode: TX6mPTT" << endl;
+        cout << "Starting RPX-100 with default settings:\n";
+        cout << "Mode: RX" << endl;
         cout << endl;
-        cout << "type \033[36m'RF-100-FSK help'\033[0m to see all options !" << endl;
+        cout << "type \033[36m'RPX-100-FSK help'\033[0m to see all options !" << endl;
     }
     else if (argc >= 2)
     {
@@ -42,49 +34,41 @@ int main(int argc, char *argv[])
                 {
                     cout << "Starting RPX-100-FSK with following setting:\n";
                     cout << "Mode: " << argv[c] << endl;
-                    modeSelector = 0;
+                    modeSel = 0;
                 }
-                else if (mode == "TXDirectPTT")
+                else if (mode == "TX")
                 {
                     cout << "Starting RPX-100-FSK with following setting:\n";
                     cout << "Mode: " << argv[c] << endl;
-                    modeSelector = 5;
+                    modeSel = 1;
                 }
-                else if (mode == "TX6mPTT")
+                else if (mode == "TXPRE")
                 {
                     cout << "Starting RPX-100-FSK with following setting:\n";
                     cout << "Mode: " << argv[c] << endl;
-                    modeSelector = 6;
+                    modeSel = 2;
                 }
-                else if (mode == "TX2mPTT")
+                else if (mode == "TXPA")
                 {
                     cout << "Starting RPX-100-FSK with following setting:\n";
                     cout << "Mode: " << argv[c] << endl;
-                    modeSelector = 7;
-                }
-                else if (mode == "TX70cmPTT")
-                {
-                    cout << "Starting RPX-100-FSK with following setting:\n";
-                    cout << "Mode: " << argv[c] << endl;
-                    modeSelector = 8;
+                    modeSel = 3;
                 }
                 else if (mode == "help")
                 {
-                    cout << "Options for starting RPX-100-FSK: RF-100-FSK \033[36mMODE\033[0m" << endl;
+                    cout << "Options for starting RPX-100: RPX-100-FSK \033[36mMODE\033[0m" << endl;
                     cout << endl;
                     cout << "\033[36mMODE\033[0m:" << endl;
                     cout << "     \033[32mRX\033[0m for receive mode" << endl;
-                    cout << endl;
-                    cout << "     \033[31mTXDirectPTT\033[0m for transmit mode with PTT without bandpass filter" << endl;
-                    cout << "     \033[31mTX6mPTT\033[0m for transmit mode with PTT with bandpass filter for 50-54 MHz" << endl;
-                    cout << "     \033[31mTX2mPTT\033[0m for transmit mode with PTT with bandpass filter for 144-146 MHz" << endl;
-                    cout << "     \033[31mTX70cmPTT\033[0m for transmit mode with PTT with bandpass filter for 430-440 MHz" << endl;
+                    cout << "     \033[31mTX\033[0m for transmit mode without bandpass filter" << endl;
+                    cout << "     \033[31mTXPRE\033[0m for transmit mode with bandpass filter for 50-54 MHz" << endl;
+                    cout << "     \033[31mTXPA\033[0m for transmit mode with bandpass filter for 144-146 MHz" << endl;
                     cout << endl;
                     return 0;
                 }
                 else
                 {
-                    cout << "Wrong settings, please type  \033[36m'RPX-100-FSK help'\033[0m to see all options !" << endl;
+                    cout << "Wrong settings, please type  \033[36m'RPX-100-Test help'\033[0m to see all options !" << endl;
                     return 0;
                 }
                 break;
@@ -93,13 +77,13 @@ int main(int argc, char *argv[])
     }
 
     LogInit();
-    Logger("RPX-100-TX was started succesfully with following settings:\n");
+    Logger("RPX-100-FSK was started succesfully with following settings:\n");
     msgSDR.str("");
     msgSDR << "Mode: " << mode << endl;
     Logger(msgSDR.str());
 
     // Initialize LimeSDR
-    if (SDRinit(frequency, sampleRate, modeSelector, normalizedGain) != 0)
+    if (SDRinit(frequency, sampleRate, modeSel, normalizedGain) != 0)
     {
         msgSDR.str("");
         msgSDR << "ERROR: " << LMS_GetLastErrorMessage();

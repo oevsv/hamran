@@ -3,10 +3,9 @@
  *
  * File:   RPX-100-TX.h
  * Author: Bernhard Isemann
- *         Marek Honek
  *
- * Created on 19 Sep 2021, 12:37
- * Updated on 27 Feb 2022, 17:00
+ * Created on 08 May 2022, 12:37
+ * Updated on 08 May 2022, 17:00
  * Version 2.00
  *****************************************************************************/
 
@@ -51,3 +50,11 @@ void *sendBeacon(void *threadID);
 
 // Log facility
 std::stringstream msgSDR;
+
+// SDR values
+double frequency = 52.8e6;
+double sampleRate = 4e6;
+int modeSelector;
+double normalizedGain = 0.5;
+string mode = "TXPA";
+int modeSel = 3;
