@@ -15,7 +15,7 @@
 </table>
 
 <h1>Overview</h1>
-<p>Before cloneing and using the code please read the get started information <a href="https://amsat-oe.org/getstarted.html>here</a>.</p>
+<p>Before cloneing and using the code please read the get started information <a href="https://amsat-oe.org/getstarted.html">here</a>.</p>
 
 Development and operation of an emergency radio communication system is a newly enforced duty of the Radio Amateurs in Austria and reason for the need to establish a new digital transmission procedure allowing high speed data communication in Sub-GHz Frequency bands.<br><br>
 Requirements for the new communication system are to use a wideband transmission mode to support more bandwidth for each user, and enables multiple users at the same time to connect to a base station.
