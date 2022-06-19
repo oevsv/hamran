@@ -1,3 +1,4 @@
+<p><span style="color:red">Before cloning and using the code please read the get started information</span> <a href="https://amsat-oe.org/getstarted.html">here</a>.</p>
 <table border="0" style="width:100%">
  <tr>
   <td><img src="doc/img/image1.png" height="340" alt="OFDMA"></td>
