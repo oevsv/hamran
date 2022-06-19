@@ -1,4 +1,4 @@
-<span style='color:red'>Before cloning and using this code please read the get started information</span> <a href="https://amsat-oe.org/getstarted.html">here.</a> The software under development and is targeting a specifig hardware (WRAN RF Frontend).<br>
+<span style="color:red">Before cloning and using this code please read the get started information</span> <a href="https://amsat-oe.org/getstarted.html">here.</a> The software is under development and is targeting a specifig hardware (WRAN RF Frontend).<br>
 <table border="0" style="width:100%">
  <tr>
   <td><img src="doc/img/image1.png" height="340" alt="OFDMA"></td>
