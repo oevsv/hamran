@@ -1,4 +1,4 @@
-<p><span style="color:red">Before cloning and using the code please read the get started information</span> <a href="https://amsat-oe.org/getstarted.html">here. This code is under development and is targeting a specifig hardware (WRAN RF Frontend).</a>.</p>
+<p><red>Before cloning and using the code please read the get started information</red> <a href="https://amsat-oe.org/getstarted.html">here.</a> This code is under development and is targeting a specifig hardware (WRAN RF Frontend).</p>
 <table border="0" style="width:100%">
  <tr>
   <td><img src="doc/img/image1.png" height="340" alt="OFDMA"></td>
@@ -16,7 +16,7 @@
 </table>
 
 <h1>Overview</h1>
-<p><span style="color:red">Before cloning and using the code please read the get started information</span> <a href="https://amsat-oe.org/getstarted.html">here</a>.</p>
+<p><red">Before cloning and using the code please read the get started information</red> <a href="https://amsat-oe.org/getstarted.html">here</a>.</p>
 
 Development and operation of an emergency radio communication system is a newly enforced duty of the Radio Amateurs in Austria and reason for the need to establish a new digital transmission procedure allowing high speed data communication in Sub-GHz Frequency bands.<br><br>
 Requirements for the new communication system are to use a wideband transmission mode to support more bandwidth for each user, and enables multiple users at the same time to connect to a base station.
