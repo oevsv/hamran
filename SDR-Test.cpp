@@ -1,15 +1,15 @@
 /******************************************************************************
- * C++ source of RPX-100
+ * C++ source of RPX-100-Test
  *
- * File:   SDRsamples.cpp
+ * File:   SDR-Test.cpp
  * Author: Bernhard Isemann
  *
- * Created on 06 Jan 2022, 10:35
- * Updated on 06 Jan 2022, 18:20
+ * Created on 08 May 2022, 10:35
+ * Updated on 08 May 2022, 18:20
  * Version 1.00
  *****************************************************************************/
 
-#include "SDRsamples.h"
+#include "SDR-Test.h"
 
 using namespace std;
 
@@ -112,7 +112,7 @@ int SDRinit(double frequency, double sampleRate, int modeSelector, double normal
     }
 
     // set TX gain
-    if (LMS_SetNormalizedGain(device, LMS_CH_RX, 0, 1) != 0)
+    if (LMS_SetNormalizedGain(device, LMS_CH_RX, 0, normalizedGain) != 0)
     {
         error();
     }
