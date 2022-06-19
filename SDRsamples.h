@@ -47,7 +47,7 @@
 #pragma once
 
 #define NUM_CONNECTS 5 // max number of sockets connections
-#define PORT_NUMBER 8084
+#define PORT_NUMBER 8082
 #define TIMEOUT 500
 
 extern pthread_mutex_t SDRmutex;

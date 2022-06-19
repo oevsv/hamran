@@ -164,7 +164,7 @@ void *startSocketServer(void *threadID)
     int *thID = (int*)threadID;
     ServerSocket RPX_server(RPX_port);
     msgSDR.str("");
-    msgSDR << "Socket server started as thread no: " << thID << " using port: " << RPX_port << ", rxON=" << rxON;
+    msgSDR << "Socket server started as thread no: " << thID << " using port: " << RPX_port << ", rxON=" << rxON << endl;
     Logger(msgSDR.str());
     pthread_t connects[NUM_CONNECTS];
     ConCurSocket = 0;
@@ -178,7 +178,7 @@ void *startSocketServer(void *threadID)
             if (pthread_create(&connects[ConCurSocket], NULL, startSocketConnect, (void *)ConCurSocket) != 0)
             {
                 msgSDR.str("");
-                msgSDR << "ERROR starting thread " << ConCurSocket;
+                msgSDR << "ERROR starting thread " << ConCurSocket << endl;
                 Logger(msgSDR.str());
             }
             ConCurSocket++;
@@ -247,7 +247,7 @@ void *startSDRStream(void *threadID)
 
     // Start streaming
     msgSDR.str("");
-    msgSDR << "SDR stream started as thread no: " << threadID << " with sampleCnt (I+Q): " << sampleCnt;
+    msgSDR << "SDR stream started as thread no: " << threadID << " with sampleCnt (I+Q): " << sampleCnt << endl;
     Logger(msgSDR.str());
 
     while (rxON)
@@ -282,7 +282,7 @@ void *startSocketConnect(void *threadID)
 {
     int *thID = (int*)threadID;
     msgSDR.str("");
-    msgSDR << "Socket connection started as connect no: " << thID << " using port: " << RPX_port << ", rxON=" << rxON;
+    msgSDR << "Socket connection started as connect no: " << thID << " using port: " << RPX_port << ", rxON=" << rxON << endl;
     Logger(msgSDR.str());
 
     while (socketsON)
@@ -335,7 +335,7 @@ void rpxServer::onConnect(int socketID)
 {
     const string &handle = "User #" + Util::toString(socketID);
     msgSDR.str("");
-    msgSDR << "New connection: " << handle;
+    msgSDR << "New connection: " << handle << endl;
     Logger(msgSDR.str());
 }
 
@@ -343,9 +343,10 @@ void rpxServer::onMessage(int socketID, const string &data)
 {
     // Send the received message to all connected clients in the form of 'User XX: message...'
     msgSDR.str("");
-    msgSDR << "Received: " << data;
+    msgSDR << "Received: " << data << endl;
     Logger(msgSDR.str());
     // const string &message = this->getValue(socketID, "handle") + ": " + data;
+    
 
     // this->broadcast(message);
 }
@@ -354,7 +355,7 @@ void rpxServer::onDisconnect(int socketID)
 {
     const string &handle = this->getValue(socketID, "handle");
     msgSDR.str("");
-    msgSDR << "Disconnected: " << handle;
+    msgSDR << "Disconnected: " << handle << endl;
     Logger(msgSDR.str());
 
     // Let everyone know the user has disconnected
@@ -369,6 +370,6 @@ void rpxServer::onDisconnect(int socketID)
 void rpxServer::onError(int socketID, const string &message)
 {
     msgSDR.str("");
-    msgSDR << "Error: " << message;
+    msgSDR << "Error: " << message << endl;
     Logger(msgSDR.str());
 }

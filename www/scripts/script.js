@@ -1,6 +1,6 @@
 'use strict';
 
-var spectrum, logger, ws;
+var spectrum, logger, ws, wsCtrl;
 
 function connectWebSocket(spectrum) {
 
@@ -42,6 +42,12 @@ function connectWebSocket(spectrum) {
             spectrum.log(" > Freq:" + data.center / 1000000 + " MHz | Span: " + data.span / 1000000 + " MHz | Gain: " + data.gain + "dB | Fps: " + data.framerate);
         }
     }
+}
+
+function tx6m() {
+    ws.send('test');
+    console.log("send test message !");
+
 }
 
 

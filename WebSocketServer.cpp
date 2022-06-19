@@ -125,7 +125,7 @@ WebSocketServer::WebSocketServer( int port, const string certPath, const string&
     if( !this->_context )
         throw "libwebsocket init failed";
     msgWS.str("");
-    msgWS << "Server started on port " << Util::toString( this->_port );
+    msgWS << "Server started on port " << Util::toString( this->_port ) << endl;
     Logger(msgWS.str());
 
     // Some of the libwebsocket stuff is define statically outside the class. This
