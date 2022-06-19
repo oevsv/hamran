@@ -343,8 +343,12 @@ void rpxServer::onMessage(int socketID, const string &data)
 {
     // Send the received message to all connected clients in the form of 'User XX: message...'
     msgSDR.str("");
-    msgSDR << "Received: " << data << endl;
+    msgSDR << "User click: " << data << endl;
     Logger(msgSDR.str());
+    if (data = "tx2m") {
+        
+    }
+    
     // const string &message = this->getValue(socketID, "handle") + ": " + data;
     
 

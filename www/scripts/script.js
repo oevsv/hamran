@@ -45,8 +45,12 @@ function connectWebSocket(spectrum) {
 }
 
 function tx6m() {
-    ws.send('test');
-    console.log("send test message !");
+    ws.send('tx6m');
+
+}
+
+function tx2m() {
+    ws.send('tx2m');
 
 }
 
