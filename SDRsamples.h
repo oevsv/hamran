@@ -44,7 +44,7 @@
 #include "WebSocketServer.h"
 
 
-#pragma once
+#pragma onces
 
 #define NUM_CONNECTS 5 // max number of sockets connections
 #define PORT_NUMBER 8082
