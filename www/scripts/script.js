@@ -54,6 +54,11 @@ function tx2m() {
 
 }
 
+function tx70cm() {
+    ws.send('tx70cm');
+
+}
+
 
 function main() {
     

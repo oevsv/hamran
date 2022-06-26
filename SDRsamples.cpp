@@ -97,12 +97,12 @@ int SDRinit(double frequency, double sampleRate, int modeSelector, double normal
     Logger(msgSDR.str());
 
     // Set center frequency
-    if (LMS_SetLOFrequency(device, LMS_CH_RX, 0, 52.8e6) != 0)
+    if (LMS_SetLOFrequency(device, LMS_CH_RX, 0, 144.8e6) != 0)
     {
         error();
     }
     msgSDR.str("");
-    msgSDR << "Center frequency: " << 52.8e6 / 1e6 << " MHz" << endl;
+    msgSDR << "Center frequency: " << 144.8e6 / 1e6 << " MHz" << endl;
     Logger(msgSDR.str());
 
     // select Low TX path for LimeSDR mini --> TX port 2 (misslabed in MINI, correct in USB)
@@ -345,9 +345,19 @@ void rpxServer::onMessage(int socketID, const string &data)
     msgSDR.str("");
     msgSDR << "User click: " << data << endl;
     Logger(msgSDR.str());
-    if (data = "tx2m") {
-        
-    }
+    switch (data)
+    {
+        case: "tx6m"
+        SDRfrequency(device, 52.0e6);
+        break;
+
+        case: "tx2m"
+        SDRfrequency(device, 145.0e6);
+        break;
+
+        case: "tx70cm"
+        SDRfrequency(device, 435.0e6);
+        break;
     
     // const string &message = this->getValue(socketID, "handle") + ": " + data;
     
