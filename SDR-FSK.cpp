@@ -1,15 +1,15 @@
 /******************************************************************************
- * C++ source of RPX-100-TX
+ * C++ source of RPX-100-FSK
  *
- * File:   SDRsamples-TX.cpp
+ * File:   SDR-FSK.cpp
  * Author: Bernhard Isemann
  *
- * Created on 06 Jan 2022, 10:35
- * Updated on 27 Feb 2022, 17:20
+ * Created on 08 May 2022, 10:35
+ * Updated on 08 May 2022, 17:20
  * Version 2.00
  *****************************************************************************/
 
-#include "SDRsamples-FSK.h"
+#include "SDR-FSK.h"
 
 using namespace std;
 
@@ -24,8 +24,8 @@ void *sendBeacon(void *threadID)
         {
             t1 = chrono::high_resolution_clock::now();
 
-            // call SDRinitTX (TX6mPTT)
-            if (SDRset(52.8e6, 4e6, 5, 1) != 0)
+            // call SDRinitTX
+            if (SDRset(52.8e6, 4e6, 3, 0.85) != 0)
             {
                 msgSDR.str("");
                 msgSDR << "ERROR: " << LMS_GetLastErrorMessage();
@@ -86,27 +86,29 @@ int startSDRTXStream(string message)
     LMS_StartStream(&streamId);
 
     //modulator
-    freqmod mod = freqmod_create(modFactor); // modulator
+    freqmod mod = freqmod_create(kf); // modulator
     float f_ratio = toneFrequency / sampleRate;
 
     //Initialize data buffers
     liquid_float_complex mod_buffer[sampleCnt]; //TX buffer to hold complex values - liquid library)
-    float test_tone[2*sampleCnt];
+    float test_tone[sampleCnt];
 
     msgSDR.str("");
     msgSDR << "Modulation Factor: " << modFactor << endl;
     Logger(msgSDR.str());
-
-    // generate message signal (sum of sines)
-    for (int i = 0; i <sampleCnt; i++)
-    {
-        test_tone[2*i] = cos(2*M_PI*i/16.0);
-        test_tone[2*i+1] = sin(2*M_PI*i/16.0);
+    int i = 0;
+   // generate message signal (sum of sines)
+    for (i=0; i<sampleCnt; i++) {
+        test_tone[i] = 0.3f*cosf(2*M_PI*0.027f*i + 0.0f) +
+               0.2f*cosf(2*M_PI*0.033f*i + 0.4f) +
+               0.4f*cosf(2*M_PI*0.045f*i + 1.7f);
     }
 
+    // modulate signal
     freqmod_modulate_block(mod, test_tone, sampleCnt, mod_buffer);
 
-    int i = 0;
+
+    i = 0;
     while (i < sampleCnt)
      {
          buffer[2 * i] = mod_buffer[i].real();

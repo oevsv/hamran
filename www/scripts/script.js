@@ -1,10 +1,12 @@
 'use strict';
 
-var spectrum, logger, ws;
+var spectrum, logger, ws, wsCtrl;
 
 function connectWebSocket(spectrum) {
 
-    ws = new WebSocket("ws://" + window.location.host.substring(0, window.location.host.indexOf(':')) + ":8082");
+    // ws = new WebSocket("ws://" + window.location.host.substring(0, window.location.host.indexOf(':')) + ":8084");
+    // ws = new WebSocket("ws://" + window.location.host.substring(0, window.location.host.indexOf(':')) + ":8082");
+    ws = new WebSocket("ws://" + window.location.host + ":8082");
 
     spectrum.setWebSocket(ws);
   
@@ -40,6 +42,18 @@ function connectWebSocket(spectrum) {
             spectrum.log(" > Freq:" + data.center / 1000000 + " MHz | Span: " + data.span / 1000000 + " MHz | Gain: " + data.gain + "dB | Fps: " + data.framerate);
         }
     }
+}
+
+function tx6m() {
+    ws.send('band:1');
+}
+
+function tx2m() {
+    ws.send('band:2');
+}
+
+function tx70cm() {
+    ws.send('band:3');
 }
 
 
