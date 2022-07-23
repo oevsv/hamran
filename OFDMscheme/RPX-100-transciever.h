@@ -14,6 +14,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include <fcntl.h>
 #include <errno.h>
@@ -22,6 +23,7 @@
 #include <syslog.h>
 #include <string.h>
 #include <iostream>
+#include <fstream>
 #include <cstdio>
 #include <ctime>
 #include <math.h>
@@ -30,19 +32,25 @@
 #include <chrono>
 #include <cstring>
 #include <bitset>
-#include "ini.h"
-#include "log.h"
+#include "stuff/ini.h"
+#include "stuff/log.h"
 #include <chrono>
-#include "alsa/asoundlib.h"
+// #include "alsa/asoundlib.h"
+#include "lime/LimeSuite.h"
 #include "liquid/liquid.h"
-#include "sockets/ServerSocket.h"
-#include "sockets/SocketException.h"
+#include "stuff/ServerSocket.h"
+#include "stuff/SocketException.h"
 #include <iterator>
 #include <signal.h>
-#include <pthread.h>
-#include "Util.h"
-#include "WebSocketServer.h"
+// #include <pthread.h>
+#include "stuff/Util.h"
+#include "stuff/WebSocketServer.h"
+#include <correct.h>
 #pragma once
+
+
+lms_device_t *device = NULL;
+
 
 pthread_mutex_t SDRmutex;
 #define NUM_THREADS 5 // max number of main threads
@@ -57,6 +65,13 @@ pthread_mutex_t SDRmutex;
 #define TX_6m_MODE 6
 #define RX_MODE 0
 
+// print each step for debuggigng
+#define PRINT false
+
+string message = "OE1XTU WRAN at 52.8 MHz";
+
+float calculateBER(unsigned int payload_len, string transmitted, unsigned char *received);
+bool callback_invoked = false;
 
 // Radio Frontend - Define GPIO settings for CM4 hat module
 uint8_t setRX = 0x18;       // GPIO0=LOW - RX, GPIO3=HIGH - PTT off,
@@ -74,22 +89,22 @@ string modeName[9] = {"RX", "TXDirect", "TX6m", "TX2m", "TX70cm", "TXDirectPTT",
 uint8_t modeGPIO[9] = {setRX, setTXDirect, setTX6m, setTX2m, setTX70cm, setTXDirectPTT, setTX6mPTT, setTX2mPTT, setTX70cmPTT};
 
 
-void *beaconReception(void *threadID);
-void *sendBeacon(void *threadID);
+void sendFrame(int cyclic_prefix, int phy_mode);
+void frameReception(int cyclic_prefix);
+
 int error();
 string exec(string command);
 
 // Log facility
 void print_gpio(uint8_t gpio_val);
-std::stringstream msgSDR;
-std::stringstream HEXmsg;
+stringstream msgSDR;
+stringstream HEXmsg;
 
 // SDR values
 double sampleRate = 3328000; //default
 string mode = "TX6m";
-double def_normalizedGain = 1;
-double def_frequency = 52.8e6;
-
+double normalizedGain = 1;
+double frequency = 52.8e6;
 
 
 // Initialize sdr buffers
@@ -100,19 +115,22 @@ bool rxON = true;
 bool txON = true;
 
 int startSDRTXStream(int *tx_buffer, int FrameSampleCnt);
-int startSDRBeaconReception(int *tx_buffer);
-void BeaconFrameAssemble(int *r_frame_buffer);
+void frameAssemble(int *r_frame_buffer, int cyclic_prefix, int phy_mode);
 void subcarrierAllocation (unsigned char *array);
 ofdmflexframegen DefineFrameGenerator (int dfg_cycl_pref, int dfg_PHYmode);
 int frameSymbols(int cyclic_prefix);
 uint complexFrameBufferLength(int cyclic_prefix);
+uint complexSymbolBufferLength(int cyclic_prefix);
 uint payloadLength(int cyclic_prefix, int phy_mode);
 void setSampleRate(int cyclic_prefix);
 
-int noSDR_buffer[66560]; //buffer for artificial channel
+int SDRset(double frequency, int modeSelector, double normalizedGain);
+int SDRinit(int modeSelector);
+int startSDRTXStream(int *tx_buffer, int FrameSampleCnt);
 
 
-int mycallback(unsigned char *_header,
+
+int callbackWhatsReceived(unsigned char *_header,
                int _header_valid,
                unsigned char *_payload,
                unsigned int _payload_len,
