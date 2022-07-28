@@ -5,9 +5,10 @@
  * Author: Bernhard Isemann
  *         Marek Honek
  *
- * Created on 19 Sep 2021, 12:37
- * Updated on 29 Mar 2022, 20:20
- * Version 2.00
+ * Created on 19 Apr 2022, 18:20
+ * Updated on 22 May 2022, 18:00
+ * Version 1.00
+ * Predecessor RPX-100-Beacon-reorganized.h
  *****************************************************************************/
 
 #include <sys/types.h>
@@ -31,7 +32,6 @@
 #include <bitset>
 #include "ini.h"
 #include "log.h"
-#include "lime/LimeSuite.h"
 #include <chrono>
 #include "alsa/asoundlib.h"
 #include "liquid/liquid.h"
@@ -55,10 +55,7 @@ pthread_mutex_t SDRmutex;
 #define DEFAULT_CYCL_PREFIX 4
 
 #define TX_6m_MODE 6
-#define RX_MODE 0    //corrected 19Apr22 from 1 to 0
-
-// #define FREQUENCY 52.8e6
-// #define NORMALIZED_GAIN 1
+#define RX_MODE 0
 
 
 // Radio Frontend - Define GPIO settings for CM4 hat module
@@ -77,15 +74,7 @@ string modeName[9] = {"RX", "TXDirect", "TX6m", "TX2m", "TX70cm", "TXDirectPTT",
 uint8_t modeGPIO[9] = {setRX, setTXDirect, setTX6m, setTX2m, setTX70cm, setTXDirectPTT, setTX6mPTT, setTX2mPTT, setTX70cmPTT};
 
 
-// SDR facility
-lms_device_t *device = NULL;
-int SDRinitTX(double frequency, int modeSelector, double normalizedGain);
-int SDRsetTX(double frequency, int modeSelector, double normalizedGain);
-int SDRfrequency(lms_device_t *device, double frequency);
-void *startSocketServer(void *threadID);
-void *startSDRStream(void *threadID);
-void *startSocketConnect(void *threadID);
-void *startWebsocketServer(void *threadID);
+void *beaconReception(void *threadID);
 void *sendBeacon(void *threadID);
 int error();
 string exec(string command);
@@ -97,9 +86,7 @@ std::stringstream HEXmsg;
 
 // SDR values
 double sampleRate = 3328000; //default
-// double normalizedGain = 1; // if it works without this line, delete it
 string mode = "TX6m";
-// int modeSel = 6; // if it works without this line, delete it
 double def_normalizedGain = 1;
 double def_frequency = 52.8e6;
 
@@ -112,12 +99,24 @@ int samplesRead = 1048;
 bool rxON = true;
 bool txON = true;
 
-//Beacon frame parameters
-//unsigned int cp_len;    // if it works without this line, delete it
-//unsigned int taper_len; // if it works without this line, delete it
-
 int startSDRTXStream(int *tx_buffer, int FrameSampleCnt);
-int BeaconFrameAssemble(int *symbols, int *r_frame_buffer);
-void subcarrier_allocation (unsigned char *array);
-int DefineFrameGenerator (int dfg_cycl_pref, int dfg_PHYmode, ofdmflexframegen *generator, unsigned int *dfg_c_buffer_len, unsigned int *dfg_payload_len);
-int DefineFrameSynchronizer (int dfs_cycl_pref, int dfs_PHYmode, ofdmflexframegen *synchronizer, unsigned int *dfs_c_buffer_len, unsigned int *dfs_payload_len);
+int startSDRBeaconReception(int *tx_buffer);
+void BeaconFrameAssemble(int *r_frame_buffer);
+void subcarrierAllocation (unsigned char *array);
+ofdmflexframegen DefineFrameGenerator (int dfg_cycl_pref, int dfg_PHYmode);
+int frameSymbols(int cyclic_prefix);
+uint complexFrameBufferLength(int cyclic_prefix);
+uint payloadLength(int cyclic_prefix, int phy_mode);
+void setSampleRate(int cyclic_prefix);
+
+int noSDR_buffer[66560]; //buffer for artificial channel
+
+
+int mycallback(unsigned char *_header,
+               int _header_valid,
+               unsigned char *_payload,
+               unsigned int _payload_len,
+               int _payload_valid,
+               framesyncstats_s _stats,
+               void *_userdata);
+

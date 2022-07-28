@@ -45,13 +45,15 @@ function connectWebSocket(spectrum) {
 }
 
 function tx6m() {
-    ws.send('tx6m');
-
+    ws.send('band:1');
 }
 
 function tx2m() {
-    ws.send('tx2m');
+    ws.send('band:2');
+}
 
+function tx70cm() {
+    ws.send('band:3');
 }
 
 

@@ -93,16 +93,16 @@ int SDRinit(double frequency, double sampleRate, int modeSelector, double normal
         error();
     }
     msgSDR.str("");
-    msgSDR << "Sample rate: " << 4e6/ 1e6 << " MHz" << endl;
+    msgSDR << "Sample rate: " << 4e6 / 1e6 << " MHz" << endl;
     Logger(msgSDR.str());
 
     // Set center frequency
-    if (LMS_SetLOFrequency(device, LMS_CH_RX, 0, 52.8e6) != 0)
+    if (LMS_SetLOFrequency(device, LMS_CH_RX, 0, 144.8e6) != 0)
     {
         error();
     }
     msgSDR.str("");
-    msgSDR << "Center frequency: " << 52.8e6 / 1e6 << " MHz" << endl;
+    msgSDR << "Center frequency: " << 144.8e6 / 1e6 << " MHz" << endl;
     Logger(msgSDR.str());
 
     // select Low TX path for LimeSDR mini --> TX port 2 (misslabed in MINI, correct in USB)
@@ -161,7 +161,7 @@ void print_gpio(uint8_t gpio_val)
 
 void *startSocketServer(void *threadID)
 {
-    int *thID = (int*)threadID;
+    int *thID = (int *)threadID;
     ServerSocket RPX_server(RPX_port);
     msgSDR.str("");
     msgSDR << "Socket server started as thread no: " << thID << " using port: " << RPX_port << ", rxON=" << rxON << endl;
@@ -269,18 +269,18 @@ void *startSDRStream(void *threadID)
     LMS_DestroyStream(device, &streamId); // stream is deallocated and can no longer be used
 
     // Close device
-    if (LMS_Close(device) == 0)
-    {
-        msgSDR.str("");
-        msgSDR << "Closed" << endl;
-        Logger(msgSDR.str());
-    }
-    pthread_exit(NULL);
+    // if (LMS_Close(device) == 0)
+    // {
+    //     msgSDR.str("");
+    //     msgSDR << "Closed" << endl;
+    //     Logger(msgSDR.str());
+    // }
+    // pthread_exit(NULL);
 }
 
 void *startSocketConnect(void *threadID)
 {
-    int *thID = (int*)threadID;
+    int *thID = (int *)threadID;
     msgSDR.str("");
     msgSDR << "Socket connection started as connect no: " << thID << " using port: " << RPX_port << ", rxON=" << rxON << endl;
     Logger(msgSDR.str());
@@ -345,12 +345,55 @@ void rpxServer::onMessage(int socketID, const string &data)
     msgSDR.str("");
     msgSDR << "User click: " << data << endl;
     Logger(msgSDR.str());
+<<<<<<< HEAD
     if (data == "tx2m") {
         
+=======
+    string cmd = "";
+    if (data.find_first_of(':') > 0)
+    {
+        cmd = data.substr(0, data.find_first_of(':'));
+    };
+    int par = 0;
+    if (data.find_first_of(':') > 0)
+    {
+        par = stoi(data.substr(data.find_first_of(':') + 1));
+>>>>>>> 1568745bb960131ac8b6b46d6ac707239458c55a
     }
-    
+    if (cmd == "band")
+    {
+        switch (par)
+        {
+        case 1:
+            SDRfrequency(device, 52.0e6);
+            break;
+
+        case 2:
+            SDRfrequency(device, 145.0e6);
+            break;
+
+        case 3:
+            pthread_t threads[5];
+            pthread_mutex_init(&SDRmutex, 0);
+            rxON = false;
+            sleep(1);
+            SDRfrequency(device, 435.0e6);
+            rxON = true;
+            if (pthread_create(&threads[1], NULL, startSDRStream, (void *)1) != 0)
+            {
+                msgSDR.str("");
+                msgSDR << "ERROR starting thread 1";
+                Logger(msgSDR.str());
+            }
+            break;
+
+        default:
+            SDRfrequency(device, 52.0e6);
+            break;
+        }
+    }
+
     // const string &message = this->getValue(socketID, "handle") + ": " + data;
-    
 
     // this->broadcast(message);
 }

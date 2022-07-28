@@ -1,4 +1,4 @@
-**Before cloning and using this code please read the get started information** <a href="https://amsat-oe.org/getstarted.html">here.</a><br>The software is under development and is targeting a specifig hardware (WRAN RF Frontend).<br>
+**Before cloning and using this code please read the get started information** <a href="https://rpx-100.net/getstarted.html">here.</a><br>The software is under development and is targeting a specifig hardware (WRAN RF Frontend).<br>
 <table border="0" style="width:100%">
  <tr>
   <td><img src="doc/img/image1.png" height="340" alt="OFDMA"></td>
@@ -6,7 +6,7 @@
     <b>Bernhard Isemann</b><br><br>
         AT: OE3BIA<br>
         NL: PA3BI<br><br><br>
-        Web: <a href="https://amsat-oe.org">www.amsat-oe.org</a><br>
+        Web: <a href="https://rpx-100.net">www.rpx-100.net</a><br>
         </td>
         <td align="center">
         <a href="https://oevsv.at/home/" target="_blank"><img src="doc/img/OEVSV_small.png" height="120" alt="Austrian Radio Amateur Association"></a><br><br>
@@ -16,7 +16,7 @@
 </table>
 
 <h1>Overview</h1>
-Before cloning and using this code please read the get started information <a href="https://amsat-oe.org/getstarted.html">here.</a><br><br>
+Before cloning and using this code please read the get started information <a href="https://rpx-100.net/getstarted.html">here.</a><br><br>
 
 Development and operation of an emergency radio communication system is a newly enforced duty of the Radio Amateurs in Austria and reason for the need to establish a new digital transmission procedure allowing high speed data communication in Sub-GHz Frequency bands.<br><br>
 Requirements for the new communication system are to use a wideband transmission mode to support more bandwidth for each user, and enables multiple users at the same time to connect to a base station.
