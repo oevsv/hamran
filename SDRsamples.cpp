@@ -345,7 +345,7 @@ void rpxServer::onMessage(int socketID, const string &data)
     msgSDR.str("");
     msgSDR << "User click: " << data << endl;
     Logger(msgSDR.str());
-    if (data = "tx2m") {
+    if (data == "tx2m") {
         
     }
     
