@@ -1,5 +1,5 @@
 /******************************************************************************
- * C++ source of RPX-100S
+ * C++ source of RPX-100
  *
  * File:   RPX-100.h
  * Author: Bernhard Isemann

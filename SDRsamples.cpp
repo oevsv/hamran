@@ -345,10 +345,6 @@ void rpxServer::onMessage(int socketID, const string &data)
     msgSDR.str("");
     msgSDR << "User click: " << data << endl;
     Logger(msgSDR.str());
-<<<<<<< HEAD
-    if (data == "tx2m") {
-        
-=======
     string cmd = "";
     if (data.find_first_of(':') > 0)
     {
@@ -358,7 +354,6 @@ void rpxServer::onMessage(int socketID, const string &data)
     if (data.find_first_of(':') > 0)
     {
         par = stoi(data.substr(data.find_first_of(':') + 1));
->>>>>>> 1568745bb960131ac8b6b46d6ac707239458c55a
     }
     if (cmd == "band")
     {

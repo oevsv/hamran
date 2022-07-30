@@ -1,5 +1,5 @@
 /******************************************************************************
- * C++ source of RPX-100S
+ * C++ source of RPX-100
  *
  * File:   SDRsamples.h
  * Author: Bernhard Isemann
