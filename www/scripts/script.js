@@ -4,9 +4,9 @@ var spectrum, logger, ws, wsCtrl;
 
 function connectWebSocket(spectrum) {
 
-    ws = new WebSocket("ws://" + window.location.host.substring(0, window.location.host.indexOf(':')) + ":8084");
+    // ws = new WebSocket("ws://" + window.location.host.substring(0, window.location.host.indexOf(':')) + ":8084");
     // ws = new WebSocket("ws://" + window.location.host.substring(0, window.location.host.indexOf(':')) + ":8082");
-    // ws = new WebSocket("ws://" + window.location.host + ":8082");
+    ws = new WebSocket("ws://" + window.location.host + ":8082");
 
     spectrum.setWebSocket(ws);
   
@@ -26,9 +26,17 @@ function connectWebSocket(spectrum) {
         var data = JSON.parse(evt.data);
         if (data.s) {
             spectrum.addData(data.s);
+            let num = parseFloat(data.center);
+            let bw = parseFloat(data.span);
+            let tx = parseFloat(data.txFreq);
+            document.getElementById('center').innerHTML = 'RX: ' + (num/1000000).toFixed(3) + ' MHz |';
+            document.getElementById('tx').innerHTML = ' TX: ' + (tx/1000000).toFixed(3) + ' MHz';
+            document.getElementById('min').innerHTML = ((num - bw/2)/1000000).toFixed(3) + ' MHz';
+            document.getElementById('max').innerHTML = ((num + bw/2)/1000000).toFixed(3) + ' MHz';
         } else {
             if (data.center) {
                 spectrum.setCenterHz(data.center);
+                
             }
             if (data.span) {
                 spectrum.setSpanHz(data.span);
@@ -44,18 +52,10 @@ function connectWebSocket(spectrum) {
     }
 }
 
-function tx6m() {
-    ws.send('band:1');
+function cmd(c, p) {
+    let command = c + ':' + p;
+    ws.send(command);
 }
-
-function tx2m() {
-    ws.send('band:2');
-}
-
-function tx70cm() {
-    ws.send('band:3');
-}
-
 
 function main() {
     

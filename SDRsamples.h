@@ -5,7 +5,7 @@
  * Author: Bernhard Isemann
  *
  * Created on 06 Jan 2022, 12:37
- * Updated on 07 Jan 2022, 17:00
+ * Updated on 30 Jul 2022, 09:00
  * Version 1.00
  *****************************************************************************/
 
@@ -47,7 +47,7 @@
 #pragma onces
 
 #define NUM_CONNECTS 5 // max number of sockets connections
-#define PORT_NUMBER 8084
+#define PORT_NUMBER 8082
 #define TIMEOUT 500
 
 extern pthread_mutex_t SDRmutex;
@@ -55,17 +55,19 @@ extern pthread_mutex_t SDRmutex;
 // SDR facility
 lms_device_t *device = NULL;
 int SDRinit(double frequency, double sampleRate, int modeSelector, double normalizedGain);
-int SDRfrequency(lms_device_t *device, double frequency);
+int SDRfrequency(lms_device_t *device, double RXfreq, double TXfreq);
+int SDRsampleRate(lms_device_t *device, double sampleR);
 string exec(string command);
-void *startSocketServer(void *threadID);
 void *startSDRStream(void *threadID);
-void *startSocketConnect(void *threadID);
 void *startWebsocketServer(void *threadID);
 int error();
 extern double frequency;
 extern double sampleRate;
 extern int modeSelector;
 extern double normalizedGain;
+double rxFreq = 52e6;
+double txFreq = 52e6;
+double span = 2e6;
 
 
 // Radio Frontend - Define GPIO settings for CM4 hat module
@@ -106,9 +108,6 @@ double step = sampleRate / (nfft);
 bool rxON = true;
 
 // Socket Server facility
-int RPX_port = 5254;
-string RPX_host = "10.0.0.5";
-ServerSocket RPX_socket[NUM_CONNECTS];
 int ConCurSocket;
 bool socketsON = true;
 

@@ -166,7 +166,7 @@ Spectrum.prototype.updateAxes = function() {
         this.ctx_axes.beginPath();
         this.ctx_axes.moveTo(20, y);
         this.ctx_axes.lineTo(width, y);
-        this.ctx_axes.strokeStyle = "rgba(200, 200, 200, 0.10)";
+        this.ctx_axes.strokeStyle = "rgba(248, 240, 255, 0.30)";
         this.ctx_axes.stroke();
     }
 
@@ -197,7 +197,7 @@ Spectrum.prototype.updateAxes = function() {
         this.ctx_axes.beginPath();
         this.ctx_axes.moveTo(x, 0);
         this.ctx_axes.lineTo(x, height);
-        this.ctx_axes.strokeStyle = "rgba(200, 200, 200, 0.10)";
+        this.ctx_axes.strokeStyle = "rgba(248, 240, 255, 0.30)";
         this.ctx_axes.stroke();
     }
 }

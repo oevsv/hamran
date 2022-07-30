@@ -167,14 +167,6 @@ int main(int argc, char *argv[])
         msg << "ERROR starting thread 1";
         Logger(msg.str());
     }
-
-    // Start thread for SocketServer
-    // if (pthread_create(&threads[2], NULL, startSocketServer, (void *)2) != 0)
-    // {
-    //     msg.str("");
-    //     msg << "ERROR starting thread 2";
-    //     Logger(msg.str());
-    // }
     
     // Start thread for WebSocket proxy
     if (pthread_create(&threads[3], NULL, startWebsocketServer, (void *)3) != 0)

@@ -169,3 +169,27 @@ a:hover {
   box-shadow: none;
   border-radius: 0px;
 }
+
+.parameter {
+  margin-top: 10px;
+}
+
+.center {
+  color:#343A40;
+  text-align: center;
+  font-size: x-small;
+}
+
+.min{
+  color:#343A40;
+  text-align: left;
+  font-size: x-small;
+  margin-left: 20px;
+}
+
+.max {
+  color:#343A40;
+  text-align: right;
+  font-size: x-small;
+  margin-right: 20px;
+}
