@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "outDir": "./app/dist/cjs",
+    "module": "CommonJS",
+    "target": "esnext",
+    "allowSyntheticDefaultImports": true,
+    "declaration": true
+  },
+  "exclude": [
+    "./test",
+    "./app/dist"
+  ]
+}
