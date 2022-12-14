@@ -11,9 +11,8 @@
 
 
 #include "Socket.h"
-#include "string.h"
-#include <string.h>
-#include <errno.h>
+#include <cstring>
+#include <cerrno>
 #include <fcntl.h>
 #include <iostream>
 

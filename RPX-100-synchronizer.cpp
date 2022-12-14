@@ -162,7 +162,7 @@ void *beaconReception(void *threadID)
   
     ofdmflexframesync fs = ofdmflexframesync_create(SUBCARRIERS, cp_len, taper_len, allocation_array, mycallback, NULL);
 
-    while(1)
+    while(true)
     {
         pthread_mutex_lock(&SDRmutex);
 

@@ -14,18 +14,18 @@
 #include <unistd.h>
 #include <sstream>
 #include <syslog.h>
-#include <string.h>
+#include <cstring>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 #include <fcntl.h>
-#include <errno.h>
+#include <cerrno>
 #include <cstdio>
 #include <ctime>
-#include <math.h>
-#include <complex.h>
-#include <time.h>
+#include <cmath>
+#include <complex>
+#include <ctime>
 #include <chrono>
 #include <cstring>
 #include <bitset>
@@ -33,12 +33,11 @@
 #include "log.h"
 #include "lime/LimeSuite.h"
 #include <chrono>
-#include <math.h>
 #include "liquid/liquid.h"
 #include "sockets/ServerSocket.h"
 #include "sockets/SocketException.h"
 #include <iterator>
-#include <signal.h>
+#include <csignal>
 #include <pthread.h>
 #include "Util.h"
 #include "WebSocketServer.h"
@@ -53,7 +52,7 @@
 extern pthread_mutex_t SDRmutex;
 
 // SDR facility
-lms_device_t *device = NULL;
+lms_device_t *device = nullptr;
 int SDRinit(double frequency, double sampleRate, int modeSelector, double normalizedGain);
 int SDRfrequency(lms_device_t *device, double RXfreq, double TXfreq);
 int SDRsampleRate(lms_device_t *device, double sampleR);
