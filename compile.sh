@@ -1,0 +1,2 @@
+#!/usr/bin/env sh
+/usr/bin/g++ -g RPX-100.cpp -g SDRsamples.cpp -g WebSocketServer.cpp -g Util.cpp -g sockets/*.cpp -o RPX-100 -lLimeSuite -L/usr/lib -lpthread -L/usr/lib -lliquid -L/usr/lib -lwebsockets -L/usr/lib
