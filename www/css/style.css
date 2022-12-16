@@ -117,7 +117,7 @@ a:hover {
 }
 
 .btn {
-  background-color: #343A40;
+  background-color: #212529;
   color: white;
   border: none;
   padding: 4px;
@@ -202,4 +202,11 @@ a:hover {
   color: lightgray;
   font-size: x-small;
   text-decoration: none !important;
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
 }
