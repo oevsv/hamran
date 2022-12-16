@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <title>RPX-100</title>
   <meta charset="utf-8">
@@ -8,18 +7,14 @@
   <meta name="theme-color" content="white" />
   <meta name="description" content="Bernhard Isemann">
   <meta name="author" content="Bernhard Isemann">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css">
   <link rel="icon" href="images/oevsv.ico" />
   <link rel="stylesheet" type="text/css" href="css/style.css" />
-  <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="scripts/clock.js"></script>
 </head>
 
 <body>
   <nav class="navbar navbar-dark navbar-expand-md bg-dark justify-content-center py-0">
-    <a href="/" class="navbar-brand d-flex w-50 mr-auto"><img src="images/oevsv.png" height="36"
+    <a href="/" class="navbar-brand d-flex w-50 mr-auto"><img src="images/oevsv.png" alt="ÖVSV Logo" height="36"
         style="padding-right: 20px;" /><span style="padding-top: 6px">RPX-100</span>
         <span style="margin-left: 20px; padding-top: 6px; padding-left: 6px; padding-right: 6px; border-radius: 3px; background-color: red;">OE3BIA</span></a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#dropdownMenu1">
@@ -27,69 +22,59 @@
     </button>
     <div class="navbar-collapse collapse w-100" id="dropdownMenu1">
       <div class="dropdown nav-item">
-        <button class="btn btn-gray-dark dropdown-toggle" type="button" id="dropdownMenuButton1" data-toggle="dropdown"
-          aria-expanded="false">
-          RF Band
-        </button>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-          <a class="dropdown-item" href="#" onclick="cmd('band', '1')">6m: 50-54 MHz</a>
-          <a class="dropdown-item" href="#" onclick="cmd('band', '2')">2m: 144-146 MHz</a>
-          <a class="dropdown-item" href="#" onclick="cmd('band', '3')">70cm: 430-440 MHz</a>
+        <button class="btn btn-gray-dark dropdown-toggle" type="button" id="btnBandSelect" data-bs-toggle="dropdown"
+          aria-expanded="false">RF Band</button>
+        <ul class="dropdown-menu" id="ddBandSelect" aria-labelledby="btnBandSelect">
+          <li><a class="dropdown-item" data-command-name="band" data-command-param="1">6m: 50-54 MHz</a></li>
+          <li><a class="dropdown-item" data-command-name="band" data-command-param="2">2m: 144-146 MHz</a></li>
+          <li><a class="dropdown-item" data-command-name="band" data-command-param="3">70cm: 430-440 MHz</a></li>
+        </ul>
+      </div>
+      <div class="dropdown nav-item">
+        <button class="btn btn-gray-dark dropdown-toggle" type="button" id="btnBandwidth" data-bs-toggle="dropdown"
+          aria-expanded="false">Bandwidth</button>
+        <ul class="dropdown-menu" id="ddBandWith" aria-labelledby="btnBandwidth">
+          <li><a class="dropdown-item" data-command-name="bandwidth" data-command-param="1">1 MHz</a></li>
+          <li><a class="dropdown-item" data-command-name="bandwidth" data-command-param="2">2 MHz</a></li>
+          <li><a class="dropdown-item" data-command-name="bandwidth" data-command-param="4">4 Mhz</a></li>
+          <li><a class="dropdown-item" data-command-name="bandwidth" data-command-param="8">8 Mhz</a></li>
+          <li><a class="dropdown-item" data-command-name="bandwidth" data-command-param="16">16 Mhz</a></li>
+        </ul>
+      </div>
+      <div class="dropdown nav-item">
+        <button class="btn btn-gray-dark dropdown-toggle" type="button" id="btnChannel" data-bs-toggle="dropdown"
+          aria-expanded="false">Channel</button>
+        <div class="dropdown-menu" id="ddChannel" aria-labelledby="btnChannel">
+          <a class="dropdown-item" data-command-name="channel" data-command-param="4">APRS</a>
+          <a class="dropdown-item" data-command-name="channel" data-command-param="5">ADL315</a>
+          <a class="dropdown-item" data-command-name="channel" data-command-param="6">Hermannskogel</a>
+          <a class="dropdown-item" data-command-name="channel" data-command-param="7">Sandl</a>
+          <a class="dropdown-item" data-command-name="channel" data-command-param="8">Troppberg</a>
+          <a class="dropdown-item" data-command-name="channel" data-command-param="9">Hochstrass</a>
+          <a class="dropdown-item" data-command-name="channel" data-command-param="10">R0</a>
+          <a class="dropdown-item" data-command-name="channel" data-command-param="11">R1</a>
+          <a class="dropdown-item" data-command-name="channel" data-command-param="12">R2</a>
+          <a class="dropdown-item" data-command-name="channel" data-command-param="13">R3</a>
+          <a class="dropdown-item" data-command-name="channel" data-command-param="14">R4</a>
+          <a class="dropdown-item" data-command-name="channel" data-command-param="15">R5</a>
+          <a class="dropdown-item" data-command-name="channel" data-command-param="16">R6</a>
+          <a class="dropdown-item" data-command-name="channel" data-command-param="17">R7</a>
+          <a class="dropdown-item" data-command-name="channel" data-command-param="18">R60</a>
+          <a class="dropdown-item" data-command-name="channel" data-command-param="19">R68</a>
         </div>
       </div>
       <div class="dropdown nav-item">
-        <button class="btn btn-gray-dark dropdown-toggle" type="button" id="dropdownMenuButton1" data-toggle="dropdown"
-          aria-expanded="false">
-          Bandwidth
-        </button>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-          <a class="dropdown-item" href="#" onclick="cmd('bandwidth', '1')">1 MHz</a>
-          <a class="dropdown-item" href="#" onclick="cmd('bandwidth', '2')">2 MHz</a>
-          <a class="dropdown-item" href="#" onclick="cmd('bandwidth', '4')">4 Mhz</a>
-          <a class="dropdown-item" href="#" onclick="cmd('bandwidth', '8')">8 Mhz</a>
-          <a class="dropdown-item" href="#" onclick="cmd('bandwidth', '16')">16 Mhz</a>
-        </div>
-      </div>
-      <div class="dropdown nav-item">
-        <button class="btn btn-gray-dark dropdown-toggle" type="button" id="dropdownMenuButton1" data-toggle="dropdown"
-          aria-expanded="false">
-          Channel
-        </button>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-          <a class="dropdown-item" href="#" onclick="cmd('channel', '4')">APRS</a>
-          <a class="dropdown-item" href="#" onclick="cmd('channel', '5')">ADL315</a>
-          <a class="dropdown-item" href="#" onclick="cmd('channel', '6')">Hermannskogel</a>
-          <a class="dropdown-item" href="#" onclick="cmd('channel', '7')">Sandl</a>
-          <a class="dropdown-item" href="#" onclick="cmd('channel', '8')">Troppberg</a>
-          <a class="dropdown-item" href="#" onclick="cmd('channel', '9')">Hochstrass</a>
-          <a class="dropdown-item" href="#" onclick="cmd('channel', '10')">R0</a>
-          <a class="dropdown-item" href="#" onclick="cmd('channel', '11')">R1</a>
-          <a class="dropdown-item" href="#" onclick="cmd('channel', '12')">R2</a>
-          <a class="dropdown-item" href="#" onclick="cmd('channel', '13')">R3</a>
-          <a class="dropdown-item" href="#" onclick="cmd('channel', '14')">R4</a>
-          <a class="dropdown-item" href="#" onclick="cmd('channel', '15')">R5</a>
-          <a class="dropdown-item" href="#" onclick="cmd('channel', '16')">R6</a>
-          <a class="dropdown-item" href="#" onclick="cmd('channel', '17')">R7</a>
-          <a class="dropdown-item" href="#" onclick="cmd('channel', '18')">R60</a>
-          <a class="dropdown-item" href="#" onclick="cmd('channel', '19')">R68</a>
-        </div>
-      </div>
-      <div class="dropdown nav-item">
-        <button class="btn btn-gray-dark dropdown-toggle" type="button" id="dropdownMenuButton2" data-toggle="dropdown"
-          aria-expanded="false">
-          Mode
-        </button>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
+        <button class="btn btn-gray-dark dropdown-toggle" type="button" id="btnMode" data-bs-toggle="dropdown"
+          aria-expanded="false">Mode</button>
+        <div class="dropdown-menu" id="ddMode" aria-labelledby="btnMode">
           <a class="dropdown-item" href="#">WRAN (IEEE 802.22)</a>
           <a class="dropdown-item" href="#">FSK</a>
         </div>
       </div>
       <div class="dropdown nav-item">
-        <button class="btn btn-gray-dark dropdown-toggle" type="button" id="dropdownMenuButton3" data-toggle="dropdown"
-          aria-expanded="false">
-          RF Power
-        </button>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton3">
+        <button class="btn btn-gray-dark dropdown-toggle" type="button" id="btnPower" data-bs-toggle="dropdown"
+          aria-expanded="false">RF Power</button>
+        <div class="dropdown-menu" id="ddPower" aria-labelledby="btnPower">
           <a class="dropdown-item" href="#">20dBm</a>
           <a class="dropdown-item" href="#">27dBm</a>
           <a class="dropdown-item" href="#">30dBm</a>
@@ -99,11 +84,9 @@
         </div>
       </div>
       <div class="dropdown nav-item">
-        <button class="btn btn-gray-dark dropdown-toggle" type="button" id="dropdownMenuButton4" data-toggle="dropdown"
-          aria-expanded="false">
-          TX Beacon
-        </button>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton4">
+        <button class="btn btn-gray-dark dropdown-toggle" type="button" id="btnTxBeacon" data-bs-toggle="dropdown"
+          aria-expanded="false">TX Beacon</button>
+        <div class="dropdown-menu" id="ddTxBeacon" aria-labelledby="btnTxBeacon">
           <a class="dropdown-item" href="#">one time</a>
           <a class="dropdown-item" href="#">5 min</a>
           <a class="dropdown-item" href="#">30 min</a>
@@ -122,23 +105,23 @@
     <div class="col-sm center"><a id="center"></a><a style="color: red" id="tx"></a></div>
     <div id="max" class="col-sm max"></div>
   </div>
-  <div class="container-fluid">
+  <div class="container-fluid" id="containerWaterfall">
     <canvas id="waterfall"></canvas>
-    <script src="scripts/colormap.js"></script>
-    <script src="scripts/spectrum.js"></script>
-    <script src="scripts/script.js"></script>
     <div class="status">
       <div id="log"></div>
     </div>
   </div>
 
   <footer class="bg-dark text-center footer" style="position: fixed; bottom: 0; left: 0; width: 100%;">
-    <div class="text-center p-1 text-footer"
-      style="color: lightgray; font-size: x-small; text-decoration: none !important;">
-      © <a style="color: lightgray; font-size: x-small; text-decoration: none !important;" href="https://rpx-100.net/"
-        target="_blank">Österreichischer Versuchssenderverband, 2022</a>
+    <div class="text-center p-1 text-footer copyright-footer">© <a style="color: lightgray; font-size: x-small; text-decoration: none !important;" href="https://rpx-100.net/" target="_blank">Österreichischer Versuchssenderverband, 2022</a>
     </div>
   </footer>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.2/dist/jquery.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="scripts/clock.js"></script>
+  <script src="scripts/colormap.js"></script>
+  <script src="scripts/spectrum.js"></script>
+  <script src="scripts/script.js"></script>
 </body>
-
 </html>

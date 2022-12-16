@@ -1,24 +1,23 @@
 'use strict';
 
-var spectrum, logger, ws, wsCtrl;
+let spectrum, ws;
 
 function connectWebSocket(spectrum) {
 
-    if (window.location.host.indexOf(':') > 6)
+    if (window.location.host.startsWith('https'))
     {
-        ws = new WebSocket("ws://" + window.location.host.substring(0, window.location.host.indexOf(':')) + ":8085");
-        // ws = new WebSocket("ws://" + window.location.host.substring(0, window.location.host.indexOf(':')) + ":8082");
+        ws = new WebSocket("wss://" + window.location.host.substring(0, window.location.host.indexOf(':')) + ":8085");
     } else
     {
-        ws = new WebSocket("ws://" + window.location.host + ":8085");
+        ws = new WebSocket("ws://" + window.location.host.substring(0, window.location.host.indexOf(':')) + ":8085");
     }
     
     spectrum.setWebSocket(ws);
   
-    ws.onopen = function(evt) {
+    ws.onopen = function() {
         console.log("connected!");
     }
-    ws.onclose = function(evt) {
+    ws.onclose = function() {
         console.log("closed");
         setTimeout(function() {
             connectWebSocket(spectrum);
@@ -28,16 +27,16 @@ function connectWebSocket(spectrum) {
         console.log("error: " + evt.message);
     }
     ws.onmessage = function (evt) {
-        var data = JSON.parse(evt.data);
+        const data = JSON.parse(evt.data);
         if (data.s) {
             spectrum.addData(data.s);
             let num = parseFloat(data.center);
             let bw = parseFloat(data.span);
             let tx = parseFloat(data.txFreq);
-            document.getElementById('center').innerHTML = 'RX: ' + (num/1000000).toFixed(3) + ' MHz |';
-            document.getElementById('tx').innerHTML = ' TX: ' + (tx/1000000).toFixed(3) + ' MHz';
-            document.getElementById('min').innerHTML = ((num - bw/2)/1000000).toFixed(3) + ' MHz';
-            document.getElementById('max').innerHTML = ((num + bw/2)/1000000).toFixed(3) + ' MHz';
+            document.getElementById('center').innerHTML = 'RX: ' + (num/1_000_000).toFixed(3) + ' MHz |';
+            document.getElementById('tx').innerHTML = ' TX: ' + (tx/1_000_000).toFixed(3) + ' MHz';
+            document.getElementById('min').innerHTML = ((num - bw/2)/1_000_000).toFixed(3) + ' MHz';
+            document.getElementById('max').innerHTML = ((num + bw/2)/1_000_000).toFixed(3) + ' MHz';
         } else {
             if (data.center) {
                 spectrum.setCenterHz(data.center);
@@ -62,7 +61,7 @@ function cmd(c, p) {
     ws.send(command);
 }
 
-function main() {
+jQuery(function main() {
     
     // Create spectrum object on canvas with ID "waterfall"
     spectrum = new Spectrum(
@@ -79,7 +78,15 @@ function main() {
         spectrum.onKeypress(e);
     });
 
-    
-}
-
-window.onload = main;
+    jQuery('#ddChannel a[data-command-name], ' +
+           '#ddBandWith a[data-command-name], ' +
+           '#ddBandSelect a[data-command-name], ' +
+           '#ddMode a[data-command-name], ' +
+           '#ddPower a[data-command-name], ' +
+           '#ddTxBeacon a[data-command-name]')
+        .on('click', function (e) {
+            e.preventDefault();
+            const t = e.target;
+            cmd(t.dataset.commandName, t.dataset.commandParam);
+    })
+});

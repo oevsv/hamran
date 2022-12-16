@@ -1,49 +1,92 @@
 // Require in some of the native stuff that comes with Node
-var http = require('http');
-var url = require('url');
-var path = require('path');
-var fs = require('fs');
+const http = require('http');
+const path = require('path');
+const fs = require('fs');
 
 
 // Port number to use
-var port = 80;
+const port = 8080;
 // Colors for CLI output
-var WHITE = '\033[39m';
-var RED = '\033[91m';
-var GREEN = '\033[32m';
+const WHITE = '\033[39m';
+const RED = '\033[91m';
+const GREEN = '\033[32m';
+
+// Setting up MIME-Type (YOU MAY NEED TO ADD MORE HERE) <--------
+const contentTypesByExtension = {
+    '.html': 'text/html',
+    '.css':  'text/css',
+    '.js':   'text/javascript',
+    '.json': 'text/json',
+    '.svg':  'image/svg+xml'
+};
+
+/**
+ * Resolve, which file the server should send to a client.
+ * It could be a requested file when the file exists or the index file on a directory.
+ * If the file does not exist, we return the path to the 404 page.
+ * @param stats stat result of the file name
+ * @param filename the name of the requested file
+ * @returns {string} absolute file name which should be served by the server
+ */
+function resolveFilenameToSend(stats, filename) {
+    if (stats == null) {
+        // Output a red error pointing to failed request
+        console.log(RED + 'FAIL: ' + filename);
+        // Redirect the browser to the 404 page
+        filename = path.join(process.cwd(), '/404.html');
+    } else if (stats.isDirectory()) {
+        // Output a green line to the console explaining what folder was requested
+        console.log(GREEN + 'FLDR: ' + WHITE + filename);
+        // redirect the user to the index.html in the requested folder
+        filename += '/rpx100.html';
+    } else if (!stats.isFile()) {
+        // Output a red error pointing to failed request
+        console.log(RED + 'FAIL: ' + filename);
+        // Redirect the browser to the 404 page
+        filename = path.join(process.cwd(), '/404.html');
+    }
+    return filename;
+}
+
+/**
+ * Send an internal server error response to the client.
+ *
+ * @param response the response object.
+ * @param err the error message
+ */
+function sendErrorResponse(response, err) {
+    response.writeHead(500, {'Content-Type': 'text/plain'});
+    response.write(err + '\n');
+    response.end();
+}
+
+/**
+ * Determine the content type of the file based on the file suffix and set it in the headers object.
+ *
+ * For example, passing in a file name of "test.css" will result in the 'Content-Type' being set to "text/css"
+ *
+ * @param filename the filename from which the suffix will be used
+ * @param headers the headers object to update
+ */
+function setContentTypeForSuffix(filename, headers) {
+    const contentType = contentTypesByExtension[path.extname(filename)];
+    // If the requested file has a matching MIME-Type
+    if (contentType) {
+        // Set it in the headers
+        headers['Content-Type'] = contentType;
+    }
+}
 
 // Create the server
 http.createServer(function (request, response) {
 
-    // The requested URL, like http://localhost:8000/file.html => /file.html
-    var uri = url.parse(request.url).pathname;
     // get the /file.html from above and then find it from the current folder
-    var filename = path.join(process.cwd(), uri);
-
-    // Setting up MIME-Type (YOU MAY NEED TO ADD MORE HERE) <--------
-    var contentTypesByExtension = {
-        '.html': 'text/html',
-        '.css':  'text/css',
-        '.js':   'text/javascript',
-        '.json': 'text/json',
-        '.svg':  'image/svg+xml'
-    };
+    let filename = path.join(process.cwd(), request.url);
 
     // Check if the requested file exists
-    fs.exists(filename, function (exists) {
+    fs.stat(filename, function (err, stats) {
         // If it doesn't
-        if (!exists) {
-            // Output a red error pointing to failed request
-            console.log(RED + 'FAIL: ' + filename);
-            // Redirect the browser to the 404 page
-            filename = path.join(process.cwd(), '/404.html');
-        // If the requested URL is a folder, like http://localhost:8000/catpics
-        } else if (fs.statSync(filename).isDirectory()) {
-            // Output a green line to the console explaining what folder was requested
-            console.log(GREEN + 'FLDR: ' + WHITE + filename);
-            // redirect the user to the index.html in the requested folder
-            filename += '/rpx100.html';
-        }
+        filename = resolveFilenameToSend(stats, filename);
 
         // Assuming the file exists, read it
         fs.readFile(filename, 'binary', function (err, file) {
@@ -52,20 +95,13 @@ http.createServer(function (request, response) {
             // If there was an error trying to read the file
             if (err) {
                 // Put the error in the browser
-                response.writeHead(500, {'Content-Type': 'text/plain'});
-                response.write(err + '\n');
-                response.end();
+                sendErrorResponse(response, err);
                 return;
             }
 
             // Otherwise, declare a headers object and a var for the MIME-Type
-            var headers = {};
-            var contentType = contentTypesByExtension[path.extname(filename)];
-            // If the requested file has a matching MIME-Type
-            if (contentType) {
-                // Set it in the headers
-                headers['Content-Type'] = contentType;
-            }
+            const headers = {};
+            setContentTypeForSuffix(filename, headers);
 
             // Output the read file to the browser for it to load
             response.writeHead(200, headers);
@@ -75,7 +111,7 @@ http.createServer(function (request, response) {
 
     });
 
-}).listen(parseInt(port, 10));
+}).listen(port);
 
 // Nachricht, die im Terminal ausgegeben wird.
 console.log(WHITE + 'Static file server running at\n  => http://localhost:' + port + '/\nCTRL + C to shutdown');
