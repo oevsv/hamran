@@ -49,7 +49,7 @@ public:
     WebSocketServer( int port, const string certPath = "", const string& keyPath = "" );
     ~WebSocketServer( );
 
-    void run(       uint64_t timeout = 50     );
+    [[noreturn]] void run(       uint64_t timeout = 50     );
     void wait(      uint64_t timeout = 50     );
     void send(      int socketID, string data );
     void broadcast( string data               );

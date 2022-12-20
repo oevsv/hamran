@@ -144,7 +144,7 @@ int main(int argc, char *argv[])
     // close(STDERR_FILENO);
 
     LogInit();
-    Logger("RPX-100 was started succesfully with following settings:");
+    Logger("RPX-100 was started successfully with following settings:");
     msg.str("");
     msg << "Mode: " << mode;
     Logger(msg.str());
@@ -155,13 +155,15 @@ int main(int argc, char *argv[])
         msg.str("");
         msg << "ERROR: " << LMS_GetLastErrorMessage();
         Logger(msg.str());
+        cerr << "Could not find the lime SDR - is it connected?" << endl;
+        return 1;
     }
 
     pthread_t threads[NUM_THREADS];
-    pthread_mutex_init(&SDRmutex,0);
+    pthread_mutex_init(&SDRmutex,nullptr);
 
     // Start thread for SDR Stream
-    if (pthread_create(&threads[1], NULL, startSDRStream, (void *)1) != 0)
+    if (pthread_create(&threads[1], nullptr, startSDRStream, (void *)1) != 0)
     {
         msg.str("");
         msg << "ERROR starting thread 1";
@@ -169,7 +171,7 @@ int main(int argc, char *argv[])
     }
     
     // Start thread for WebSocket proxy
-    if (pthread_create(&threads[3], NULL, startWebsocketServer, (void *)3) != 0)
+    if (pthread_create(&threads[3], nullptr, startWebsocketServer, (void *)3) != 0)
     {
         msg.str("");
         msg << "ERROR starting thread 3";
@@ -177,5 +179,5 @@ int main(int argc, char *argv[])
     }
     
     pthread_mutex_destroy(&SDRmutex);
-    pthread_exit(NULL);
+    pthread_exit(nullptr);
 }

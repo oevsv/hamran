@@ -32,7 +32,7 @@ int SDRinit(double frequency, double sampleRate, int modeSelector, double normal
     }
 
     // open the first device
-    if (LMS_Open(&device, list[0], NULL))
+    if (LMS_Open(&device, list[0], nullptr))
     {
         error();
     }
@@ -164,8 +164,9 @@ int error()
     msgSDR.str("");
     msgSDR << "ERROR: " << LMS_GetLastErrorMessage();
     Logger(msgSDR.str());
-    if (device != NULL)
+    if (device != nullptr) {
         LMS_Close(device);
+    }
     return -1;
 }
 
@@ -228,7 +229,7 @@ void *startWebsocketServer(void *threadID)
         spgramcf_destroy(q);
     }
 
-    pthread_exit(NULL);
+    pthread_exit(nullptr);
 }
 
 void *startSDRStream(void *threadID)
@@ -254,7 +255,7 @@ void *startSDRStream(void *threadID)
     while (rxON)
     {
         pthread_mutex_lock(&SDRmutex);
-        samplesRead = LMS_RecvStream(&streamId, buffer, sampleCnt, NULL, 1000);
+        samplesRead = LMS_RecvStream(&streamId, buffer, sampleCnt, nullptr, 1000);
         int i = 0;
 
         while (i < samplesRead)
@@ -277,16 +278,14 @@ void *startSDRStream(void *threadID)
     //     Logger(msgSDR.str());
     // }
     // pthread_exit(NULL);
-    return 0;
+    return nullptr;
 }
 
 rpxServer::rpxServer(int port) : WebSocketServer(port)
 {
 }
 
-rpxServer::~rpxServer()
-{
-}
+rpxServer::~rpxServer() = default;
 
 void rpxServer::onConnect(int socketID)
 {
@@ -302,11 +301,11 @@ void rpxServer::onMessage(int socketID, const string &data)
     msgSDR.str("");
     msgSDR << "User click: " << data << endl;
     Logger(msgSDR.str());
-    string cmd = "";
+    string cmd;
     if (data.find_first_of(':') > 0)
     {
         cmd = data.substr(0, data.find_first_of(':'));
-    };
+    }
     int par = 0;
     if (data.find_first_of(':') > 0)
     {
@@ -318,7 +317,7 @@ void rpxServer::onMessage(int socketID, const string &data)
         switch (par)
         {
         case 1:         
-            pthread_mutex_init(&SDRmutex, 0);
+            pthread_mutex_init(&SDRmutex, nullptr);
             rxON = false;
             sleep(1);
             if (SDRfrequency(device, Ch1_RX, Ch1_TX) != 0)
@@ -337,7 +336,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             txFreq = Ch1_TX;
             span = Ch1_SR;
             rxON = true;
-            if (pthread_create(&threads[1], NULL, startSDRStream, (void *)1) != 0)
+            if (pthread_create(&threads[1], nullptr, startSDRStream, (void *)1) != 0)
             {
                 msgSDR.str("");
                 msgSDR << "ERROR starting thread 1";
@@ -346,7 +345,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             break;
 
         case 2:
-            pthread_mutex_init(&SDRmutex, 0);
+            pthread_mutex_init(&SDRmutex, nullptr);
             rxON = false;
             sleep(1);
             if (SDRfrequency(device, Ch2_RX, Ch2_TX) != 0)
@@ -365,7 +364,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             txFreq = Ch2_TX;
             span = Ch2_SR;
             rxON = true;
-            if (pthread_create(&threads[1], NULL, startSDRStream, (void *)1) != 0)
+            if (pthread_create(&threads[1], nullptr, startSDRStream, (void *)1) != 0)
             {
                 msgSDR.str("");
                 msgSDR << "ERROR starting thread 1";
@@ -374,7 +373,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             break;
 
         case 3:
-            pthread_mutex_init(&SDRmutex, 0);
+            pthread_mutex_init(&SDRmutex, nullptr);
             rxON = false;
             sleep(1);
             if (SDRfrequency(device, Ch3_RX, Ch3_TX) != 0)
@@ -393,7 +392,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             txFreq = Ch3_TX;
             span = Ch3_SR;
             rxON = true;
-            if (pthread_create(&threads[1], NULL, startSDRStream, (void *)1) != 0)
+            if (pthread_create(&threads[1], nullptr, startSDRStream, (void *)1) != 0)
             {
                 msgSDR.str("");
                 msgSDR << "ERROR starting thread 1";
@@ -402,7 +401,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             break;
 
         default:
-            pthread_mutex_init(&SDRmutex, 0);
+            pthread_mutex_init(&SDRmutex, nullptr);
             rxON = false;
             sleep(1);
             if (SDRfrequency(device, Ch4_RX, Ch4_TX) != 0)
@@ -421,7 +420,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             txFreq = Ch4_TX;
             span = Ch4_SR;
             rxON = true;
-            if (pthread_create(&threads[1], NULL, startSDRStream, (void *)1) != 0)
+            if (pthread_create(&threads[1], nullptr, startSDRStream, (void *)1) != 0)
             {
                 msgSDR.str("");
                 msgSDR << "ERROR starting thread 1";
@@ -437,7 +436,7 @@ void rpxServer::onMessage(int socketID, const string &data)
         switch (par)
         {
         case 1:           
-            pthread_mutex_init(&SDRmutex, 0);
+            pthread_mutex_init(&SDRmutex, nullptr);
             rxON = false;
             sleep(1);
             if (SDRsampleRate(device, 1e6) !=0)
@@ -448,7 +447,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             }
             span = 1e6;
             rxON = true;
-            if (pthread_create(&threads[1], NULL, startSDRStream, (void *)1) != 0)
+            if (pthread_create(&threads[1], nullptr, startSDRStream, (void *)1) != 0)
             {
                 msgSDR.str("");
                 msgSDR << "ERROR starting thread 1";
@@ -457,7 +456,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             break;
 
         case 2:
-            pthread_mutex_init(&SDRmutex, 0);
+            pthread_mutex_init(&SDRmutex, nullptr);
             rxON = false;
             sleep(1);
             if (SDRsampleRate(device, 2e6) !=0)
@@ -468,7 +467,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             }
             span = 2e6;
             rxON = true;
-            if (pthread_create(&threads[1], NULL, startSDRStream, (void *)1) != 0)
+            if (pthread_create(&threads[1], nullptr, startSDRStream, (void *)1) != 0)
             {
                 msgSDR.str("");
                 msgSDR << "ERROR starting thread 1";
@@ -477,7 +476,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             break;
 
             case 4:
-            pthread_mutex_init(&SDRmutex, 0);
+            pthread_mutex_init(&SDRmutex, nullptr);
             rxON = false;
             sleep(1);
             if (SDRsampleRate(device, 4e6) !=0)
@@ -488,7 +487,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             }
             span = 4e6;
             rxON = true;
-            if (pthread_create(&threads[1], NULL, startSDRStream, (void *)1) != 0)
+            if (pthread_create(&threads[1], nullptr, startSDRStream, (void *)1) != 0)
             {
                 msgSDR.str("");
                 msgSDR << "ERROR starting thread 1";
@@ -497,7 +496,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             break;
 
             case 8:
-            pthread_mutex_init(&SDRmutex, 0);
+            pthread_mutex_init(&SDRmutex, nullptr);
             rxON = false;
             sleep(1);
             if (SDRsampleRate(device, 8e6) !=0)
@@ -508,7 +507,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             }
             span = 8e6;
             rxON = true;
-            if (pthread_create(&threads[1], NULL, startSDRStream, (void *)1) != 0)
+            if (pthread_create(&threads[1], nullptr, startSDRStream, (void *)1) != 0)
             {
                 msgSDR.str("");
                 msgSDR << "ERROR starting thread 1";
@@ -517,7 +516,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             break;
 
             case 16:
-            pthread_mutex_init(&SDRmutex, 0);
+            pthread_mutex_init(&SDRmutex, nullptr);
             rxON = false;
             sleep(1);
             if (SDRsampleRate(device, 16e6) !=0)
@@ -528,7 +527,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             }
             span = 16e6;
             rxON = true;
-            if (pthread_create(&threads[1], NULL, startSDRStream, (void *)1) != 0)
+            if (pthread_create(&threads[1], nullptr, startSDRStream, (void *)1) != 0)
             {
                 msgSDR.str("");
                 msgSDR << "ERROR starting thread 1";
@@ -537,7 +536,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             break;
 
         default:
-            pthread_mutex_init(&SDRmutex, 0);
+            pthread_mutex_init(&SDRmutex, nullptr);
             rxON = false;
             sleep(1);
             if (SDRsampleRate(device, 4e6) !=0)
@@ -548,7 +547,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             }
             span = 4e6;
             rxON = true;
-            if (pthread_create(&threads[1], NULL, startSDRStream, (void *)1) != 0)
+            if (pthread_create(&threads[1], nullptr, startSDRStream, (void *)1) != 0)
             {
                 msgSDR.str("");
                 msgSDR << "ERROR starting thread 1";
@@ -564,7 +563,7 @@ void rpxServer::onMessage(int socketID, const string &data)
         switch (par)
         {
         case 4:         
-            pthread_mutex_init(&SDRmutex, 0);
+            pthread_mutex_init(&SDRmutex, nullptr);
             rxON = false;
             sleep(1);
             if (SDRfrequency(device, Ch4_RX, Ch4_TX) != 0)
@@ -583,7 +582,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             txFreq = Ch4_TX;
             span = Ch4_SR;
             rxON = true;
-            if (pthread_create(&threads[1], NULL, startSDRStream, (void *)1) != 0)
+            if (pthread_create(&threads[1], nullptr, startSDRStream, (void *)1) != 0)
             {
                 msgSDR.str("");
                 msgSDR << "ERROR starting thread 1";
@@ -592,7 +591,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             break;
 
         case 5:
-            pthread_mutex_init(&SDRmutex, 0);
+            pthread_mutex_init(&SDRmutex, nullptr);
             rxON = false;
             sleep(1);
             if (SDRfrequency(device, Ch5_RX, Ch5_TX) != 0)
@@ -611,7 +610,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             txFreq = Ch5_TX;
             span = Ch5_SR;
             rxON = true;
-            if (pthread_create(&threads[1], NULL, startSDRStream, (void *)1) != 0)
+            if (pthread_create(&threads[1], nullptr, startSDRStream, (void *)1) != 0)
             {
                 msgSDR.str("");
                 msgSDR << "ERROR starting thread 1";
@@ -620,7 +619,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             break;
 
         case 6:
-            pthread_mutex_init(&SDRmutex, 0);
+            pthread_mutex_init(&SDRmutex, nullptr);
             rxON = false;
             sleep(1);
             if (SDRfrequency(device, Ch6_RX, Ch6_TX) != 0)
@@ -639,7 +638,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             txFreq = Ch6_TX;
             span = Ch6_SR;
             rxON = true;
-            if (pthread_create(&threads[1], NULL, startSDRStream, (void *)1) != 0)
+            if (pthread_create(&threads[1], nullptr, startSDRStream, (void *)1) != 0)
             {
                 msgSDR.str("");
                 msgSDR << "ERROR starting thread 1";
@@ -648,7 +647,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             break;
 
             case 7:
-            pthread_mutex_init(&SDRmutex, 0);
+            pthread_mutex_init(&SDRmutex, nullptr);
             rxON = false;
             sleep(1);
             if (SDRfrequency(device, Ch7_RX, Ch7_TX) != 0)
@@ -667,7 +666,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             txFreq = Ch7_TX;
             span = Ch7_SR;
             rxON = true;
-            if (pthread_create(&threads[1], NULL, startSDRStream, (void *)1) != 0)
+            if (pthread_create(&threads[1], nullptr, startSDRStream, (void *)1) != 0)
             {
                 msgSDR.str("");
                 msgSDR << "ERROR starting thread 1";
@@ -676,7 +675,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             break;
 
             case 8:
-            pthread_mutex_init(&SDRmutex, 0);
+            pthread_mutex_init(&SDRmutex, nullptr);
             rxON = false;
             sleep(1);
             if (SDRfrequency(device, Ch8_RX, Ch8_TX) != 0)
@@ -695,7 +694,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             txFreq = Ch8_TX;
             span = Ch8_SR;
             rxON = true;
-            if (pthread_create(&threads[1], NULL, startSDRStream, (void *)1) != 0)
+            if (pthread_create(&threads[1], nullptr, startSDRStream, (void *)1) != 0)
             {
                 msgSDR.str("");
                 msgSDR << "ERROR starting thread 1";
@@ -704,7 +703,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             break;
 
             case 9:
-            pthread_mutex_init(&SDRmutex, 0);
+            pthread_mutex_init(&SDRmutex, nullptr);
             rxON = false;
             sleep(1);
             if (SDRfrequency(device, Ch9_RX, Ch9_TX) != 0)
@@ -723,7 +722,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             txFreq = Ch9_TX;
             span = Ch9_SR;
             rxON = true;
-            if (pthread_create(&threads[1], NULL, startSDRStream, (void *)1) != 0)
+            if (pthread_create(&threads[1], nullptr, startSDRStream, (void *)1) != 0)
             {
                 msgSDR.str("");
                 msgSDR << "ERROR starting thread 1";
@@ -732,7 +731,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             break;
 
             case 10:
-            pthread_mutex_init(&SDRmutex, 0);
+            pthread_mutex_init(&SDRmutex, nullptr);
             rxON = false;
             sleep(1);
             if (SDRfrequency(device, Ch10_RX, Ch10_TX) != 0)
@@ -751,7 +750,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             txFreq = Ch10_TX;
             span = Ch10_SR;
             rxON = true;
-            if (pthread_create(&threads[1], NULL, startSDRStream, (void *)1) != 0)
+            if (pthread_create(&threads[1], nullptr, startSDRStream, (void *)1) != 0)
             {
                 msgSDR.str("");
                 msgSDR << "ERROR starting thread 1";
@@ -760,7 +759,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             break;
 
             case 11:
-            pthread_mutex_init(&SDRmutex, 0);
+            pthread_mutex_init(&SDRmutex, nullptr);
             rxON = false;
             sleep(1);
             if (SDRfrequency(device, Ch11_RX, Ch11_TX) != 0)
@@ -779,7 +778,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             txFreq = Ch11_TX;
             span = Ch11_SR;
             rxON = true;
-            if (pthread_create(&threads[1], NULL, startSDRStream, (void *)1) != 0)
+            if (pthread_create(&threads[1], nullptr, startSDRStream, (void *)1) != 0)
             {
                 msgSDR.str("");
                 msgSDR << "ERROR starting thread 1";
@@ -788,7 +787,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             break;
 
             case 12:
-            pthread_mutex_init(&SDRmutex, 0);
+            pthread_mutex_init(&SDRmutex, nullptr);
             rxON = false;
             sleep(1);
             if (SDRfrequency(device, Ch12_RX, Ch12_TX) != 0)
@@ -807,7 +806,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             txFreq = Ch12_TX;
             span = Ch12_SR;
             rxON = true;
-            if (pthread_create(&threads[1], NULL, startSDRStream, (void *)1) != 0)
+            if (pthread_create(&threads[1], nullptr, startSDRStream, (void *)1) != 0)
             {
                 msgSDR.str("");
                 msgSDR << "ERROR starting thread 1";
@@ -816,7 +815,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             break;
 
             case 13:
-            pthread_mutex_init(&SDRmutex, 0);
+            pthread_mutex_init(&SDRmutex, nullptr);
             rxON = false;
             sleep(1);
             if (SDRfrequency(device, Ch13_RX, Ch13_TX) != 0)
@@ -835,7 +834,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             txFreq = Ch13_TX;
             span = Ch13_SR;
             rxON = true;
-            if (pthread_create(&threads[1], NULL, startSDRStream, (void *)1) != 0)
+            if (pthread_create(&threads[1], nullptr, startSDRStream, (void *)1) != 0)
             {
                 msgSDR.str("");
                 msgSDR << "ERROR starting thread 1";
@@ -844,7 +843,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             break;
 
             case 14:
-            pthread_mutex_init(&SDRmutex, 0);
+            pthread_mutex_init(&SDRmutex, nullptr);
             rxON = false;
             sleep(1);
             if (SDRfrequency(device, Ch14_RX, Ch14_TX) != 0)
@@ -863,7 +862,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             txFreq = Ch14_TX;
             span = Ch14_SR;
             rxON = true;
-            if (pthread_create(&threads[1], NULL, startSDRStream, (void *)1) != 0)
+            if (pthread_create(&threads[1], nullptr, startSDRStream, (void *)1) != 0)
             {
                 msgSDR.str("");
                 msgSDR << "ERROR starting thread 1";
@@ -872,7 +871,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             break;
 
             case 15:
-            pthread_mutex_init(&SDRmutex, 0);
+            pthread_mutex_init(&SDRmutex, nullptr);
             rxON = false;
             sleep(1);
             if (SDRfrequency(device, Ch15_RX, Ch15_TX) != 0)
@@ -891,7 +890,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             txFreq = Ch15_TX;
             span = Ch15_SR;
             rxON = true;
-            if (pthread_create(&threads[1], NULL, startSDRStream, (void *)1) != 0)
+            if (pthread_create(&threads[1], nullptr, startSDRStream, (void *)1) != 0)
             {
                 msgSDR.str("");
                 msgSDR << "ERROR starting thread 1";
@@ -900,7 +899,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             break;
 
             case 16:
-            pthread_mutex_init(&SDRmutex, 0);
+            pthread_mutex_init(&SDRmutex, nullptr);
             rxON = false;
             sleep(1);
             if (SDRfrequency(device, Ch16_RX, Ch16_TX) != 0)
@@ -919,7 +918,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             txFreq = Ch16_TX;
             span = Ch16_SR;
             rxON = true;
-            if (pthread_create(&threads[1], NULL, startSDRStream, (void *)1) != 0)
+            if (pthread_create(&threads[1], nullptr, startSDRStream, (void *)1) != 0)
             {
                 msgSDR.str("");
                 msgSDR << "ERROR starting thread 1";
@@ -928,7 +927,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             break;
 
             case 17:
-            pthread_mutex_init(&SDRmutex, 0);
+            pthread_mutex_init(&SDRmutex, nullptr);
             rxON = false;
             sleep(1);
             if (SDRfrequency(device, Ch17_RX, Ch17_TX) != 0)
@@ -947,7 +946,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             txFreq = Ch17_TX;
             span = Ch17_SR;
             rxON = true;
-            if (pthread_create(&threads[1], NULL, startSDRStream, (void *)1) != 0)
+            if (pthread_create(&threads[1], nullptr, startSDRStream, (void *)1) != 0)
             {
                 msgSDR.str("");
                 msgSDR << "ERROR starting thread 1";
@@ -956,7 +955,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             break;
 
             case 18:
-            pthread_mutex_init(&SDRmutex, 0);
+            pthread_mutex_init(&SDRmutex, nullptr);
             rxON = false;
             sleep(1);
             if (SDRfrequency(device, Ch18_RX, Ch18_TX) != 0)
@@ -975,7 +974,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             txFreq = Ch18_TX;
             span = Ch18_SR;
             rxON = true;
-            if (pthread_create(&threads[1], NULL, startSDRStream, (void *)1) != 0)
+            if (pthread_create(&threads[1], nullptr, startSDRStream, (void *)1) != 0)
             {
                 msgSDR.str("");
                 msgSDR << "ERROR starting thread 1";
@@ -984,7 +983,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             break;
 
             case 19:
-            pthread_mutex_init(&SDRmutex, 0);
+            pthread_mutex_init(&SDRmutex, nullptr);
             rxON = false;
             sleep(1);
             if (SDRfrequency(device, Ch19_RX, Ch19_TX) != 0)
@@ -1003,7 +1002,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             txFreq = Ch19_TX;
             span = Ch19_SR;
             rxON = true;
-            if (pthread_create(&threads[1], NULL, startSDRStream, (void *)1) != 0)
+            if (pthread_create(&threads[1], nullptr, startSDRStream, (void *)1) != 0)
             {
                 msgSDR.str("");
                 msgSDR << "ERROR starting thread 1";
@@ -1012,7 +1011,7 @@ void rpxServer::onMessage(int socketID, const string &data)
             break;
 
         default:
-            pthread_mutex_init(&SDRmutex, 0);
+            pthread_mutex_init(&SDRmutex, nullptr);
             rxON = false;
             sleep(1);
             if (SDRfrequency(device, Ch4_RX, Ch4_TX) != 0)
@@ -1028,7 +1027,7 @@ void rpxServer::onMessage(int socketID, const string &data)
                 Logger(msgSDR.str());
             }
             rxON = true;
-            if (pthread_create(&threads[1], NULL, startSDRStream, (void *)1) != 0)
+            if (pthread_create(&threads[1], nullptr, startSDRStream, (void *)1) != 0)
             {
                 msgSDR.str("");
                 msgSDR << "ERROR starting thread 1";

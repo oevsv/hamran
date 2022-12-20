@@ -52,7 +52,7 @@ public:
     void run(       uint64_t timeout = 50     );
     void wait(      uint64_t timeout = 50     );
     void send(      int socketID, string data );
-    void broadcast( string data               );
+    void broadcast( const string& data        );
 
     // Key => value storage for each connection
     string getValue( int socketID, const string& name );

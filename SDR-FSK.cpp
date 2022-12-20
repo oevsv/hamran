@@ -87,7 +87,6 @@ int startSDRTXStream(string message)
 
     //modulator
     freqmod mod = freqmod_create(kf); // modulator
-    float f_ratio = toneFrequency / sampleRate;
 
     //Initialize data buffers
     liquid_float_complex mod_buffer[sampleCnt]; //TX buffer to hold complex values - liquid library)
@@ -96,7 +95,7 @@ int startSDRTXStream(string message)
     msgSDR.str("");
     msgSDR << "Modulation Factor: " << modFactor << endl;
     Logger(msgSDR.str());
-    int i = 0;
+    int i;
    // generate message signal (sum of sines)
     for (i=0; i<sampleCnt; i++) {
         test_tone[i] = 0.3f*cosf(2*M_PI*0.027f*i + 0.0f) +
