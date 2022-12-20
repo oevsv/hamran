@@ -82,8 +82,8 @@ a:hover {
 
 .navbar-brand {
   font-size: 16px;
-  padding-top: 0px;
-  padding-bottom: 0px;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 #waterfall {
@@ -92,12 +92,16 @@ a:hover {
   height: 100%;
 }
 
+#containerWaterfall {
+  position: absolute;
+}
 .status {
-  position: fixed;
   width: 100%;
+  position: absolute;
   top: 0;
   right: 0;
   left: 50px;
+  margin-bottom: 20px;
   height: 30px;
   text-align: left;
   line-height: 30px;
@@ -109,15 +113,15 @@ a:hover {
 
 #log {
   white-space: nowrap;
-  text-shadow: 0 1px 0 darken(red, 10%);
+  text-shadow: 0 1px 0 darken(red, 10%); /* this is a sass function - it will not work here */
 }
 
 .btn {
-  background-color: #343A40;
+  background-color: #212529;
   color: white;
   border: none;
   padding: 4px;
-  box-shadow: 0px;
+  box-shadow: none;
 }
 
 .dropdown-menu a.dropdown-item {
@@ -126,7 +130,7 @@ a:hover {
   border: none;
   padding: 4px;
   box-shadow: none;
-  border-radius: 0px;
+  border-radius: 0;
 }
 
 .dropdown-menu.show {
@@ -135,10 +139,10 @@ a:hover {
   border: none;
   padding: 4px;
   box-shadow:none;
-  border-radius: 0px;
+  border-radius: 0;
   position: absolute;
   will-change: transform;
-  top: 0px;
+  top: 0;
   left: 30px;
   transform: translate3d(0px, 36px, 0px);
 }
@@ -149,7 +153,7 @@ a:hover {
   border: none;
   padding: 4px;
   box-shadow: none;
-  border-radius: 0px;
+  border-radius: 0;
 }
 
 .btn:hover {
@@ -158,7 +162,7 @@ a:hover {
   border: none;
   padding: 4px;
   box-shadow: none;
-  border-radius: 0px;
+  border-radius: 0;
 }
 
 .dropdown-menu a.dropdown-item:hover {
@@ -167,7 +171,7 @@ a:hover {
   border: none;
   padding: 4px;
   box-shadow: none;
-  border-radius: 0px;
+  border-radius: 0;
 }
 
 .parameter {
@@ -192,4 +196,17 @@ a:hover {
   text-align: right;
   font-size: x-small;
   margin-right: 20px;
+}
+
+.copyright-footer {
+  color: lightgray;
+  font-size: x-small;
+  text-decoration: none !important;
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
 }
