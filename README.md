@@ -3,7 +3,7 @@
  <tr>
   <td><img src="doc/img/image1.png" height="340" alt="OFDMA"></td>
     <td>
-    <b>Bernhard Isemann</b><br><br>
+    <b>Open SDR Platform</b><br><br>
         AT: OE3BIA<br>
         FR: F4VVO<br><br><br>
         Web: <a href="https://rpx-100.net">www.rpx-100.net</a><br>
