@@ -149,7 +149,7 @@ a:hover {
 
 .btn:focus {
   color: white;
-  background-color: #C71A2C;
+  background-color: red;
   border: none;
   padding: 4px;
   box-shadow: none;
@@ -158,7 +158,7 @@ a:hover {
 
 .btn:hover {
   color: white;
-  background-color: #C71A2C;
+  background-color: red;
   border: none;
   padding: 4px;
   box-shadow: none;
@@ -167,7 +167,7 @@ a:hover {
 
 .dropdown-menu a.dropdown-item:hover {
   color: white;
-  background-color: #C71A2C;
+  background-color: red;
   border: none;
   padding: 4px;
   box-shadow: none;
