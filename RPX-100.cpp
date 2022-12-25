@@ -61,30 +61,6 @@ int main(int argc, char *argv[])
                     cout << "Mode: " << argv[c] << endl;
                     modeSel = 4;
                 }
-                else if (mode == "TXDirectPTT")
-                {
-                    cout << "Starting RPX-100 with following setting:\n";
-                    cout << "Mode: " << argv[c] << endl;
-                    modeSel = 5;
-                }
-                else if (mode == "TX6mPTT")
-                {
-                    cout << "Starting RPX-100 with following setting:\n";
-                    cout << "Mode: " << argv[c] << endl;
-                    modeSel = 6;
-                }
-                else if (mode == "TX2mPTT")
-                {
-                    cout << "Starting RPX-100 with following setting:\n";
-                    cout << "Mode: " << argv[c] << endl;
-                    modeSel = 7;
-                }
-                else if (mode == "TX70cmPTT")
-                {
-                    cout << "Starting RPX-100 with following setting:\n";
-                    cout << "Mode: " << argv[c] << endl;
-                    modeSel = 8;
-                }
                 else if (mode == "help")
                 {
                     cout << "Options for starting RPX-100: RF-test \033[36mMODE\033[0m" << endl;
@@ -95,11 +71,6 @@ int main(int argc, char *argv[])
                     cout << "     \033[31mTX6m\033[0m for transmit mode with bandpass filter for 50-54 MHz" << endl;
                     cout << "     \033[31mTX2m\033[0m for transmit mode with bandpass filter for 144-146 MHz" << endl;
                     cout << "     \033[31mTX70cm\033[0m for transmit mode with bandpass filter for 430-440 MHz" << endl;
-                    cout << endl;
-                    cout << "     \033[31mTXDirectPTT\033[0m for transmit mode with PTT without bandpass filter" << endl;
-                    cout << "     \033[31mTX6mPTT\033[0m for transmit mode with PTT with bandpass filter for 50-54 MHz" << endl;
-                    cout << "     \033[31mTX2mPTT\033[0m for transmit mode with PTT with bandpass filter for 144-146 MHz" << endl;
-                    cout << "     \033[31mTX70cmPTT\033[0m for transmit mode with PTT with bandpass filter for 430-440 MHz" << endl;
                     cout << endl;
                     return 0;
                 }
