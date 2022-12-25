@@ -1,4 +1,4 @@
-core
+.vccode
 
 # CMake from https://github.com/github/gitignore.git
 CMakeLists.txt.user
