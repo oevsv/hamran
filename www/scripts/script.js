@@ -6,10 +6,10 @@ function connectWebSocket(spectrum) {
 
     if (window.location.host.startsWith('https'))
     {
-        ws = new WebSocket("wss://" + window.location.host);
+        ws = new WebSocket("wss://" + window.location.host.substring(0, window.location.host.indexOf(':')) + ":80");
     } else
     {
-        ws = new WebSocket("ws://" + window.location.host);
+        ws = new WebSocket("ws://" + window.location.host.substring(0, window.location.host.indexOf(':')) + ":80");
     }
     
     spectrum.setWebSocket(ws);
