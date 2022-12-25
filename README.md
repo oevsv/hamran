@@ -5,7 +5,7 @@
     <td>
     <b>Bernhard Isemann</b><br><br>
         AT: OE3BIA<br>
-        NL: PA3BI<br><br><br>
+        FR: F4VVO<br><br><br>
         Web: <a href="https://rpx-100.net">www.rpx-100.net</a><br>
         </td>
         <td align="center">
@@ -24,7 +24,7 @@ The implementation of a new digital communication system will be based on the co
 Hardware and software design of a base station and CPE-like user device shall allow a modular use with different radio front-ends supporting all possible Sub-GHz frequency bands.<br><br>
 The Austrian Radio Amateur Association (OeVSV) together with the Institute of Telecommunication of the Vienna University of Technology will request a permit to test operation of such a new digital communication system in VHF and UHF frequency bands. A possible cooperation with The German Radio Amateur Association shall be explored for utilizing the new transmission protocol in German UHF bands.  
 
-<p align="center"><img src="doc/img/BlockDiagramm.png" height="400" alt="Concept Modem"></p>
+<p align="center"><img src="doc/img/BlockDiagram.png" height="400" alt="Concept Modem"></p>
 
 <h1>Goals</h1>
 <ul>
