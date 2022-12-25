@@ -1,4 +1,4 @@
-**Before cloning and using this code please read the get started information** <a href="https://rpx-100.net/getstarted.html">here.</a><br>The software is under development and is targeting a specifig hardware (WRAN RF Frontend).<br>
+**Before cloning and using this code please read the get started information** <a href="https://rpx-100.net/getstarted.html">here.</a><br>The software is under development and is targeting a specific hardware (WRAN RF Frontend).<br>
 <table border="0" style="width:100%">
  <tr>
   <td><img src="doc/img/image1.png" height="340" alt="OFDMA"></td>
@@ -24,7 +24,7 @@ The implementation of a new digital communication system will be based on the co
 Hardware and software design of a base station and CPE-like user device shall allow a modular use with different radio front-ends supporting all possible Sub-GHz frequency bands.<br><br>
 The Austrian Radio Amateur Association (OeVSV) together with the Institute of Telecommunication of the Vienna University of Technology will request a permit to test operation of such a new digital communication system in VHF and UHF frequency bands. A possible cooperation with The German Radio Amateur Association shall be explored for utilizing the new transmission protocol in German UHF bands.  
 
-<p align="center"><img src="doc/img/SWStack.png" height="400" alt="Concept Modem"></p>
+<p align="center"><img src="doc/img/BlockDiagramm.png" height="400" alt="Concept Modem"></p>
 
 <h1>Goals</h1>
 <ul>
