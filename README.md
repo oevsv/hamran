@@ -35,10 +35,3 @@ The Austrian Radio Amateur Association (OeVSV) together with the Institute of Te
 <li>Benchmark how reliability and scalability such a new transmission protocol can be operated in the VHF and UHF band.</li>
 <li>Provide a blueprint for industrial development and production of base stations and end-user devices for the new transmission protocol.</li>
 </ul>
-
-<h1>Concept Modem</h1>
-<img src="doc/img/Modem.png" height="400" alt="Concept Modem">
-
-<h1>Concept Access Point</h1>
-<img src="doc/img/AccessPoint.png" height="400" alt="Concept Access Point">
-
