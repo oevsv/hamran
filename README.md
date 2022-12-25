@@ -1,11 +1,13 @@
 **Before cloning and using this code please read the get started information** <a href="https://rpx-100.net/getstarted.html">here.</a><br>The software is under development and is targeting a specific hardware (WRAN RF Frontend).<br>
-<table border="0" style="width:100%">
+<table style="border:0" style="width:100%">
  <tr>
   <td><img src="doc/img/image1.png" height="340" alt="OFDMA"></td>
     <td>
     <b>Open SDR Platform</b><br><br>
-        AT: OE3BIA<br>
-        FR: F4VVO<br><br><br>
+        <img src="doc/img/Austria.jpg" height="11"> Austria:<br>
+        OE1RSA, OE1VMC, OE3AEB, OE3BIA, OE9RIR, OE9RWV<br><br>
+        <img src="doc/img/France.jpg" height="11"> France:<br>         
+        F4VVO<br><br>
         Web: <a href="https://rpx-100.net">www.rpx-100.net</a><br>
         </td>
         <td align="center">
