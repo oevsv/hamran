@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "outDir": "./app/dist/esm",
+    "module": "esnext",
+    "target": "esnext",
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "declaration": true
+  },
+  "exclude": [
+    "./test",
+    "./app/dist"
+  ]
+}
