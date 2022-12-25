@@ -5,7 +5,7 @@ const fs = require('fs');
 
 
 // Port number to use
-const port = 80;
+const port = 8080;
 // Colors for CLI output
 const WHITE = '\033[39m';
 const RED = '\033[91m';
