@@ -3,7 +3,7 @@
  * This software is released under the MIT license.
  * See the LICENSE file for further details.
  */
-
+import {colormaps} from './colormap'
 'use strict';
 
 Spectrum.prototype.squeeze = function(value, out_min, out_max) {
@@ -31,7 +31,7 @@ Spectrum.prototype.addWaterfallRow = function(bins) {
     this.ctx_wf.drawImage(this.ctx_wf.canvas,
         0, 0, this.wf_size, this.wf_rows - 1,
         0, 1, this.wf_size, this.wf_rows - 1);
-    
+
     this.wfrowcount++;
 
     // Draw new line on waterfall canvas
@@ -257,7 +257,7 @@ Spectrum.prototype.setSpectrumPercent = function(percent) {
 
 Spectrum.prototype.incrementSpectrumPercent = function() {
     if (this.spectrumPercent + this.spectrumPercentStep <= 100) {
-        this.setSpectrumPercent(this.spectrumPercent + this.spectrumPercentStep);        
+        this.setSpectrumPercent(this.spectrumPercent + this.spectrumPercentStep);
     }
 }
 
@@ -301,9 +301,9 @@ Spectrum.prototype.rangeDecrease = function() {
 Spectrum.prototype.doAutoScale = function(bins) {
     var maxbinval = Math.max(...bins);
     var minbinval = Math.min(...bins);
-          
+
     this.setRange(Math.ceil(minbinval * 0.075) * 10, Math.ceil(maxbinval * 0.075) * 10);  // 75% to nearest 10
-    this.toggleAutoScale();      
+    this.toggleAutoScale();
 }
 
 Spectrum.prototype.setCenterHz = function(hz) {
@@ -334,9 +334,9 @@ Spectrum.prototype.setAveraging = function(num) {
 }
 
 Spectrum.prototype.setTuningStep = function(num) {
-    if (num > 0 && num < 10e6) 
+    if (num > 0 && num < 10e6)
         this.tuningStep = num;
-    this.log("Step: " + this.tuningStep);         
+    this.log("Step: " + this.tuningStep);
 }
 
 Spectrum.prototype.incrementAveraging = function() {
@@ -349,47 +349,47 @@ Spectrum.prototype.decrementAveraging = function() {
     }
 }
 
-Spectrum.prototype.incrementFrequency = function() { 
+Spectrum.prototype.incrementFrequency = function() {
     var freq = { freq : this.centerHz + this.tuningStep };
-    this.ws.send(JSON.stringify(freq));               
+    this.ws.send(JSON.stringify(freq));
 }
 
-Spectrum.prototype.decrementFrequency = function() { 
-    var freq = { freq : this.centerHz - this.tuningStep};       
-    this.ws.send(JSON.stringify(freq));                
+Spectrum.prototype.decrementFrequency = function() {
+    var freq = { freq : this.centerHz - this.tuningStep};
+    this.ws.send(JSON.stringify(freq));
 }
 
-Spectrum.prototype.incrementGain = function() { 
+Spectrum.prototype.incrementGain = function() {
     var gain = { gain : this.gain + 1 };
-    this.ws.send(JSON.stringify(gain));               
+    this.ws.send(JSON.stringify(gain));
 }
 
-Spectrum.prototype.decrementGain = function() { 
+Spectrum.prototype.decrementGain = function() {
     var gain = { gain : this.gain - 1 };
-    this.ws.send(JSON.stringify(gain));               
+    this.ws.send(JSON.stringify(gain));
 }
 
-Spectrum.prototype.incrementFps = function() { 
+Spectrum.prototype.incrementFps = function() {
     var fps = { fps : this.fps + 5 };
-    this.ws.send(JSON.stringify(fps));               
+    this.ws.send(JSON.stringify(fps));
 }
 
-Spectrum.prototype.decrementFps = function() { 
+Spectrum.prototype.decrementFps = function() {
     var fps = { fps : this.fps - 5 };
-    this.ws.send(JSON.stringify(fps));               
+    this.ws.send(JSON.stringify(fps));
 }
 
 Spectrum.prototype.decrementTuningStep = function() {  // 1ex, 2.5ex, 5ex
     if (this.tuningStep > 1) {
-        
+
         var step;
         var firstDigit = parseInt(this.tuningStep / Math.pow(10, parseInt(Math.log10(this.tuningStep))));
-        
-        if (firstDigit == 2) 
+
+        if (firstDigit == 2)
             step = 2.5;
-        else 
+        else
             step = 2;
-        
+
         this.setTuningStep(this.tuningStep / step);
     }
 }
@@ -399,14 +399,14 @@ Spectrum.prototype.incrementTuningStep = function() {
 
         var step;
         var firstDigit = parseInt(this.tuningStep / Math.pow(10, parseInt(Math.log10(this.tuningStep))));
-        
-        if (firstDigit > 1) 
+
+        if (firstDigit > 1)
             step = 2;
-        else 
+        else
             step = 2.5;
-        
+
         this.setTuningStep(this.tuningStep * step);
-        
+
     }
 }
 
@@ -432,7 +432,7 @@ Spectrum.prototype.setMaxHold = function(maxhold) {
 }
 
 Spectrum.prototype.setAutoScale = function(autoscale) {
-    this.autoScale = autoscale;    
+    this.autoScale = autoscale;
 }
 
 Spectrum.prototype.toggleMaxHold = function() {
@@ -445,7 +445,7 @@ Spectrum.prototype.toggleAutoScale = function() {
 
 Spectrum.prototype.log = function(message) {
     this.logger.innerHTML = message + '<br/>';
-    this.logger.scrollTop = this.logger.scrollHeight; 
+    this.logger.scrollTop = this.logger.scrollHeight;
 }
 
 Spectrum.prototype.setWebSocket = function(ws) {
@@ -480,10 +480,10 @@ Spectrum.prototype.toggleFullscreen = function() {
 
 Spectrum.prototype.onKeypress = function(e) {
 
-    switch (e.key) {        
-        case " ": 
+    switch (e.key) {
+        case " ":
             this.togglePaused();
-            break; 
+            break;
         case "S":
             this.toggleFullscreen();
             break;
@@ -550,7 +550,7 @@ Spectrum.prototype.onKeypress = function(e) {
     }
 }
 
-function Spectrum(id, options) {
+export function Spectrum(id, options) {
     // Handle options
     this.centerHz = (options && options.centerHz) ? options.centerHz : 0;
     this.spanHz = (options && options.spanHz) ? options.spanHz : 0;
@@ -565,7 +565,7 @@ function Spectrum(id, options) {
     this.autoScale = (options && options.autoScale) ? options.autoScale : false;
 
     this.logger = (options && options.logger) ? document.getElementById(options.logger) : document.getElementById('log');
-    
+
     // Setup state
     this.paused = false;
     this.fullscreen = false;
