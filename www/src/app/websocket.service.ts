@@ -58,9 +58,9 @@ export class WebsocketService {
 
   private connectWS(): void {
     if (window.location.host.startsWith('https')) {
-      this.ws = new WebSocket("wss://" + window.location.host.substring(0, window.location.host.indexOf(':')) + ":8085");
+      this.ws = new WebSocket("wss://" + window.location.host + "/ws/");
     } else {
-      this.ws = new WebSocket("ws://" + window.location.host.substring(0, window.location.host.indexOf(':')) + ":8085");
+      this.ws = new WebSocket("ws://" + window.location.host + "/ws/");
     }
   }
 }
