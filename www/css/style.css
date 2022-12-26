@@ -92,9 +92,9 @@ a:hover {
   height: 100%;
 }
 
-#containerWaterfall {
-  position: absolute;
-}
+/*#containerWaterfall {*/
+/*  position: absolute;*/
+/*}*/
 .status {
   width: 100%;
   position: absolute;
