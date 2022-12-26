@@ -1,11 +1,13 @@
-**Before cloning and using this code please read the get started information** <a href="https://rpx-100.net/getstarted.html">here.</a><br>The software is under development and is targeting a specifig hardware (WRAN RF Frontend).<br>
-<table border="0" style="width:100%">
+**Before cloning and using this code please read the get started information** <a href="https://rpx-100.net/getstarted.html">here.</a><br>The software is under development and is targeting a specific hardware (WRAN RF Frontend).<br>
+<table style="border:0" style="width:100%">
  <tr>
   <td><img src="doc/img/image1.png" height="340" alt="OFDMA"></td>
     <td>
-    <b>Bernhard Isemann</b><br><br>
-        AT: OE3BIA<br>
-        NL: PA3BI<br><br><br>
+    <b>Open SDR Platform</b><br><br>
+        <img src="doc/img/Austria.jpg" height="11"> Austria:<br>
+        OE1RSA, OE1VMC, OE3AEB, OE3BIA, OE9RIR, OE9RWV<br><br>
+        <img src="doc/img/France.jpg" height="11"> France:<br>         
+        F4VVO<br><br>
         Web: <a href="https://rpx-100.net">www.rpx-100.net</a><br>
         </td>
         <td align="center">
@@ -24,7 +26,7 @@ The implementation of a new digital communication system will be based on the co
 Hardware and software design of a base station and CPE-like user device shall allow a modular use with different radio front-ends supporting all possible Sub-GHz frequency bands.<br><br>
 The Austrian Radio Amateur Association (OeVSV) together with the Institute of Telecommunication of the Vienna University of Technology will request a permit to test operation of such a new digital communication system in VHF and UHF frequency bands. A possible cooperation with The German Radio Amateur Association shall be explored for utilizing the new transmission protocol in German UHF bands.  
 
-<p align="center"><img src="doc/img/SWStack.png" height="400" alt="Concept Modem"></p>
+<p align="center"><img src="doc/img/BlockDiagram.png" height="400" alt="Concept Modem"></p>
 
 <h1>Goals</h1>
 <ul>
@@ -35,10 +37,3 @@ The Austrian Radio Amateur Association (OeVSV) together with the Institute of Te
 <li>Benchmark how reliability and scalability such a new transmission protocol can be operated in the VHF and UHF band.</li>
 <li>Provide a blueprint for industrial development and production of base stations and end-user devices for the new transmission protocol.</li>
 </ul>
-
-<h1>Concept Modem</h1>
-<img src="doc/img/Modem.png" height="400" alt="Concept Modem">
-
-<h1>Concept Access Point</h1>
-<img src="doc/img/AccessPoint.png" height="400" alt="Concept Access Point">
-
