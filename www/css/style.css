@@ -210,3 +210,12 @@ a:hover {
   left: 0;
   width: 100%;
 }
+
+.call {
+  margin-left: 20px;
+  padding-top: 6px;
+  padding-left: 6px;
+  padding-right: 6px;
+  border-radius: 3px;
+  background-color: red;"
+}
