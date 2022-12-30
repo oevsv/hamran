@@ -1,4 +1,28 @@
-/home/bernhard/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/223.8214.51/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/home/bernhard/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/223.8214.51/bin/ninja/linux/ninja -G Ninja -S /home/bernhard/CLionProjects/RPX-100 -B /home/bernhard/CLionProjects/RPX-100/cmake-build-debug
+/home/bernhard/.local/share/JetBrains/Toolbox/apps/CLion/ch-0/223.8214.51/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" -S /home/bernhard/CLionProjects/RPX-100 -B /home/bernhard/CLionProjects/RPX-100/cmake-build-debug
+-- The C compiler identification is GNU 12.2.0
+-- The CXX compiler identification is GNU 12.2.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE  
 -- Configuring done
+CMake Error: The following variables are used in this project, but they are set to NOTFOUND.
+Please set them or make sure they are set and tested correctly in the CMake files:
+lime
+    linked by target "RPX-100" in directory /home/bernhard/CLionProjects/RPX-100
+liquid
+    linked by target "RPX-100" in directory /home/bernhard/CLionProjects/RPX-100
+websockets
+    linked by target "RPX-100" in directory /home/bernhard/CLionProjects/RPX-100
+
 -- Generating done
--- Build files have been written to: /home/bernhard/CLionProjects/RPX-100/cmake-build-debug
+CMake Generate step failed.  Build files cannot be regenerated correctly.
