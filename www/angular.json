@@ -75,10 +75,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "RPX-100-WWW:build:production"
+              "browserTarget": "rpx-100-www:build:production"
             },
             "development": {
-              "browserTarget": "RPX-100-WWW:build:development"
+              "browserTarget": "rpx-100-www:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -86,7 +86,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "RPX-100-web:build"
+            "browserTarget": "rpx-100-www:build"
           }
         },
         "test": {
