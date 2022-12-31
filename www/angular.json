@@ -25,7 +25,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/rpx-100-www",
+            "outputPath": "dist/rpx-100-web",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": [
@@ -75,10 +75,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "rpx-100-www:build:production"
+              "browserTarget": "RPX-100-web:build:production"
             },
             "development": {
-              "browserTarget": "rpx-100-www:build:development"
+              "browserTarget": "RPX-100-web:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -86,7 +86,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "rpx-100-www:build"
+            "browserTarget": "RPX-100-web:build"
           }
         },
         "test": {
@@ -112,6 +112,6 @@
     }
   },
   "cli": {
-    "analytics": "05f328d2-23a3-4033-a1f2-5f6556f89119"
+    "analytics": "3e6c3dca-196f-428e-b22d-959bc7f87be0"
   }
 }
