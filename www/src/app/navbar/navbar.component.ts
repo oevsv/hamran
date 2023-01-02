@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import {WebsocketService} from "../websocket.service";
 import {Meta} from "@angular/platform-browser";
+import {callsign, name} from '../global-variables';
 
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
-  styleUrls: ['./navbar.component.scss']
+  styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent {
 
@@ -78,11 +79,11 @@ export class NavbarComponent {
   }
 
   getCallSign() {
-    const callsign: HTMLMetaElement|null = this.meta.getTag("name=callsign");
-    if (callsign) {
-      return callsign.content
+    const call: HTMLMetaElement|null = this.meta.getTag("name=call");
+    if (call) {
+      return call.content
     } else {
-      return "OE3BIA"
+      return callsign
     }
   }
 

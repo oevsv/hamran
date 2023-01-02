@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
+import {callsign, name} from './global-variables';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'RPX-100-web';
+  title = name + "-" + callsign;
 }

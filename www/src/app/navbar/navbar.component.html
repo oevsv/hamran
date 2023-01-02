@@ -8,64 +8,64 @@
     <img src="assets/images/oevsv.png" alt="ÖVSV Logo" class="logo" />
     <span>RPX-100</span>
   </span>
-  <span class="CallSign">{{ getCallSign() }}</span>
+  <div class="CallSign">{{ getCallSign() }}</div>
   <div class="dropdown nav-item" fxHide.sm>
-    <button mat-button [matMenuTriggerFor]="band_menu" i18n>RF Band</button>
+    <button mat-button class="menuButton" [matMenuTriggerFor]="band_menu" i18n>RF Band</button>
     <mat-menu class="dropdown-menu" #band_menu="matMenu">
-      <button mat-menu-item *ngFor="let band of bands" (click)="selectBand(band.id)">
+      <button mat-menu-item class="subButton" *ngFor="let band of bands" (click)="selectBand(band.id)">
         <span>{{ band.name}}</span>
       </button>
     </mat-menu>
   </div>
   <div class="dropdown nav-item" fxHide.sm>
-    <button mat-button [matMenuTriggerFor]="bw_menu" i18n>Bandwidth</button>
+    <button mat-button class="menuButton" [matMenuTriggerFor]="bw_menu" i18n>Bandwidth</button>
     <mat-menu class="dropdown-menu" #bw_menu="matMenu">
-      <button mat-menu-item *ngFor="let bw of bandwidth" (click)="selectBandWidth(bw.value)">
+      <button mat-menu-item class="subButton" *ngFor="let bw of bandwidth" (click)="selectBandWidth(bw.value)">
         <span>{{ bw.name}}</span>
       </button>
     </mat-menu>
   </div>
   <div class="dropdown nav-item" fxHide.sm>
-    <button mat-button [matMenuTriggerFor]="channel_menu" i18n>Channel</button>
+    <button mat-button class="menuButton" [matMenuTriggerFor]="channel_menu" i18n>Channel</button>
     <mat-menu class="dropdown-menu" #channel_menu="matMenu">
-      <button mat-menu-item *ngFor="let channel of channels" (click)="selectChannel(channel.id)">
+      <button mat-menu-item class="subButton" *ngFor="let channel of channels" (click)="selectChannel(channel.id)">
         <span>{{ channel.name}}</span>
       </button>
     </mat-menu>
   </div>
   <div class="dropdown nav-item" fxHide.sm>
-    <button mat-button [matMenuTriggerFor]="mode_menu" i18n>Mode</button>
+    <button mat-button class="menuButton" [matMenuTriggerFor]="mode_menu" i18n>Mode</button>
     <mat-menu class="dropdown-menu" #mode_menu="matMenu">
-      <button mat-menu-item *ngFor="let mode of modes" (click)="selectMode(mode.id)">
+      <button mat-menu-item class="subButton" *ngFor="let mode of modes" (click)="selectMode(mode.id)">
         <span>{{ mode.name}}</span>
       </button>
     </mat-menu>
   </div>
   <div class="dropdown nav-item" fxHide.sm>
-    <button mat-button [matMenuTriggerFor]="rfp_menu" i18n>RF Power</button>
+    <button mat-button class="menuButton" [matMenuTriggerFor]="rfp_menu" i18n>RF Power</button>
     <mat-menu class="dropdown-menu" #rfp_menu="matMenu">
-      <button mat-menu-item *ngFor="let power of rfPower" (click)="selectRFPower(power.value)">
+      <button mat-menu-item class="subButton" *ngFor="let power of rfPower" (click)="selectRFPower(power.value)">
         <span>{{ power.name}}</span>
       </button>
     </mat-menu>
   </div>
   <div class="dropdown nav-item grow-to-end" fxHide.sm>
-    <button mat-button [matMenuTriggerFor]="txb_menu" i18n>Tx Beacon</button>
+    <button mat-button class="menuButton" [matMenuTriggerFor]="txb_menu" i18n>Tx Beacon</button>
     <mat-menu class="dropdown-menu" #txb_menu="matMenu">
-      <button mat-menu-item *ngFor="let beacon of txBeacon" (click)="selectRFPower(beacon.value)">
+      <button mat-menu-item class="subButton" *ngFor="let beacon of txBeacon" (click)="selectRFPower(beacon.value)">
         <span>{{ beacon.name}}</span>
       </button>
     </mat-menu>
   </div>
   <div class="nav navbar-nav ml-auto w-100 justify-content-end" style="float: right; width: 150px; text-align: center" fxHide.sm>
-      <app-clock></app-clock>
+    <app-clock></app-clock>
   </div>
 </mat-toolbar>
 
 <mat-drawer-container fxFlexFill class="example-container">
   <mat-drawer color="primary" #sidenav fxLayout="column" mode="over"  opened="false" fxHide.gt-sm="true">
     <div class="dropdown nav-item">
-      <button mat-button [matMenuTriggerFor]="band_menu" i18n>RF Band</button>
+      <button mat-button class="menuButtonDrawer" [matMenuTriggerFor]="band_menu" i18n>RF Band</button>
       <mat-menu class="dropdown-menu" #band_menu="matMenu">
         <button mat-menu-item *ngFor="let band of bands" (click)="selectBand(band.id)">
           <span>{{ band.name}}</span>
@@ -73,7 +73,7 @@
       </mat-menu>
     </div>
     <div class="dropdown nav-item">
-      <button mat-button [matMenuTriggerFor]="bw_menu" i18n>Bandwidth</button>
+      <button mat-button class="menuButtonDrawer" [matMenuTriggerFor]="bw_menu" i18n>Bandwidth</button>
       <mat-menu class="dropdown-menu" #bw_menu="matMenu">
         <button mat-menu-item *ngFor="let bw of bandwidth" (click)="selectBandWidth(bw.value)">
           <span>{{ bw.name}}</span>
@@ -81,7 +81,7 @@
       </mat-menu>
     </div>
     <div class="dropdown nav-item">
-      <button mat-button [matMenuTriggerFor]="channel_menu" i18n>Channel</button>
+      <button mat-button class="menuButtonDrawer" [matMenuTriggerFor]="channel_menu" i18n>Channel</button>
       <mat-menu class="dropdown-menu" #channel_menu="matMenu">
         <button mat-menu-item *ngFor="let channel of channels" (click)="selectChannel(channel.id)">
           <span>{{ channel.name}}</span>
@@ -89,7 +89,7 @@
       </mat-menu>
     </div>
     <div class="dropdown nav-item">
-      <button mat-button [matMenuTriggerFor]="mode_menu" i18n>Mode</button>
+      <button mat-button class="menuButtonDrawer" [matMenuTriggerFor]="mode_menu" i18n>Mode</button>
       <mat-menu class="dropdown-menu" #mode_menu="matMenu">
         <button mat-menu-item *ngFor="let mode of modes" (click)="selectMode(mode.id)">
           <span>{{ mode.name}}</span>
@@ -97,7 +97,7 @@
       </mat-menu>
     </div>
     <div class="dropdown nav-item">
-      <button mat-button [matMenuTriggerFor]="rfp_menu" i18n>RF Power</button>
+      <button mat-button class="menuButtonDrawer" [matMenuTriggerFor]="rfp_menu" i18n>RF Power</button>
       <mat-menu class="dropdown-menu" #rfp_menu="matMenu">
         <button mat-menu-item *ngFor="let power of rfPower" (click)="selectRFPower(power.value)">
           <span>{{ power.name}}</span>
@@ -105,7 +105,7 @@
       </mat-menu>
     </div>
     <div class="dropdown nav-item grow-to-end">
-      <button mat-button [matMenuTriggerFor]="txb_menu" i18n>Tx Beacon</button>
+      <button mat-button class="menuButtonDrawer" [matMenuTriggerFor]="txb_menu" i18n>Tx Beacon</button>
       <mat-menu class="dropdown-menu" #txb_menu="matMenu">
         <button mat-menu-item *ngFor="let beacon of txBeacon" (click)="selectRFPower(beacon.value)">
           <span>{{ beacon.name}}</span>

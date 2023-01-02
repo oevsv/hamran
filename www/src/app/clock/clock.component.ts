@@ -88,7 +88,7 @@ function formatDate(date: Date, format: string, utc: boolean) {
 @Component({
   selector: 'app-clock',
   templateUrl: './clock.component.html',
-  styleUrls: ['./clock.component.scss']
+  styleUrls: ['./clock.component.css']
 })
 export class ClockComponent implements OnInit, OnDestroy {
   private format: string;

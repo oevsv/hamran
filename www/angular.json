@@ -3,42 +3,30 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "RPX-100-web": {
+    "RPX100-WEB": {
       "projectType": "application",
-      "schematics": {
-        "@schematics/angular:component": {
-          "style": "scss"
-        }
-      },
+      "schematics": {},
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
-      "i18n": {
-        "sourceLocale": "en-US",
-        "locales": {
-          "de": {
-            "translation": "src/locale/messages.de.xlf"
-          }
-        }
-      },
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/rpx-100-web",
+            "outputPath": "dist/rpx100-web",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": [
               "zone.js"
             ],
             "tsConfig": "tsconfig.app.json",
-            "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.ico",
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss"
+              "src/custom-theme.scss",
+              "src/styles.css"
             ],
             "scripts": []
           },
@@ -47,7 +35,7 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
+                  "maximumWarning": "800kb",
                   "maximumError": "1mb"
                 },
                 {
@@ -56,8 +44,6 @@
                   "maximumError": "4kb"
                 }
               ],
-              "localize": true,
-              "aot": true,
               "outputHashing": "all"
             },
             "development": {
@@ -75,10 +61,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "RPX-100-web:build:production"
+              "browserTarget": "RPX100-WEB:build:production"
             },
             "development": {
-              "browserTarget": "RPX-100-web:build:development"
+              "browserTarget": "RPX100-WEB:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -86,7 +72,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "RPX-100-web:build"
+            "browserTarget": "RPX100-WEB:build"
           }
         },
         "test": {
@@ -97,13 +83,12 @@
               "zone.js/testing"
             ],
             "tsConfig": "tsconfig.spec.json",
-            "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.ico",
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.css"
             ],
             "scripts": []
           }
@@ -112,6 +97,6 @@
     }
   },
   "cli": {
-    "analytics": "3e6c3dca-196f-428e-b22d-959bc7f87be0"
+    "analytics": false
   }
 }

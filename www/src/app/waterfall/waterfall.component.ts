@@ -1,12 +1,13 @@
 import {Component, OnInit} from '@angular/core';
 import {WebsocketService} from "../websocket.service";
 
+// @ts-ignore
 import {Spectrum} from './spectrum'
 
 @Component({
   selector: 'app-waterfall',
   templateUrl: './waterfall.component.html',
-  styleUrls: ['./waterfall.component.scss']
+  styleUrls: ['./waterfall.component.css']
 })
 export class WaterfallComponent implements OnInit {
 
@@ -28,6 +29,7 @@ export class WaterfallComponent implements OnInit {
         logger: 'log',
         autoScale: true
       });
+
 
     this.websocket.getEmitter().subscribe((data) => this.processEvent(data))
 
