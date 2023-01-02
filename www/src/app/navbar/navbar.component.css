@@ -1,0 +1,86 @@
+.navbar-brand {
+  font-size: 16px;
+  padding-top: 0;
+  padding-bottom: 0;
+  display: flex;
+  align-items: center;
+}
+
+.mat-toolbar-single-row {
+  padding: 0 8px;
+  height: 60px
+}
+
+.CallSign {
+  margin-left: 20px;
+  padding-top: 6px;
+  padding-left: 6px;
+  padding-right: 6px;
+  padding-bottom: 6px;
+  border-radius: 3px;
+  background-color: red;
+}
+
+.logo {
+  height: 36px;
+  padding-right: 20px;
+}
+
+/* Style the navigation menu */
+.navbar {
+  width: 100%;
+}
+
+.nav-item {
+  padding: 6px;
+  margin-left: 30px;
+}
+
+.menuButton {
+  font-size: 16px;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  height: 32px;
+}
+
+.menuButton:hover {
+  background-color: red;
+}
+
+.subButton {
+  font-size: 14px;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  height: 28px;
+}
+
+.subButton:hover {
+  background-color: #566573;
+}
+
+.menuButtonDrawer {
+  font-size: 14px;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  height: 24px;
+}
+
+.menuButtonDrawer:hover {
+  background-color: #566573;
+  color: white;
+}
+
+.grow-to-end {
+  flex: 1;
+}
+
+.dropdown-menu {
+  line-height: normal;
+}
+
+.mat-mdc-menu-item {
+  min-height: 30px;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.mat-mdc-menu-item:hover {
+  background-color: #ABB2B9;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}

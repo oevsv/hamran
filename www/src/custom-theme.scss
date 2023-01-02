@@ -1,0 +1,68 @@
+
+// Custom Theming for Angular Material
+// For more information: https://material.angular.io/guide/theming
+@use '@angular/material' as mat;
+// Plus imports for other components in your app.
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@include mat.core();
+
+// Custom palette from Fabian Franz
+$custom-palette: (
+  50: #17202A,
+  100: #566573,
+  200: #212F3D,
+  300: #273746,
+  400: #2C3E50,
+  500: #1C2833,
+  600: #808B96,
+  700: #ABB2B9,
+  800: #D5D8DC,
+  900: #EAECEE,
+  A100: #1C2833,
+  A200: #212F3D,
+  A400: #2C3E50,
+  A700: #ABB2B9,
+  contrast: (
+    50: white,
+    100: white,
+    200: white,
+    300: white,
+    400: white,
+    500: white,
+    600: white,
+    700: white,
+    800: white,
+    900: white,
+    A100: white,
+    A200: white,
+    A400: white,
+    A700: white,
+  )
+);
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+$RPX100-WEB-primary: mat.define-palette($custom-palette);
+$RPX100-WEB-accent: mat.define-palette(mat.$gray-palette, A200, A100, A400);
+
+// The warn palette is optional (defaults to red).
+$RPX100-WEB-warn: mat.define-palette(mat.$red-palette);
+
+// Create the theme object. A theme consists of configurations for individual
+// theming systems such as "color" or "typography".
+$RPX100-WEB-theme: mat.define-light-theme((
+  color: (
+    primary: $RPX100-WEB-primary,
+    accent: $RPX100-WEB-accent,
+    warn: $RPX100-WEB-warn,
+  )
+));
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include mat.all-component-themes($RPX100-WEB-theme);

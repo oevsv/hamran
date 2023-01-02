@@ -1,0 +1,60 @@
+
+#waterfall {
+  display: block;
+  width: 100%;
+  height: 600px;
+}
+
+#containerWaterfall {
+  position: absolute;
+  width: inherit;
+}
+.parameter {
+  display: flex;
+  justify-content: space-between;
+}
+
+.center {
+  color:#343A40;
+  text-align: center;
+  font-size: x-small;
+}
+
+.min{
+  color:#343A40;
+  text-align: left;
+  font-size: x-small;
+  margin-left: 20px;
+}
+.max {
+  color:#343A40;
+  float: right;
+  font-size: x-small;
+  margin-right: 20px;
+}
+
+
+
+
+
+#log {
+  white-space: nowrap;
+  text-shadow: 0 1px 0 lightpink; /* this is a sass function - it will not work here */
+}
+
+
+.status {
+  width: 100%;
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 50px;
+  margin-bottom: 20px;
+  height: 30px;
+  text-align: left;
+  line-height: 30px;
+  color: white;
+  font-size: 14px;
+  font-family: "Lato", sans-serif;
+  font-weight: 100;
+}
