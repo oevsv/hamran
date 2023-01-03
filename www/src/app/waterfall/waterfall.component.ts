@@ -27,7 +27,7 @@ export class WaterfallComponent implements OnInit {
       "waterfall", {
         spectrumPercent: 25,
         logger: 'log',
-        autoScale: true
+        //autoScale: true
       });
 
 
