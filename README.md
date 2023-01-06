@@ -1,4 +1,3 @@
-**Before cloning and using this code please read the get started information** <a href="https://rpx-100.net/getstarted.html">here.</a><br>The software is under development and is targeting a specific hardware (WRAN RF Frontend).<br>
 <table style="border:0" style="width:100%">
  <tr>
   <td><img src="doc/img/image1.png" height="340" alt="OFDMA"></td>
@@ -18,8 +17,6 @@
 </table>
 
 <h1>Overview</h1>
-Before cloning and using this code please read the get started information <a href="https://rpx-100.net/getstarted.html">here.</a><br><br>
-
 Development and operation of an emergency radio communication system is a newly enforced duty of the Radio Amateurs in Austria and reason for the need to establish a new digital transmission procedure allowing high speed data communication in Sub-GHz Frequency bands.<br><br>
 Requirements for the new communication system are to use a wideband transmission mode to support more bandwidth for each user, and enables multiple users at the same time to connect to a base station.
 The implementation of a new digital communication system will be based on the concept of a software defined radio using the LimeSDR ecosystem. This will address and motivate a larger community of developers and radio amateurs to get involved in the enhancement of the system. 
@@ -37,3 +34,13 @@ The Austrian Radio Amateur Association (OeVSV) together with the Institute of Te
 <li>Benchmark how reliability and scalability such a new transmission protocol can be operated in the VHF and UHF band.</li>
 <li>Provide a blueprint for industrial development and production of base stations and end-user devices for the new transmission protocol.</li>
 </ul>
+
+The source code for this project can be found in the following repositories on GitHub:
+
+<ul>
+<li>WRAN Project Website (https://rpx-100.net):  <a href="https://github.com/WRAN-OEVSV/Website" target="_blank">https://github.com/WRAN-OEVSV/Website</a></li>
+<li>WRAN - IEEE802.22 Application for RPX-100: <a href="https://github.com/WRAN-OEVSV/IEEE802.22" target="_blank">https://github.com/WRAN-OEVSV/IEEE802.22</a></li>
+<li>WebSDR for RPX-100: <a href="https://github.com/WRAN-OEVSV/WebSDR" target="_blank">https://github.com/WRAN-OEVSV/WebSDR</a></li>
+<li>Hardware Design RPX-100: <a href="https://github.com/WRAN-OEVSV/Hardware" target="_blank">https://github.com/WRAN-OEVSV/Hardware</a></li>
+</ul>
+
